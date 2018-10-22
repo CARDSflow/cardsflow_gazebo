@@ -1,0 +1,95 @@
+<launch>
+
+    <!-- these are the arguments you can pass to this launch file, for example paused:=true -->
+    <arg name="paused" default="false"/>
+    <arg name="use_sim_time" default="false"/>
+    <arg name="gui" default="false"/>
+    <arg name="headless" default="true"/>
+    <arg name="debug" default="true"/>
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="debug" value="$(arg debug)"/>
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+        <arg name="headless" value="$(arg headless)"/>
+        <!--<arg name="world_name" value="roboy_xylophone.world"/>-->
+    </include>
+
+    <node name="sdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+          args="-sdf -file $(find roboy_models)/planar_2r_xz/model.sdf -model planar_2r_xz
+                   -x 0 -y 0 -z 0
+                   -R 0 -P 0 -Y 0"
+    />
+
+    <!--load robot description onto parameter server-->
+    <include file="$(find planar_2r_xz_moveit_config)/launch/planning_context.launch">
+        <arg name="load_robot_description" value="true"/>
+    </include>
+
+    <!--start path planning-->
+    <include file="$(find planar_2r_xz_moveit_config)/launch/move_group.launch">
+        <arg name="allow_trajectory_execution" value="false"/>
+    </include>
+
+    <param name="planning_plugin" type="string" value="ompl_interface/OMPLPlanner"/>
+
+    <node pkg="tf" type="static_transform_publisher" name="static_map" args="0 0 0 0 0 0 1  /torso /map  100"/>
+
+    <!--&lt;!&ndash;&lt;!&ndash;start joint publisher&ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">&ndash;&gt;-->
+    <!--&lt;!&ndash;<param name="/use_gui" value="true"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;</node>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash;start robot publisher&ndash;&gt;&ndash;&gt;-->
+    <!--<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />-->
+
+    <!--<rosparam command="load" file="$(find planar_2r_xz_moveit_config)/config/ompl_planning.yaml"/>-->
+
+    <!--<group ns="move_group">-->
+    <!--<rosparam command="load" file="$(find planar_2r_xz_moveit_config)/config/kinematics.yaml"/>-->
+    <!--</group>-->
+    <!--<arg name="marker_frequency" default="2" />-->
+    <!--<arg name="marker_collision" default="false" />-->
+    <!--<include file="$(find gazebo2rviz)/launch/gazebo2marker.launch">-->
+    <!--<arg name="frequency" value="$(arg marker_frequency)" />-->
+    <!--<arg name="collision" value="$(arg marker_collision)" />-->
+    <!--</include>-->
+
+    <param name="number_of_fpgas" type="int" value="1"/>
+    <param name="path_planning_pose" type="int" value="4"/>
+    <param name="segment" type="int" value="-1"/>
+    <rosparam param="target_ee_pos">[0, 1, 0.0]</rosparam>
+    <rosparam param="target_ee_ori">[0.0, 0.0, 0.0, 1]</rosparam>
+    <!--20cm above key target-->
+    <rosparam param="ee_target_pos_offset">[0.0, 0.0, 0.0]</rosparam>
+
+    <!--0: caspr force controller, 1: torque controller 2: surprise controller-->
+    <param name="controller" type="int" value="1"/>
+
+    <param name="Kp_controller" type="double" value="500"/>
+    <param name="Kd_controller" type="double" value="30"/>
+
+    <param name="max_force" type="double" value="1000"/>
+    <param name="min_force" type="double" value="20"/>
+
+    <param name="qp_print_level" type="int" value="0"/>
+    <param name="qp_working_sets" type="int" value="1000"/>
+
+    <rosparam param="target_pos">[0,0,0,0,0,0]</rosparam>
+    <rosparam param="target_vel">[0, 0, 0, 0, 0, 0]</rosparam>
+    <rosparam param="target_acc">[0, 0, 0, 0, 0, 0]</rosparam>
+
+    <param name="planner" type="string" value="KPIECEkConfigDefault"/>
+    <param name="planning_group" type="string" value="link_2"/>
+
+    <param name="delay" type="double" value="0.0"/>
+    <param name="log" type="bool" value="false"/>
+    <param name="log2" type="bool" value="false"/>
+    <param name="log_state" type="bool" value="false"/>
+
+    <!--<node name="rviz" pkg="rviz" type="rviz" respawn="false" output="screen"/>-->
+    <node name="rqt" pkg="rqt_gui" type="rqt_gui" respawn="false" output="screen"
+          args="-p DarkRoom"
+    />
+</launch>

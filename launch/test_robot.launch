@@ -1,0 +1,64 @@
+<launch>
+
+    <!-- these are the arguments you can pass to this launch file, for example paused:=true -->
+    <arg name="paused" default="false"/>
+    <arg name="use_sim_time" default="false"/>
+    <arg name="gui" default="false"/>
+    <arg name="headless" default="true"/>
+    <arg name="debug" default="true"/>
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="debug" value="$(arg debug)"/>
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+        <arg name="headless" value="$(arg headless)"/>
+    </include>
+
+    <!-- Robot pose -->
+    <arg name="x" default="0"/>
+    <arg name="y" default="0"/>
+    <arg name="z" default="0"/>
+    <arg name="roll" default="0"/>
+    <arg name="pitch" default="0"/>
+    <arg name="yaw" default="0"/>
+
+    <!--spawn gazebo model with given pose-->
+    <node name="sdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+          args="-sdf -file $(find roboy_models)/test_robot/model.sdf -model test_robot
+                -x $(arg x) -y $(arg y) -z $(arg z)
+                -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)"
+    />
+
+    <!--load robot description onto parameter server-->
+    <include file="$(find test_robot_moveit_config)/launch/planning_context.launch">
+        <arg name="load_robot_description" value="true"/>
+    </include>
+
+    <!--start joint publisher-->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <param name="/use_gui" value="false"/>
+    </node>
+
+    <!--start robot publisher-->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+    <!-- start path planning-->
+    <include file="$(find test_robot_moveit_config)/launch/move_group.launch">
+        <arg name="allow_trajectory_execution" value="false"/>
+    </include>
+
+    <param name="number_of_fpgas" type="int" value="1" />
+
+    <!--these define the gains for the PID in each simulated muscle-->
+    <param name="Kp" type="double" value="1000" />
+    <param name="Ki" type="double" value="0" />
+    <param name="Kd" type="double" value="0" />
+
+    <param name="jacobian_link" type="string" value="link_3" />
+
+    <node name="rviz" pkg="rviz" type="rviz" respawn="false" output="screen"/>
+    <!-- <node name="rqt" pkg="rqt_gui" type="rqt_gui" respawn="false" output="screen"
+          args="-p DarkRoom"
+    /> -->
+</launch>

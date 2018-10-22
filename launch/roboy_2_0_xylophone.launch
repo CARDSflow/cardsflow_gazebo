@@ -1,0 +1,85 @@
+<launch>
+
+    <!-- these are the arguments you can pass to this launch file, for example paused:=true -->
+    <arg name="paused" default="false"/>
+    <arg name="use_sim_time" default="false"/>
+    <arg name="gui" default="false"/>
+    <arg name="headless" default="true"/>
+    <arg name="debug" default="true"/>
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="debug" value="$(arg debug)"/>
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+        <arg name="headless" value="$(arg headless)"/>
+    </include>
+
+    <!-- Robot pose -->
+    <arg name="x" default="0"/>
+    <arg name="y" default="0"/>
+    <arg name="z" default="0"/>
+    <arg name="roll" default="1.54"/>
+    <arg name="pitch" default="0"/>
+    <arg name="yaw" default="0"/>
+
+    <!--spawn gazebo model with given pose-->
+    <node name="sdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+          args="-sdf -file $(find roboy_models)/roboy_2_0_simplified/model.sdf -model roboy_2_0_simplified
+                -x $(arg x) -y $(arg y) -z $(arg z)
+                -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)"
+    />
+
+    <node name="sdf_spawner2" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+          args="-sdf -file $(find roboy_models)/xylophone/model.sdf -model xylophone
+                 -x 0.5 -y -0.81 -z 0.16
+                 -R 1.571 -P 0 -Y -3.0"
+    />
+
+    <!--load robot description onto parameter server-->
+    <include file="$(find roboy_2_0_simplified_moveit_config)/launch/planning_context.launch">
+        <arg name="load_robot_description" value="true"/>
+    </include>
+
+    <!--&lt;!&ndash;start joint publisher&ndash;&gt;-->
+    <!--<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">-->
+        <!--<param name="/use_gui" value="false"/>-->
+    <!--</node>-->
+
+    <!--&lt;!&ndash;start robot publisher&ndash;&gt;-->
+    <!--<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />-->
+
+    <!--&lt;!&ndash; start path planning&ndash;&gt;-->
+    <!--<include file="$(find roboy_2_0_xylophone_moveit_config)/launch/move_group.launch">-->
+        <!--<arg name="allow_trajectory_execution" value="false"/>-->
+    <!--</include>-->
+
+    <!--0: caspr force controller, 1: torque controller 2: surprise controller-->
+    <param name="controller" type="int" value="1" />
+
+    <param name="Kp_controller" type="double" value="1000" />
+    <param name="Kp2_controller" type="double" value="1" />
+    <param name="Kd_controller" type="double" value="100" />
+
+    <param name="max_force" type="double" value="1000" />
+    <param name="min_force" type="double" value="20" />
+
+    <param name="qp_print_level" type="int" value="0" />
+    <param name="qp_working_sets" type="int" value="1000" />
+
+    <rosparam param="target_pos">[0, 0, 0, 0, 0]</rosparam>
+    <rosparam param="target_vel">[0, 0, 0, 0, 0]</rosparam>
+    <rosparam param="target_acc">[0, 0, 0, 0, 0]</rosparam>
+
+    <param name="planner" type="string" value="KPIECEkConfigDefault" />
+
+    <param name="delay" type="double" value="0.0" />
+    <param name="log" type="bool" value="false" />
+    <param name="log2" type="bool" value="false" />
+    <param name="log_state" type="bool" value="false" />
+
+    <!--<node name="rviz" pkg="rviz" type="rviz" respawn="false" output="screen"/>-->
+    <node name="rqt" pkg="rqt_gui" type="rqt_gui" respawn="false" output="screen"
+          args="-p DarkRoom"
+    />
+</launch>

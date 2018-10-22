@@ -1,0 +1,88 @@
+<launch>
+
+    <!-- these are the arguments you can pass to this launch file, for example paused:=true -->
+    <arg name="paused" default="false"/>
+    <arg name="use_sim_time" default="false"/>
+    <arg name="gui" default="false"/>
+    <arg name="headless" default="true"/>
+    <arg name="debug" default="true"/>
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="debug" value="$(arg debug)"/>
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+        <arg name="headless" value="$(arg headless)"/>
+    </include>
+
+    <!-- Robot pose -->
+    <arg name="x" default="0"/>
+    <arg name="y" default="0"/>
+    <arg name="z" default="0"/>
+    <arg name="roll" default="3.14"/>
+    <arg name="pitch" default="0"/>
+    <arg name="yaw" default="0"/>
+
+    <!--spawn gazebo model with given pose-->
+    <node name="sdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+          args="-sdf -file $(find roboy_models)/roboy_hand_left/model.sdf -model roboy_hand_left
+                -x $(arg x) -y $(arg y) -z $(arg z)
+                -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)"
+    />
+
+    <!--load robot description onto parameter server-->
+    <include file="$(find roboy_hand_left_moveit_config)/launch/planning_context.launch">
+        <arg name="load_robot_description" value="true"/>
+    </include>
+
+    <!--&lt;!&ndash;&lt;!&ndash;start joint publisher&ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">&ndash;&gt;-->
+        <!--&lt;!&ndash;<param name="/use_gui" value="true"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;</node>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash;start robot publisher&ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />&ndash;&gt;-->
+
+     <!--start path planning-->
+    <include file="$(find roboy_hand_left_moveit_config)/launch/move_group.launch">
+        <arg name="allow_trajectory_execution" value="false"/>
+    </include>
+
+    <!--<arg name="marker_frequency" default="2" />-->
+    <!--<arg name="marker_collision" default="false" />-->
+    <!--<include file="$(find gazebo2rviz)/launch/gazebo2marker.launch">-->
+        <!--<arg name="frequency" value="$(arg marker_frequency)" />-->
+        <!--<arg name="collision" value="$(arg marker_collision)" />-->
+    <!--</include>-->
+
+    <param name="number_of_fpgas" type="int" value="1" />
+
+    <!--0: caspr force controller, 1: torque controller 2: surprise controller-->
+    <param name="controller" type="int" value="1" />
+
+    <param name="Kp_controller" type="double" value="2000" />
+    <param name="Kp2_controller" type="double" value="1" />
+    <param name="Kd_controller" type="double" value="100" />
+
+    <param name="max_force" type="double" value="1000" />
+    <param name="min_force" type="double" value="20" />
+
+    <param name="qp_print_level" type="int" value="0" />
+    <param name="qp_working_sets" type="int" value="1000" />
+
+    <rosparam param="target_pos">[0.0, 0.0, 0.0, 0.0]</rosparam>
+    <rosparam param="target_vel">[0, 0, 0, 0]</rosparam>
+    <rosparam param="target_acc">[0, 0, 0, 0]</rosparam>
+
+    <param name="planner" type="string" value="KPIECEkConfigDefault" />
+
+    <param name="delay" type="double" value="0.0" />
+    <param name="log" type="bool" value="false" />
+    <param name="log2" type="bool" value="false" />
+    <param name="log_state" type="bool" value="false" />
+
+    <!--&lt;!&ndash;<node name="rviz" pkg="rviz" type="rviz" respawn="false" output="screen"/>&ndash;&gt;-->
+    <node name="rqt" pkg="rqt_gui" type="rqt_gui" respawn="false" output="screen"
+          args="-p DarkRoom"
+    />
+</launch>

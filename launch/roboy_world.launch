@@ -1,0 +1,3272 @@
+<sdf version='1.6'>
+  <world name='default'>
+    <model name='ground_plane'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+    </model>
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type='adiabatic'/>
+    <physics name='default_physics' default='0' type='ode'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>1</shadows>
+    </scene>
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <latitude_deg>0</latitude_deg>
+      <longitude_deg>0</longitude_deg>
+      <elevation>0</elevation>
+      <heading_deg>0</heading_deg>
+    </spherical_coordinates>
+    <model name='roboy_xylophone_left_arm'>
+      <link name='upper_arm_left'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.223248 0.413779 -0.005836 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>1</mass>
+          <inertia>
+            <ixx>0.537883</ixx>
+            <ixy>-0.283948</ixy>
+            <ixz>0.00778542</ixz>
+            <iyy>0.158059</iyy>
+            <iyz>0.0040487</iyz>
+            <izz>0.686387</izz>
+          </inertia>
+        </inertial>
+        <collision name='upper_arm_left_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://roboy_xylophone_left_arm/meshes/CAD/upper_arm_left.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='upper_arm_left_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://roboy_xylophone_left_arm/meshes/CAD/upper_arm_left.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='torso'>
+        <self_collide>0</self_collide>
+        <pose frame=''>-0.005 0.0465 -0.005675 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>1294.12</mass>
+          <inertia>
+            <ixx>295.368</ixx>
+            <ixy>0.0645361</ixy>
+            <ixz>-15.8057</ixz>
+            <iyy>502.224</iyy>
+            <iyz>-0.0264074</iyz>
+            <izz>217.74</izz>
+          </inertia>
+        </inertial>
+        <collision name='torso_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://roboy_xylophone_left_arm/meshes/CAD/torso.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='torso_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://roboy_xylophone_left_arm/meshes/CAD/torso.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='lower_arm_left'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.109722 0.150883 0.000146 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.5</mass>
+          <inertia>
+            <ixx>0.0503534</ixx>
+            <ixy>-0.0288596</ixy>
+            <ixz>-0.00109655</ixz>
+            <iyy>0.0185788</iyy>
+            <iyz>-0.000722374</iyz>
+            <izz>0.0674796</izz>
+          </inertia>
+        </inertial>
+        <collision name='lower_arm_left_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://roboy_xylophone_left_arm/meshes/CAD/lower_arm_left.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='lower_arm_left_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://roboy_xylophone_left_arm/meshes/CAD/lower_arm_left.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='shoulder_left_link2'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.287605 0.594444 -0.013042 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0001</mass>
+          <inertia>
+            <ixx>0.00120729</ixx>
+            <ixy>-0.000583745</ixy>
+            <ixz>2.64719e-05</ixz>
+            <iyy>0.00028318</iyy>
+            <iyz>1.28029e-05</iyz>
+            <izz>0.00148902</izz>
+          </inertia>
+        </inertial>
+        <collision name='shoulder_left_link2_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://roboy_xylophone_left_arm/meshes/CAD/shoulder_left_link2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='shoulder_left_link2_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://roboy_xylophone_left_arm/meshes/CAD/shoulder_left_link2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='shoulder_left_link3'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.287605 0.594444 -0.013042 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0001</mass>
+          <inertia>
+            <ixx>0.00207982</ixx>
+            <ixy>-0.00100545</ixy>
+            <ixz>4.54573e-05</ixz>
+            <iyy>0.000487527</iyy>
+            <iyz>2.19878e-05</iyz>
+            <izz>0.00256517</izz>
+          </inertia>
+        </inertial>
+        <collision name='shoulder_left_link3_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://roboy_xylophone_left_arm/meshes/CAD/shoulder_left_link3.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='shoulder_left_link3_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://roboy_xylophone_left_arm/meshes/CAD/shoulder_left_link3.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='hand_left'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.023711 -0.047382 0.001641 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.2</mass>
+          <inertia>
+            <ixx>0.0697812</ixx>
+            <ixy>-0.00100466</ixy>
+            <ixz>0.020582</ixz>
+            <iyy>0.0628638</iyy>
+            <iyz>0.00300304</iyz>
+            <izz>0.00782345</izz>
+          </inertia>
+        </inertial>
+        <collision name='hand_left_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://roboy_xylophone_left_arm/meshes/CAD/hand_left.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='hand_left_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://roboy_xylophone_left_arm/meshes/CAD/hand_left.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='shoulder_left_axis_1' type='revolute'>
+        <parent>torso</parent>
+        <child>shoulder_left_link2</child>
+        <pose frame=''>-0.00027 -0.000118 -0.005289 0 -0 0</pose>
+        <axis>
+          <xyz>0.05101 0.02231 0.998449</xyz>
+          <limit>
+            <lower>-3.14159</lower>
+            <upper>3.14159</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='shoulder_left_axis_2' type='revolute'>
+        <parent>shoulder_left_link2</parent>
+        <child>shoulder_left_link3</child>
+        <pose frame=''>0.004579 -0.002 -0.000189 0 -0 0</pose>
+        <axis>
+          <xyz>-0.915707 0.400061 0.037844</xyz>
+          <limit>
+            <lower>-3.14159</lower>
+            <upper>3.14159</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='wrist_left' type='revolute'>
+        <parent>lower_arm_left</parent>
+        <child>hand_left</child>
+        <pose frame=''>0.030832 0.106257 0.009191 0 -0 0</pose>
+        <axis>
+          <xyz>-0.42108 -0.906106 0.040778</xyz>
+          <limit>
+            <lower>-1.5708</lower>
+            <upper>1.5708</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='shoulder_left_axis_3' type='revolute'>
+        <parent>shoulder_left_link3</parent>
+        <child>upper_arm_left</child>
+        <pose frame=''>0.059118 0.168775 -0.006673 0 -0 0</pose>
+        <axis>
+          <xyz>-0.398596 -0.916217 0.040837</xyz>
+          <limit>
+            <lower>-3.14159</lower>
+            <upper>3.14159</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='elbow_left' type='revolute'>
+        <parent>upper_arm_left</parent>
+        <child>lower_arm_left</child>
+        <pose frame=''>0.032769 0.15468 0.004782 0 -0 0</pose>
+        <axis>
+          <xyz>0.917116 -0.398413 0.012884</xyz>
+          <limit>
+            <lower>-1.5708</lower>
+            <upper>0</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <plugin name='musc_plugin' filename='libmusc_plugin.so'>
+        <myoMuscle name='motor0'>
+          <link name='torso'>
+            <viaPoint type='FIXPOINT'>0.23757805790055161 0.42944722178973777 0.015492439711174616</viaPoint>
+            <viaPoint type='FIXPOINT'>0.2718871356728519 0.5683871510708945 0.012838404526322811</viaPoint>
+            <viaPoint type='FIXPOINT'>0.28894109223784553 0.5762546353826103 0.010689615277497923</viaPoint>
+          </link>
+          <link name='upper_arm_left'>
+            <viaPoint type='FIXPOINT'>0.05491580433052924 0.10841171982232496 0.017831771965319883</viaPoint>
+          </link>
+        </myoMuscle>
+        <myoMuscle name='motor1'>
+          <link name='torso'>
+            <viaPoint type='FIXPOINT'>0.24003539451940126 0.4672940494831832 0.025509439663540263</viaPoint>
+          </link>
+          <link name='upper_arm_left'>
+            <viaPoint type='FIXPOINT'>0.020501914766615704 0.12321733887017047 0.01410723384316305</viaPoint>
+          </link>
+        </myoMuscle>
+        <myoMuscle name='motor2'>
+          <link name='torso'>
+            <viaPoint type='FIXPOINT'>0.2512180133128348 0.5145590997255809 0.028667405657349203</viaPoint>
+          </link>
+          <link name='upper_arm_left'>
+            <viaPoint type='FIXPOINT'>0.044237920094962996 0.10944032785810763 0.010149046674318436</viaPoint>
+          </link>
+        </myoMuscle>
+        <myoMuscle name='motor3'>
+          <link name='torso'>
+            <viaPoint type='FIXPOINT'>0.28063665292590523 0.5580004259562044 0.028534400330321574</viaPoint>
+          </link>
+          <link name='upper_arm_left'>
+            <viaPoint type='FIXPOINT'>0.04607031345514102 0.12741039589756034 0.012005733160551051</viaPoint>
+          </link>
+        </myoMuscle>
+        <myoMuscle name='motor4'>
+          <link name='torso'>
+            <viaPoint type='FIXPOINT'>0.30339350272539195 0.5961449530207843 -7.360778653264788e-16</viaPoint>
+          </link>
+          <link name='upper_arm_left'>
+            <viaPoint type='FIXPOINT'>0.06347829624088981 0.10364936049603962 -0.005440631932115131</viaPoint>
+          </link>
+        </myoMuscle>
+        <myoMuscle name='motor8'>
+          <link name='torso'>
+            <viaPoint type='FIXPOINT'>0.23414595021784673 0.427938701226947 -0.053841948186743455</viaPoint>
+            <viaPoint type='FIXPOINT'>0.26979225356546843 0.5677688240604152 -0.026839119223290568</viaPoint>
+            <viaPoint type='FIXPOINT'>0.2865401700456306 0.5761408124917585 -0.026075605770313627</viaPoint>
+          </link>
+          <link name='upper_arm_left'>
+            <viaPoint type='FIXPOINT'>0.05328738919638248 0.10711033026042195 -0.027260597325893914</viaPoint>
+          </link>
+        </myoMuscle>
+        <myoMuscle name='motor5'>
+          <link name='torso'>
+            <viaPoint type='FIXPOINT'>0.2769871340021255 0.5564042514238009 -0.04289909901328127</viaPoint>
+          </link>
+          <link name='upper_arm_left'>
+            <viaPoint type='FIXPOINT'>0.04432968965363042 0.12664910668643628 -0.02206419544634254</viaPoint>
+          </link>
+        </myoMuscle>
+        <myoMuscle name='motor6'>
+          <link name='torso'>
+            <viaPoint type='FIXPOINT'>0.24756132617262158 0.5129597900609095 -0.04290640006488961</viaPoint>
+          </link>
+          <link name='upper_arm_left'>
+            <viaPoint type='FIXPOINT'>0.04273686141004042 0.10878381622066825 -0.01923177770926636</viaPoint>
+          </link>
+        </myoMuscle>
+        <myoMuscle name='motor7'>
+          <link name='torso'>
+            <viaPoint type='FIXPOINT'>0.23617466540192045 0.4656054988488306 -0.05005816161190855</viaPoint>
+          </link>
+          <link name='upper_arm_left'>
+            <viaPoint type='FIXPOINT'>0.01999425623662898 0.12284545505075485 -0.02367904890158932</viaPoint>
+          </link>
+        </myoMuscle>
+        <myoMuscle name='motor10'>
+          <link name='upper_arm_left'>
+            <viaPoint type='FIXPOINT'>-0.04627871246374887 -0.06774974473969295 0.041143668608891855</viaPoint>
+          </link>
+          <link name='lower_arm_left'>
+            <viaPoint type='FIXPOINT'>0.03858640057855839 0.12668108856446914 0.021087573911803645</viaPoint>
+          </link>
+        </myoMuscle>
+        <myoMuscle name='motor9'>
+          <link name='upper_arm_left'>
+            <viaPoint type='FIXPOINT'>-0.0534132790641641 -0.09094006058517706 -0.02757452156276807</viaPoint>
+          </link>
+          <link name='lower_arm_left'>
+            <viaPoint type='FIXPOINT'>0.040598791244850344 0.12948535208095127 -0.035443891553970173</viaPoint>
+          </link>
+        </myoMuscle>
+        <endEffector link='hand_left' name='endeffector0'>-0.03613016215599679 -0.03379071808651629 0.2574839525058224</endEffector>
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+      <pose frame=''>0 0 0 1.57 -0 0</pose>
+    </model>
+    <model name='xylophone'>
+      <static>1</static>
+      <link name='C_3'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.959 0.047 0.306982 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0462629</mass>
+          <inertia>
+            <ixx>0.00446864</ixx>
+            <ixy>-0.00159832</ixy>
+            <ixz>-0.000511656</ixz>
+            <iyy>0.0469582</iyy>
+            <iyz>-0.01362</iyz>
+            <izz>0.0426134</izz>
+          </inertia>
+        </inertial>
+        <collision name='C_3_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/C_3.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='C_3_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/C_3.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='A_1'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.566 0.047 0.335288 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0775205</mass>
+          <inertia>
+            <ixx>0.00903735</ixx>
+            <ixy>-0.00158023</ixy>
+            <ixz>-0.000936114</ixz>
+            <iyy>0.0337766</iyy>
+            <iyz>-0.0147114</iyz>
+            <izz>0.0249467</izz>
+          </inertia>
+        </inertial>
+        <collision name='A_1_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/A_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='A_1_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/A_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='A_2'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.871 0.047 0.31332 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0521765</mass>
+          <inertia>
+            <ixx>0.00525914</ixx>
+            <ixy>-0.00163708</ixy>
+            <ixz>-0.000588921</ixz>
+            <iyy>0.0447778</iyy>
+            <iyz>-0.0142394</iyz>
+            <izz>0.0396583</izz>
+          </inertia>
+        </inertial>
+        <collision name='A_2_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/A_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='A_2_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/A_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='G_2'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.828 0.047 0.316417 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0564005</mass>
+          <inertia>
+            <ixx>0.00580697</ixx>
+            <ixy>-0.00168217</ixy>
+            <ixz>-0.000642855</ixz>
+            <iyy>0.0444046</iyy>
+            <iyz>-0.0147768</iyz>
+            <izz>0.0387486</izz>
+          </inertia>
+        </inertial>
+        <collision name='G_2_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/G_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='G_2_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/G_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='D_2'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.698 0.047 0.32578 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0669605</mass>
+          <inertia>
+            <ixx>0.00733769</ixx>
+            <ixy>-0.00168342</ixy>
+            <ixz>-0.000785726</ixz>
+            <iyy>0.0398789</iyy>
+            <iyz>-0.0152267</iyz>
+            <izz>0.0327204</izz>
+          </inertia>
+        </inertial>
+        <collision name='D_2_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/D_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='D_2_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/D_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='H_1'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.611 0.047 0.332047 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0732965</mass>
+          <inertia>
+            <ixx>0.00836451</ixx>
+            <ixy>-0.00161296</ixy>
+            <ixz>-0.000876572</ixz>
+            <iyy>0.0356378</iyy>
+            <iyz>-0.0148705</iyz>
+            <izz>0.0274694</izz>
+          </inertia>
+        </inertial>
+        <collision name='H_1_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/H_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='H_1_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/H_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='C_2'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.655 0.047 0.328877 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0711845</mass>
+          <inertia>
+            <ixx>0.00796432</ixx>
+            <ixy>-0.00167931</ixy>
+            <ixz>-0.000843205</ixz>
+            <iyy>0.0384169</iyy>
+            <iyz>-0.0153344</iyz>
+            <izz>0.0306431</izz>
+          </inertia>
+        </inertial>
+        <collision name='C_2_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/C_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='C_2_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/C_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='F_0'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.179 0.047 0.363161 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.11089</mass>
+          <inertia>
+            <ixx>0.0154126</ixx>
+            <ixy>-0.000714791</ixy>
+            <ixz>-0.00145019</ixz>
+            <iyy>0.0188304</iyy>
+            <iyz>-0.0072085</iyz>
+            <izz>0.00371431</izz>
+          </inertia>
+        </inertial>
+        <collision name='F_0_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/F_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='F_0_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/F_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='H_0'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.306 0.047 0.354014 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0986405</mass>
+          <inertia>
+            <ixx>0.0129445</ixx>
+            <ixy>-0.00108699</ixy>
+            <ixz>-0.00125756</ixz>
+            <iyy>0.0220604</iyy>
+            <iyz>-0.0106856</iyz>
+            <izz>0.0093797</izz>
+          </inertia>
+        </inertial>
+        <collision name='H_0_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/H_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='H_0_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/H_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='G_0'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.22 0.047 0.360208 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.106666</mass>
+          <inertia>
+            <ixx>0.0145518</ixx>
+            <ixy>-0.000845059</ixy>
+            <ixz>-0.00138363</ixz>
+            <iyy>0.0195843</iyy>
+            <iyz>-0.00845285</iyz>
+            <izz>0.00531775</izz>
+          </inertia>
+        </inertial>
+        <collision name='G_0_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/G_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='G_0_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/G_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='F_sharp_1'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.501 0.077 0.159562 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0838565</mass>
+          <inertia>
+            <ixx>0.00278072</ixx>
+            <ixy>-0.0027734</ixy>
+            <ixz>-0.000883296</ixz>
+            <iyy>0.0234697</iyy>
+            <iyz>-0.00670355</iyz>
+            <izz>0.0214267</izz>
+          </inertia>
+        </inertial>
+        <collision name='F_sharp_1_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/F_sharp_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='F_sharp_1_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/F_sharp_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='G_1'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.524 0.047 0.338313 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0821669</mass>
+          <inertia>
+            <ixx>0.00977499</ixx>
+            <ixy>-0.00155062</ixy>
+            <ixz>-0.00100115</ixz>
+            <iyy>0.0322355</iyy>
+            <iyz>-0.0145663</iyz>
+            <izz>0.0226803</izz>
+          </inertia>
+        </inertial>
+        <collision name='G_1_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/G_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='G_1_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/G_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='C_sharo_0'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.066975 0.06601 0.168787 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.119761</mass>
+          <inertia>
+            <ixx>0.00345957</ixx>
+            <ixy>-0.00052966</ixy>
+            <ixz>-0.00105368</ixz>
+            <iyy>0.00348456</iyy>
+            <iyz>-0.00106948</iyz>
+            <izz>0.00107832</izz>
+          </inertia>
+        </inertial>
+        <collision name='C_sharo_0_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/C_sharo_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='C_sharo_0_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/C_sharo_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='C_sharp_1'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.372 0.077 0.151752 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0944165</mass>
+          <inertia>
+            <ixx>0.00298452</ixx>
+            <ixy>-0.00231856</ixy>
+            <ixz>-0.000945821</ixz>
+            <iyy>0.015646</iyy>
+            <iyz>-0.00532994</iyz>
+            <izz>0.013492</izz>
+          </inertia>
+        </inertial>
+        <collision name='C_sharp_1_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/C_sharp_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='C_sharp_1_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/C_sharp_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='G_sharp_1'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.544 0.077 0.162165 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0796325</mass>
+          <inertia>
+            <ixx>0.00268159</ixx>
+            <ixy>-0.00285978</ixy>
+            <ixz>-0.000852497</ixz>
+            <iyy>0.0259067</iyy>
+            <iyz>-0.00702502</iyz>
+            <izz>0.0239256</izz>
+          </inertia>
+        </inertial>
+        <collision name='G_sharp_1_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/G_sharp_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='G_sharp_1_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/G_sharp_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='E_2'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.742 0.047 0.322611 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0631589</mass>
+          <inertia>
+            <ixx>0.00677668</ixx>
+            <ixy>-0.00168798</ixy>
+            <ixz>-0.000733931</ixz>
+            <iyy>0.041472</iyy>
+            <iyz>-0.015119</iyz>
+            <izz>0.0348643</izz>
+          </inertia>
+        </inertial>
+        <collision name='E_2_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/E_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='E_2_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/E_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='E_1'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.436 0.047 0.344651 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0885029</mass>
+          <inertia>
+            <ixx>0.0109566</ixx>
+            <ixy>-0.00138966</ixy>
+            <ixz>-0.00109852</ixz>
+            <iyy>0.0276725</iyy>
+            <iyz>-0.0132992</iyz>
+            <izz>0.0169526</izz>
+          </inertia>
+        </inertial>
+        <collision name='E_1_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/E_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='E_1_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/E_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='F_sharp_0'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.198 0.077 0.141217 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.106666</mass>
+          <inertia>
+            <ixx>0.00316549</ixx>
+            <ixy>-0.00139414</ixy>
+            <ixz>-0.000994331</ixz>
+            <iyy>0.00689056</iyy>
+            <iyz>-0.00298246</iyz>
+            <izz>0.00466326</izz>
+          </inertia>
+        </inertial>
+        <collision name='F_sharp_0_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/F_sharp_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='F_sharp_0_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/F_sharp_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='D_sharp_0'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.11 0.077 0.13589 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.115537</mass>
+          <inertia>
+            <ixx>0.00336479</ixx>
+            <ixy>-0.000838912</ixy>
+            <ixz>-0.00103638</ixz>
+            <iyy>0.00426818</iyy>
+            <iyz>-0.00172701</iyz>
+            <izz>0.00191959</izz>
+          </inertia>
+        </inertial>
+        <collision name='D_sharp_0_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/D_sharp_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='D_sharp_0_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/D_sharp_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='D_sharp_2'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.72 0.077 0.172821 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0648485</mass>
+          <inertia>
+            <ixx>0.00235038</ixx>
+            <ixy>-0.00308247</ixy>
+            <ixz>-0.000739892</ixz>
+            <iyy>0.0356902</iyy>
+            <iyz>-0.00806929</iyz>
+            <izz>0.0339104</izz>
+          </inertia>
+        </inertial>
+        <collision name='D_sharp_2_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/D_sharp_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='D_sharp_2_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/D_sharp_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='F_2'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.786 0.047 0.319442 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0610469</mass>
+          <inertia>
+            <ixx>0.00641835</ixx>
+            <ixy>-0.00172832</ixy>
+            <ixz>-0.000702432</ixz>
+            <iyy>0.0440577</iyy>
+            <iyz>-0.0153279</iyz>
+            <izz>0.0378026</izz>
+          </inertia>
+        </inertial>
+        <collision name='F_2_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/F_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='F_2_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/F_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='F_1'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.482 0.047 0.341338 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0842789</mass>
+          <inertia>
+            <ixx>0.0102134</ixx>
+            <ixy>-0.00146298</ixy>
+            <ixz>-0.00103605</ixz>
+            <iyy>0.0296903</iyy>
+            <iyz>-0.013866</iyz>
+            <izz>0.0197023</izz>
+          </inertia>
+        </inertial>
+        <collision name='F_1_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/F_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='F_1_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/F_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='D_0'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.092 0.047 0.369428 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.117226</mass>
+          <inertia>
+            <ixx>0.0169107</ixx>
+            <ixy>-0.000388364</ixy>
+            <ixz>-0.00155948</ixz>
+            <iyy>0.0177599</iyy>
+            <iyz>-0.00398421</iyz>
+            <izz>0.0011627</izz>
+          </inertia>
+        </inertial>
+        <collision name='D_0_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/D_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='D_0_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/D_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='D_sharp_1'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.415 0.077 0.154355 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0901925</mass>
+          <inertia>
+            <ixx>0.00288997</ixx>
+            <ixy>-0.00247086</ixy>
+            <ixz>-0.000919021</ixz>
+            <iyy>0.0180372</iyy>
+            <iyz>-0.00577751</iyz>
+            <izz>0.0159405</izz>
+          </inertia>
+        </inertial>
+        <collision name='D_sharp_1_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/D_sharp_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='D_sharp_1_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/D_sharp_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='H_2'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.914 0.047 0.310223 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0479525</mass>
+          <inertia>
+            <ixx>0.0047313</ixx>
+            <ixy>-0.00157892</ixy>
+            <ixz>-0.000535926</ixz>
+            <iyy>0.0447312</iyy>
+            <iyz>-0.013597</iyz>
+            <izz>0.0401283</izz>
+          </inertia>
+        </inertial>
+        <collision name='H_2_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/H_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='H_2_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/H_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='A_sharp_0'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.284 0.077 0.146424 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0986405</mass>
+          <inertia>
+            <ixx>0.00299896</ixx>
+            <ixy>-0.00184925</ixy>
+            <ixz>-0.000953434</ixz>
+            <iyy>0.0105326</iyy>
+            <iyz>-0.00410187</iyz>
+            <izz>0.00840123</izz>
+          </inertia>
+        </inertial>
+        <collision name='A_sharp_0_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/A_sharp_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='A_sharp_0_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/A_sharp_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='C_1'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.35 0.047 0.350845 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0961061</mass>
+          <inertia>
+            <ixx>0.012375</ixx>
+            <ixy>-0.00121136</ixy>
+            <ixz>-0.00121429</ixz>
+            <iyy>0.0240307</iyy>
+            <iyz>-0.0118014</iyz>
+            <izz>0.0119127</izz>
+          </inertia>
+        </inertial>
+        <collision name='C_1_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/C_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='C_1_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/C_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='D_1'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.393 0.047 0.347748 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0923045</mass>
+          <inertia>
+            <ixx>0.0116549</ixx>
+            <ixy>-0.00130639</ixy>
+            <ixz>-0.00115598</ixz>
+            <iyy>0.0257985</iyy>
+            <iyz>-0.0126148</iyz>
+            <izz>0.0143905</izz>
+          </inertia>
+        </inertial>
+        <collision name='D_1_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/D_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='D_1_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/D_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='A_0'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.263 0.047 0.357111 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.102865</mass>
+          <inertia>
+            <ixx>0.0137664</ixx>
+            <ixy>-0.000974234</ixy>
+            <ixz>-0.00132286</ixz>
+            <iyy>0.0207558</iyy>
+            <iyz>-0.00966105</iyz>
+            <izz>0.00726457</izz>
+          </inertia>
+        </inertial>
+        <collision name='A_0_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/A_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='A_0_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/A_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='A_sharp_1'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.589 0.077 0.16489 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0758309</mass>
+          <inertia>
+            <ixx>0.00260013</ixx>
+            <ixy>-0.00294857</ixy>
+            <ixz>-0.000825445</ixz>
+            <iyy>0.0285829</iyy>
+            <iyz>-0.0073647</iyz>
+            <izz>0.0266498</izz>
+          </inertia>
+        </inertial>
+        <collision name='A_sharp_1_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/A_sharp_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='A_sharp_1_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/A_sharp_1.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='C_0'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.048 0.047 0.372597 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.12145</mass>
+          <inertia>
+            <ixx>0.0178628</ixx>
+            <ixy>-0.000209924</ixy>
+            <ixz>-0.00162951</ixz>
+            <iyy>0.0179945</iyy>
+            <iyz>-0.00217208</iyz>
+            <izz>0.000456462</izz>
+          </inertia>
+        </inertial>
+        <collision name='C_0_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/C_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='C_0_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/C_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='E_0'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.134 0.047 0.366403 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.113425</mass>
+          <inertia>
+            <ixx>0.0160632</ixx>
+            <ixy>-0.00054732</ixy>
+            <ixz>-0.00149657</ixz>
+            <iyy>0.0179615</iyy>
+            <iyz>-0.0055689</iyz>
+            <izz>0.00220161</izz>
+          </inertia>
+        </inertial>
+        <collision name='E_0_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/E_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='E_0_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/E_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='C_sharp_2'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.676 0.077 0.170157 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0694949</mass>
+          <inertia>
+            <ixx>0.00247559</ixx>
+            <ixy>-0.0031014</ixy>
+            <ixz>-0.000780663</ixz>
+            <iyy>0.0339356</iyy>
+            <iyz>-0.00799379</iyz>
+            <izz>0.0320713</izz>
+          </inertia>
+        </inertial>
+        <collision name='C_sharp_2_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/C_sharp_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='C_sharp_2_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/C_sharp_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='G_sharp_0'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.241 0.077 0.143821 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.102865</mass>
+          <inertia>
+            <ixx>0.00309065</ixx>
+            <ixy>-0.00163644</ixy>
+            <ixz>-0.000976577</ixz>
+            <iyy>0.00862471</iyy>
+            <iyz>-0.00356533</iyz>
+            <izz>0.00643884</izz>
+          </inertia>
+        </inertial>
+        <collision name='G_sharp_0_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/G_sharp_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='G_sharp_0_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/G_sharp_0.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='G_sharp_2'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.848 0.077 0.18057 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0547109</mass>
+          <inertia>
+            <ixx>0.00210171</ixx>
+            <ixy>-0.00306309</ixy>
+            <ixz>-0.000652252</ixz>
+            <iyy>0.0412104</iyy>
+            <iyz>-0.00837767</iyz>
+            <izz>0.0395901</izz>
+          </inertia>
+        </inertial>
+        <collision name='G_sharp_2_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/G_sharp_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='G_sharp_2_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/G_sharp_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='F_sharp_2'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.806 0.077 0.178027 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0589349</mass>
+          <inertia>
+            <ixx>0.00222346</ixx>
+            <ixy>-0.00313608</ixy>
+            <ixz>-0.000692692</ixz>
+            <iyy>0.0402576</iyy>
+            <iyz>-0.00845664</iyz>
+            <izz>0.0385526</izz>
+          </inertia>
+        </inertial>
+        <collision name='F_sharp_2_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/F_sharp_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='F_sharp_2_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/F_sharp_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='A_sharp_2'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.892 0.077 0.183234 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>0.0504869</mass>
+          <inertia>
+            <ixx>0.00197785</ixx>
+            <ixy>-0.00297335</ixy>
+            <ixz>-0.000610789</ixz>
+            <iyy>0.0419325</iyy>
+            <iyz>-0.00825193</iyz>
+            <izz>0.0403989</izz>
+          </inertia>
+        </inertial>
+        <collision name='A_sharp_2_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/A_sharp_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='A_sharp_2_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/A_sharp_2.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='Rahmen'>
+        <self_collide>0</self_collide>
+        <pose frame=''>0.5045 0 0.279506 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <mass>33.444</mass>
+          <inertia>
+            <ixx>2.11185</ixx>
+            <ixy>-0.37209</ixy>
+            <ixz>-0.176202</ixz>
+            <iyy>12.8256</iyy>
+            <iyz>-3.32422</iyz>
+            <izz>10.7788</izz>
+          </inertia>
+        </inertial>
+        <collision name='Rahmen_collision'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/Rahmen.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='Rahmen_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://xylophone/meshes/CAD/Rahmen.stl</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='C_0' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>C_0</child>
+        <pose frame=''>0.00012 -0.012 0.072897 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='D_0' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>D_0</child>
+        <pose frame=''>-5.9e-05 -0.012 0.070059 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='E_0' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>E_0</child>
+        <pose frame=''>0.000125 -0.012 0.068033 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='F_0' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>F_0</child>
+        <pose frame=''>-9.8e-05 -0.012 0.066223 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='G_0' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>G_0</child>
+        <pose frame=''>-7e-06 -0.012 0.063852 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='A_0' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>A_0</child>
+        <pose frame=''>0.000269 -0.012 0.061762 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='H_0' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>H_0</child>
+        <pose frame=''>-2e-06 -0.012 0.060081 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='G_1' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>G_1</child>
+        <pose frame=''>1.4e-05 -0.012 0.049844 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='A_1' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>A_1</child>
+        <pose frame=''>-0.000213 -0.012 0.047818 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='H_1' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>H_1</child>
+        <pose frame=''>-2.6e-05 -0.012 0.045872 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='C_2' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>C_2</child>
+        <pose frame=''>-6.8e-05 -0.012 0.043307 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='D_2' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>D_2</child>
+        <pose frame=''>-0.000202 -0.012 0.041216 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='E_2' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>E_2</child>
+        <pose frame=''>-0.000107 -0.012 0.039334 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='F_2' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>F_2</child>
+        <pose frame=''>0.000124 -0.012 0.037589 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='G_2' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>G_2</child>
+        <pose frame=''>3.4e-05 -0.012 0.035426 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='A_2' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>A_2</child>
+        <pose frame=''>3.7e-05 -0.012 0.033199 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='H_2' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>H_2</child>
+        <pose frame=''>-0.000234 -0.012 0.031245 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='C_3' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>C_3</child>
+        <pose frame=''>-4.7e-05 -0.012 0.029026 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='A_sharp_2' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>A_sharp_2</child>
+        <pose frame=''>6.1e-05 -0.012 0.032235 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='G_sharp_2' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>G_sharp_2</child>
+        <pose frame=''>4.2e-05 -0.012 0.033938 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='F_sharp_2' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>F_sharp_2</child>
+        <pose frame=''>-0.000247 -0.012 0.036269 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='D_sharp_2' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>D_sharp_2</child>
+        <pose frame=''>-2e-06 -0.012 0.039401 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='C_sharp_2' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>C_sharp_2</child>
+        <pose frame=''>0.000105 -0.012 0.041693 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='A_sharp_1' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>A_sharp_1</child>
+        <pose frame=''>-0.000435 -0.012 0.045959 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='G_sharp_1' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>G_sharp_1</child>
+        <pose frame=''>0.000174 -0.012 0.047722 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='F_sharp_1' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>F_sharp_1</child>
+        <pose frame=''>-9.6e-05 -0.012 0.049524 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='G_sharp_0' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>G_sharp_0</child>
+        <pose frame=''>-8.6e-05 -0.012 0.061452 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='F_sharp_0' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>F_sharp_0</child>
+        <pose frame=''>-1.8e-05 -0.012 0.063349 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='D_sharp_0' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>D_sharp_0</child>
+        <pose frame=''>-0.000141 -0.012 0.066841 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='C_sharp_0' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>C_sharo_0</child>
+        <pose frame=''>-4.7e-05 -0.00101 0.033802 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='A_sharp_0' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>A_sharp_0</child>
+        <pose frame=''>-1.3e-05 -0.012 0.059554 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='C_1' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>C_1</child>
+        <pose frame=''>-0.00018 -0.012 0.058472 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='D_1' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>D_1</child>
+        <pose frame=''>-4.1e-05 -0.012 0.055698 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='E_1' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>E_1</child>
+        <pose frame=''>-3.9e-05 -0.012 0.053881 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='F_1' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>F_1</child>
+        <pose frame=''>0.00024 -0.012 0.051734 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='C_sharp_1' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>C_sharp_1</child>
+        <pose frame=''>-0.000173 -0.012 0.055639 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name='D_sharp_1' type='prismatic'>
+        <parent>Rahmen</parent>
+        <child>D_sharp_1</child>
+        <pose frame=''>4.1e-05 -0.012 0.053459 0 -0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0.005</upper>
+          </limit>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <pose frame=''>0.5 -0.81 0.16 1.571 -0 -3</pose>
+    </model>
+    <light name='user_spot_light_0' type='spot'>
+      <pose frame=''>0.0948 -0.389212 1 0 -0 0</pose>
+      <diffuse>0.5 0.5 0.5 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+      <direction>0 0 -1</direction>
+      <attenuation>
+        <range>20</range>
+        <constant>0.5</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <cast_shadows>0</cast_shadows>
+      <spot>
+        <inner_angle>0.6</inner_angle>
+        <outer_angle>1</outer_angle>
+        <falloff>1</falloff>
+      </spot>
+    </light>
+    <state world_name='default'>
+      <sim_time>7 166000000</sim_time>
+      <real_time>425 690057460</real_time>
+      <wall_time>1531608700 713874078</wall_time>
+      <iterations>7166</iterations>
+      <model name='ground_plane'>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='roboy_xylophone_left_arm'>
+        <pose frame=''>-0.142226 -0.034837 1.09831 -2.15518 0.038742 1.01154</pose>
+        <scale>1 1 1</scale>
+        <link name='hand_left'>
+          <pose frame=''>-0.15896 -0.027747 1.12832 -1.20795 -0.21986 -0.36761</pose>
+          <velocity>5.9704 0.709517 5.11278 -0.056828 -1.20779 -1.51749</velocity>
+          <acceleration>9.54366 4.47788 -112.201 -0.467605 -0.851775 0.581606</acceleration>
+          <wrench>1.90873 0.895576 -22.4402 0 -0 0</wrench>
+        </link>
+        <link name='lower_arm_left'>
+          <pose frame=''>-0.016254 0.00987 0.968305 -2.15517 0.038746 1.01154</pose>
+          <velocity>4.21866 0.482021 3.48052 -0.05573 -1.2077 -1.51875</velocity>
+          <acceleration>7.74378 3.38665 -77.1902 2.22725 1.21608 -0.190961</acceleration>
+          <wrench>3.87189 1.69332 -38.5951 0 -0 0</wrench>
+        </link>
+        <link name='shoulder_left_link2'>
+          <pose frame=''>0.287664 0.013137 0.597732 1.65043 -1.1227 -0.023085</pose>
+          <velocity>-0.009753 0.001364 -0.001601 -0.549522 -1.21429 -0.255899</velocity>
+          <acceleration>-1.2554 2.34333 -0.297391 -0.220493 0.808224 3.06455</acceleration>
+          <wrench>-0.000126 0.000234 -3e-05 0 -0 0</wrench>
+        </link>
+        <link name='shoulder_left_link3'>
+          <pose frame=''>0.28759 0.013041 0.598217 -1.57858 -0.300997 0.114697</pose>
+          <velocity>0.01294 -0.000719 0.002117 -0.895269 -1.23968 -0.559724</velocity>
+          <acceleration>-0.50072 2.61574 -0.686304 -0.899116 -0.824077 2.608</acceleration>
+          <wrench>-5e-05 0.000262 -6.9e-05 0 -0 0</wrench>
+        </link>
+        <link name='torso'>
+          <pose frame=''>-0.004971 0.005746 0.05 1.5708 -0 -5.8e-05</pose>
+          <velocity>-5e-06 4.1e-05 1e-06 -0.000823 -0.000106 0</velocity>
+          <acceleration>-0.079247 0.205386 -0.927444 -0.73246 0.803867 -3.01499</acceleration>
+          <wrench>-102.555 265.794 -1200.22 0 -0 0</wrench>
+        </link>
+        <link name='upper_arm_left'>
+          <pose frame=''>0.16673 0.019335 0.748029 -2.15518 0.038742 1.01154</pose>
+          <velocity>1.74195 0.189476 1.38812 -0.054603 -1.20427 -1.51769</velocity>
+          <acceleration>3.78947 3.00726 -31.5191 -2.55676 -0.758828 -1.45</acceleration>
+          <wrench>3.78947 3.00726 -31.5191 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='xylophone'>
+        <pose frame=''>0.5 -0.81 0.16 1.571 -0 -3</pose>
+        <scale>1 1 1</scale>
+        <link name='A_0'>
+          <pose frame=''>0.189235 -0.493568 0.206927 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='A_1'>
+          <pose frame=''>-0.107653 -0.557932 0.206932 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='A_2'>
+          <pose frame=''>-0.406501 -0.622722 0.206936 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='A_sharp_0'>
+          <pose frame=''>0.198177 -0.705104 0.23697 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='A_sharp_1'>
+          <pose frame=''>-0.106377 -0.729864 0.236966 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='A_sharp_2'>
+          <pose frame=''>-0.408934 -0.754463 0.236963 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='C_0'>
+          <pose frame=''>0.399898 -0.447896 0.206924 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='C_1'>
+          <pose frame=''>0.10399 -0.512049 0.206929 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='C_2'>
+          <pose frame=''>-0.194858 -0.576838 0.206933 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='C_3'>
+          <pose frame=''>-0.492725 -0.641415 0.206937 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='C_sharo_0'>
+          <pose frame=''>0.409874 -0.65234 0.225976 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='C_sharp_1'>
+          <pose frame=''>0.110305 -0.712248 0.236969 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='C_sharp_2'>
+          <pose frame=''>-0.19325 -0.736927 0.236965 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='D_0'>
+          <pose frame=''>0.356786 -0.457243 0.206925 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='D_1'>
+          <pose frame=''>0.061857 -0.521183 0.206929 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='D_2'>
+          <pose frame=''>-0.23699 -0.585973 0.206934 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='D_sharp_0'>
+          <pose frame=''>0.371922 -0.690978 0.236972 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='D_sharp_1'>
+          <pose frame=''>0.067368 -0.715739 0.236969 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='D_sharp_2'>
+          <pose frame=''>-0.237185 -0.740499 0.236965 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='E_0'>
+          <pose frame=''>0.315633 -0.466164 0.206925 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='E_1'>
+          <pose frame=''>0.019725 -0.530317 0.20693 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='E_2'>
+          <pose frame=''>-0.280103 -0.595319 0.206934 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='F_0'>
+          <pose frame=''>0.271541 -0.475724 0.206926 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='F_1'>
+          <pose frame=''>-0.025347 -0.540088 0.20693 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='F_2'>
+          <pose frame=''>-0.323215 -0.604666 0.206935 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='F_sharp_0'>
+          <pose frame=''>0.284051 -0.698122 0.236971 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='F_sharp_1'>
+          <pose frame=''>-0.018506 -0.72272 0.236967 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='F_sharp_2'>
+          <pose frame=''>-0.323059 -0.747482 0.236964 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='G_0'>
+          <pose frame=''>0.231368 -0.484434 0.206927 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='G_1'>
+          <pose frame=''>-0.0665 -0.54901 0.206931 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='G_2'>
+          <pose frame=''>-0.364368 -0.613587 0.206936 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='G_sharp_0'>
+          <pose frame=''>0.241114 -0.701613 0.236971 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='G_sharp_1'>
+          <pose frame=''>-0.061443 -0.726212 0.236967 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='G_sharp_2'>
+          <pose frame=''>-0.364998 -0.750891 0.236963 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='H_0'>
+          <pose frame=''>0.147102 -0.502702 0.206928 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='H_1'>
+          <pose frame=''>-0.151745 -0.567491 0.206932 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='H_2'>
+          <pose frame=''>-0.448633 -0.631856 0.206937 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='Rahmen'>
+          <pose frame=''>-0.038895 -0.604486 0.159943 1.571 -0 -3</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <light name='user_spot_light_0'>
+        <pose frame=''>0.002371 -0.01361 2.618 0 -0 0</pose>
+      </light>
+    </state>
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose frame=''>1.36411 -4.63856 3.74762 0 0.511643 1.72819</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
+  </world>
+</sdf>
