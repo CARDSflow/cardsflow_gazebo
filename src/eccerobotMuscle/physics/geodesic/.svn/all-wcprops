@@ -1,0 +1,119 @@
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/caliper/!svn/ver/176/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic
+END
+geodesic_mesh_elements.h
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/caliper/!svn/ver/171/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic/geodesic_mesh_elements.h
+END
+geodesic_matlab_api.h
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/caliper/!svn/ver/171/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic/geodesic_matlab_api.h
+END
+geodesic_mesh.h
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/caliper/!svn/ver/176/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic/geodesic_mesh.h
+END
+geodesic_constants_and_simple_functions.h
+K 25
+svn:wc:ra_dav:version-url
+V 151
+/caliper/!svn/ver/171/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic/geodesic_constants_and_simple_functions.h
+END
+geodesic_algorithm_graph_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/caliper/!svn/ver/171/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic/geodesic_algorithm_graph_base.h
+END
+geodesic_algorithm_subdivision.h
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/caliper/!svn/ver/171/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic/geodesic_algorithm_subdivision.h
+END
+example0.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/caliper/!svn/ver/171/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic/example0.cpp
+END
+example1.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/caliper/!svn/ver/171/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic/example1.cpp
+END
+geodesic_algorithm_exact_elements.h
+K 25
+svn:wc:ra_dav:version-url
+V 145
+/caliper/!svn/ver/171/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic/geodesic_algorithm_exact_elements.h
+END
+geodesic_memory.h
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/caliper/!svn/ver/171/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic/geodesic_memory.h
+END
+geodesic_algorithm_exact.h
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/caliper/!svn/ver/176/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic/geodesic_algorithm_exact.h
+END
+hedgehog_mesh.txt
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/caliper/!svn/ver/171/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic/hedgehog_mesh.txt
+END
+geodesic_algorithm_dijkstra_alternative.h
+K 25
+svn:wc:ra_dav:version-url
+V 151
+/caliper/!svn/ver/171/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic/geodesic_algorithm_dijkstra_alternative.h
+END
+geodesic_algorithm_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/caliper/!svn/ver/176/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic/geodesic_algorithm_base.h
+END
+flat_triangular_mesh.txt
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/caliper/!svn/ver/171/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic/flat_triangular_mesh.txt
+END
+geodesic_algorithm_dijkstra.h
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/caliper/!svn/ver/171/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic/geodesic_algorithm_dijkstra.h
+END
+example0
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/caliper/!svn/ver/171/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic/example0
+END
+readme.txt
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/caliper/!svn/ver/171/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic/readme.txt
+END
+geodesic_matlab_api.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/caliper/!svn/ver/171/trunk/caliper/src/plugins/de.caliper.sim/ext/actuators/eccerobotMuscle/physics/geodesic/geodesic_matlab_api.cpp
+END

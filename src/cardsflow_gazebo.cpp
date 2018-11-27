@@ -107,7 +107,7 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
         muscles.push_back(
                 boost::shared_ptr<cardsflow_gazebo::IMuscle>(new cardsflow_gazebo::IMuscle(parent_model)));
         muscles.back()->Init(musc_info[muscle]);
-        muscles.back()->dummy = true;
+        muscles.back()->dummy = false;
         muscles.back()->muscleID = muscle;
     }
 
@@ -139,10 +139,11 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
 
     world_to_link_transform.reset(new map<string, Matrix4d>);
 
-    ROS_INFO("CardsflowGazebo ready");
+    ROS_INFO("CardsflowGazebo ready now");
 }
 
 void CardsflowGazebo::Update() {
+//    ROS_INFO("CardsflowGazebo::Update()");
     // Get the simulation time and period
     common::Time gz_time_now = parent_model->GetWorld()->GetSimTime();
     ros::Time sim_time_ros(gz_time_now.sec, gz_time_now.nsec);
@@ -202,6 +203,9 @@ void CardsflowGazebo::writeSim(ros::Time time, ros::Duration period) {
         for (int i = 0; i < muscles[muscle]->viaPoints.size(); i++) {
             cardsflow_gazebo::IViaPointsPtr vp = muscles[muscle]->viaPoints[i];
             if (vp->prevForcePoint.IsFinite() && vp->nextForcePoint.IsFinite()) {
+//                if (i==0) {
+//                    ROS_INFO_STREAM("tendon 0 force: " << vp->prevForce);
+//                }
                 vp->link->AddForceAtWorldPosition(vp->prevForce, vp->prevForcePoint);
                 vp->link->AddForceAtWorldPosition(vp->nextForce, vp->nextForcePoint);
             }
@@ -231,10 +235,12 @@ void CardsflowGazebo::MotorCommand(const roboy_middleware_msgs::MotorCommand::Co
                 case POSITION:
                     muscles[msg->motors[i] + msg->id * NUMBER_OF_MOTORS_PER_FPGA]->cmd =
                             msg->set_points[i] * 2.0 * M_PI / (2000.0f * 53.0f); // convert ticks to rad
+                    setPoints[i] = msg->set_points[i] * 2.0 * M_PI / (2000.0f * 53.0f);
                     break;
                 case VELOCITY:
                     muscles[msg->motors[i] + msg->id * NUMBER_OF_MOTORS_PER_FPGA]->cmd =
                             msg->set_points[i] / (2000.0f * 53.0f); // convert ticks/s to 1/s
+                    setPoints[i] = msg->set_points[i] * 2.0 * M_PI / (2000.0f * 53.0f);
                     break;
                 case DISPLACEMENT:
                     if (msg->set_points[i] >= 0) // negative displacement doesnt make sense
@@ -260,10 +266,10 @@ void CardsflowGazebo::MotorStatusPublisher() {
         for (auto const &muscle:muscles) {
             msg.pwm_ref.push_back(muscle->cmd);
             msg.position.push_back(
-                    muscle->actuator.gear.position / (2.0 * M_PI / (2000.0f * 53.0f))); // convert to motor ticks
-            msg.velocity.push_back(muscle->actuator.spindle.angVel * (2000.0f * 53.0f)); // convert 1/s to ticks/sec
+                    muscle->motor.getPosition() / (2.0 * M_PI / (2000.0f * 53.0f))); // convert to motor ticks
+            msg.velocity.push_back(muscle->motor.getAngularVelocity() * (2000.0f * 53.0f)); // convert 1/s to ticks/sec
             msg.displacement.push_back(muscle->see.deltaX / (0.01 * 0.001)); // convert m to displacement ticks
-            msg.current.push_back(muscle->actuator.motor.voltage); // this is actually the pid result
+            msg.current.push_back(muscle->motor.getVoltage()); // this is actually the pid result
         }
         motorStatus_pub.publish(msg);
         rate.sleep();

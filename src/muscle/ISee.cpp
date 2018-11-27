@@ -50,7 +50,7 @@ namespace cardsflow_gazebo {
 	void ISee::applyTendonForce(double &_muscleForce, double &_actuatorForce) {
 		// since the tendon runs over a spindle the force on both tendons will be equal.
 		// Only their horizontal and vertical forces will differ due to the different angles toward the spring
-		_muscleForce = _actuatorForce = see.force / (std::cos(alpha_1) + std::cos(alpha_2)) + tendonForce;
+		_muscleForce = _actuatorForce = see.force; // / (std::cos(alpha_1) + std::cos(alpha_2)); //+ tendonForce;
 
 
 		//check for tendon rip

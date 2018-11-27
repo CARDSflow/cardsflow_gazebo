@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(cardsflow_gazebo)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/devel/lib)
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g ")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -g ")
 
 SET(CMAKE_BUILD_TYPE Debug)
 
@@ -46,22 +46,27 @@ include_directories(
 		${Qt5Core_INCLUDE_DIRS}
 		${Qt5Gui_INCLUDE_DIRS}
 )
+
+#roboticslibrary
+find_package(rl REQUIRED)
+include_directories(${RL_INCLUDE_DIRS})
+
 #==============================================================================
 # Application
 #==============================================================================
 
 add_library(cardsflow_gazebo_plugin SHARED
 		src/cardsflow_gazebo.cpp
-        src/muscle/MuscPID.cpp
+		src/eccerobotMuscle/physics/Actuator.cpp
 		src/muscle/IMuscle.cpp
-		src/muscle/CylindricalWrapping.cpp
-		src/muscle/IActuator.cpp
 		src/muscle/ISee.cpp
+		src/muscle/IActuator.cpp
 		src/muscle/IViaPoints.cpp
-	#	src/muscle/MeshWrapping.cpp
+		src/muscle/CylindricalWrapping.cpp
 		src/muscle/SphericalWrapping.cpp
-		src/muscle/StateMachine.cpp
-		include/cardsflow_gazebo/cardsflow_gazebo.hpp
+		src/muscle/MuscPID.cpp
+        #	src/muscle/MeshWrapping.cpp
+        include/cardsflow_gazebo/cardsflow_gazebo.hpp
         include/cardsflow_gazebo/muscle/MuscPID.hpp
 		include/cardsflow_gazebo/muscle/IMuscle.hpp
 		include/cardsflow_gazebo/muscle/CylindricalWrapping.hpp
@@ -71,10 +76,33 @@ add_library(cardsflow_gazebo_plugin SHARED
 		#	include/cardsflow_gazebo/muscle/MeshWrapping.hpp
 		include/cardsflow_gazebo/muscle/SphericalWrapping.hpp
 		include/cardsflow_gazebo/muscle/StateMachine.hpp
+		include/cardsflow_gazebo/eccerobotMuscle/physics/Actuator.h
+		include/cardsflow_gazebo/eccerobotMuscle/physics/IActuator.h
 		)
 
 add_dependencies( cardsflow_gazebo_plugin roboy_middleware_msgs_gencpp roboy_simulation_msgs_gencpp )
-target_link_libraries(cardsflow_gazebo_plugin ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(cardsflow_gazebo_plugin ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES} ${RL_LIBRARIES})
+
+add_executable(testMuscle src/testMuscle.cpp
+		src/eccerobotMuscle/physics/Actuator.cpp
+		include/cardsflow_gazebo/eccerobotMuscle/physics/Actuator.h
+		include/cardsflow_gazebo/eccerobotMuscle/physics/IActuator.h)
+
+add_dependencies(testMuscle ${RL_LIBRARIES})
+target_link_libraries(testMuscle ${RL_LIBRARIES})
+
+
+add_executable(testZenerModel
+		src/eccerobotMuscle/physics/Actuator.cpp
+		src/eccerobotMuscle/physics/ZenerModel.cpp
+		src/testZenerModel.cpp
+		include/cardsflow_gazebo/eccerobotMuscle/physics/ISeriesElasticElement.h
+		include/cardsflow_gazebo/eccerobotMuscle/physics/IZenerModel.h
+		include/cardsflow_gazebo/eccerobotMuscle/physics/ZenerModel.h)
+
+add_dependencies(testZenerModel ${RL_LIBRARIES})
+target_link_libraries(testZenerModel ${RL_LIBRARIES})
+
 #==============================================================================
 # Installation
 #==============================================================================
