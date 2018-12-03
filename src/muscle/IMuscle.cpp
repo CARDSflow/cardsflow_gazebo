@@ -18,27 +18,27 @@ namespace cardsflow_gazebo {
         PID.reset(new MuscPID());
 
         double Kp = 2, Ki = 0, Kd = 0;
-        if (nh->hasParam("Kp")) {
-            nh->getParam("Kp", Kp);
-        }
+//        if (nh->hasParam("Kp")) {
+//            nh->getParam("Kp", Kp);
+//        }
         PID->params[POSITION].Kp = Kp;
         PID->params[VELOCITY].Kp = Kp;
         PID->params[DISPLACEMENT].Kp = Kp;
         PID->params[FORCE].Kp = Kp;
         ROS_INFO_ONCE_NAMED("IMuscle", "using Kp %lf", Kp);
 
-        if (nh->hasParam("Ki")) {
-            nh->getParam("Ki", Ki);
-        }
+//        if (nh->hasParam("Ki")) {
+//            nh->getParam("Ki", Ki);
+//        }
         PID->params[POSITION].Ki = Ki;
         PID->params[VELOCITY].Ki = Ki;
         PID->params[DISPLACEMENT].Ki = Ki;
         PID->params[FORCE].Ki = Ki;
         ROS_INFO_ONCE_NAMED("IMuscle", "using Ki %lf", Ki);
 
-        if (nh->hasParam("Kd")) {
-            nh->getParam("Kd", Kd);
-        }
+//        if (nh->hasParam("Kd")) {
+//            nh->getParam("Kd", Kd);
+//        }
         PID->params[POSITION].Kd = Kd;
         PID->params[VELOCITY].Kd = Kd;
         PID->params[DISPLACEMENT].Kd = Kd;
@@ -168,20 +168,21 @@ namespace cardsflow_gazebo {
         double springDisplacement = 0;
 
         if (!dummy) {
-            springDisplacement = muscleLength - tendonLength;
+            springDisplacement = muscleLength - tendonLength ;
+//            see.deltaX = springDisplacement;
             if (springDisplacement > 0) {
-                muscleForce = actuatorForce = springConst*springDisplacement;
+                muscleForce = actuatorForce = springConsts[0] + springConsts[1]*(springDisplacement / (0.01 * 0.001)); //TODO move this to SEE class
             } else {
                 muscleForce = actuatorForce = 0;
             }
 
-            ROS_INFO_STREAM_THROTTLE(1, "spring displacement: " << (muscleLength - tendonLength));
+//            ROS_INFO_STREAM("spring displacement: " << springDisplacement);
             calculateTendonForceProgression();
             motor.setLoadTorque(motor.getSpindleRadius()*viaPoints[0]->fb);
             motor.setVoltage(actuator.motor.voltage);
             motor.step(period.toSec());
 
-            tendonLength = initialTendonLength - (motor.getPosition() - motor.getInitialPosition()) *
+            tendonLength = initialTendonLength - (motor.getInitialPosition() - motor.getPosition()) *
                     rl::math::DEG2RAD * motor.getSpindleRadius();
 
 
@@ -190,7 +191,7 @@ namespace cardsflow_gazebo {
             calculateTendonForceProgression();
         }
 
-        ROS_INFO_STREAM_THROTTLE(1, "voltage: " << motor.getVoltage()
+        ROS_INFO_STREAM("voltage: " << motor.getVoltage()
                                                 << "\t position: " << motor.getPosition()
                                                 << "\t force: " << viaPoints[0]->fb);
 
@@ -370,5 +371,10 @@ namespace cardsflow_gazebo {
             //CalculateForce differs for each wraping-type
             viaPoints[i]->CalculateForce();
         }
+    }
+
+    double IMuscle::getMuscleLength()
+    {
+        return muscleLength;
     }
 }

@@ -1,4 +1,5 @@
 #include "cardsflow_gazebo/cardsflow_gazebo.hpp"
+#include "../../../../devel/include/roboy_middleware_msgs/MotorStatus.h"
 
 int CardsflowGazebo::roboyID_generator = 0;
 
@@ -20,6 +21,14 @@ CardsflowGazebo::CardsflowGazebo() {
     emergencyStop_srv = nh->advertiseService("/roboy/middleware/EmergencyStop", &CardsflowGazebo::EmergencyStopService,
                                              this);
     torque_srv = nh->advertiseService("/roboy/middleware/TorqueControl", &CardsflowGazebo::TorqueControlService, this);
+
+
+    // needed for publishing tendon info to gazebo NRP
+    muscleInfoNode = transport::NodePtr(new transport::Node());
+    //TODO pass gazebo world name as node name
+    muscleInfoNode->Init("default");
+    muscleInfoPublisher =
+            this->muscleInfoNode->Advertise<msgs::OpenSimMuscles>("~/muscles", /*50*/ 10, 60);
 
     spinner.reset(new ros::AsyncSpinner(2));
     spinner->start();
@@ -152,6 +161,9 @@ void CardsflowGazebo::Update() {
 
     readSim(sim_time_ros, sim_period);
     writeSim(sim_time_ros, sim_time_ros - last_write_sim_time_ros);
+
+    // TODO move it; rename it
+    publishOpenSimInfo(&muscles, parent_model->GetWorld()->GetSimTime());
 }
 
 void CardsflowGazebo::readSim(ros::Time time, ros::Duration period) {
@@ -263,6 +275,7 @@ void CardsflowGazebo::MotorStatusPublisher() {
     ros::Rate rate(100);
     while (motor_status_publishing) {
         roboy_middleware_msgs::MotorStatus msg;
+        msg.power_sense = true;
         for (auto const &muscle:muscles) {
             msg.pwm_ref.push_back(muscle->cmd);
             msg.position.push_back(
@@ -386,6 +399,49 @@ bool CardsflowGazebo::TorqueControlService(roboy_middleware_msgs::TorqueControl:
     }
     updateTorques = true;
     return true;
+}
+
+void CardsflowGazebo::publishOpenSimInfo(vector<boost::shared_ptr<cardsflow_gazebo::IMuscle>> *muscles,
+                                         common::Time simtime) {
+    msgs::OpenSimMuscles muscles_msg = msgs::OpenSimMuscles();
+    muscles_msg.set_robot_name("all_of_them");
+
+
+    for (auto muscle : *muscles)
+    {
+        std::vector<gazebo::math::Vector3> muscle_path_buf;
+        msgs::OpenSimMuscle* muscle_msg = muscles_msg.add_muscle();
+
+        for (uint i = 0; i < muscle->viaPoints.size(); i++) {
+            gazebo::math::Vector3 p;
+            p.x = muscle->viaPoints[i]->prevForcePoint.x;
+            p.y = muscle->viaPoints[i]->prevForcePoint.y;
+            p.z = muscle->viaPoints[i]->prevForcePoint.z;
+            muscle_path_buf.push_back(p);
+            p.x = muscle->viaPoints[i]->nextForcePoint.x;
+            p.y = muscle->viaPoints[i]->nextForcePoint.y;
+            p.z = muscle->viaPoints[i]->nextForcePoint.z;
+            muscle_path_buf.push_back(p);
+        }
+
+        GZ_ASSERT(muscle_path_buf.size() >= 2, "Muscles are supposed to have a start node and an end node");
+        for (std::size_t i=0; i<muscle_path_buf.size(); ++i)
+        {
+            msgs::Vector3d* point = muscle_msg->add_pathpoint();
+            msgs::Set(
+                    point,
+                    muscle_path_buf[i].Ign());
+        }
+
+        // For a bit better performance we could access the internal OpenSim::Muscle pointer directly.
+        muscle_msg->set_length(muscle->getMuscleLength());
+        muscle_msg->set_activation(0);
+        muscle_msg->set_ismuscle(1);
+    }
+
+    msgs::Set(muscles_msg.mutable_time(), simtime);
+    // std::cout <<  muscles_msg.DebugString() << std::endl;
+    this->muscleInfoPublisher->Publish(muscles_msg);
 }
 
 bool CardsflowGazebo::parseSDFusion(const string &sdf, vector<cardsflow_gazebo::MuscInfo> &myoMuscles,

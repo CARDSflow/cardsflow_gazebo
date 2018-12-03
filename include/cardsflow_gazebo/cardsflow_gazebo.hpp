@@ -17,6 +17,10 @@
 #include <mutex>
 #include <eigen_conversions/eigen_msg.h>
 
+#include "gazebo/transport/Node.hh"
+#include "gazebo/transport/Publisher.hh"
+#include "gazebo/msgs/msgs.hh"
+
 using namespace gazebo;
 using namespace std;
 using namespace chrono;
@@ -66,6 +70,9 @@ public:
 
     /** Called on world reset */
     void Reset();
+
+    /** using protobuf msgs to publish tendon info to gazebo (NRP version */
+    void publishOpenSimInfo(vector<boost::shared_ptr<cardsflow_gazebo::IMuscle>> *muscles, common::Time simtime);
 
 private:
     /** This function parses a sdf string for myoMuscle parameters
@@ -139,4 +146,10 @@ private:
     vector<double> joint_pos, joint_vel, joint_vel_prev, joint_acc; /// of kinematic chain
     int seq = 0;
     mutex mux;
+
+    /// \brief Node for protobuf communication.
+    transport::NodePtr muscleInfoNode;
+
+    /// \brief Info publisher on opensim muscles.
+    transport::PublisherPtr muscleInfoPublisher;
 };

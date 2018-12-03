@@ -56,6 +56,7 @@ namespace cardsflow_gazebo {
 		/// \param[in] muscInfo contains info about via points, motor, gear, spindle and see of the muscles
 		void Init(MuscInfo &muscInfo);
 		void Update(ros::Time &time, ros::Duration &period );
+        double getMuscleLength();
 		string name;
 		vector<IViaPointsPtr> viaPoints;
 		double cmd = 0;
@@ -106,7 +107,7 @@ namespace cardsflow_gazebo {
 		double sim_angVel;
         bool firstUpdate;
 		double sinParm = 0;
-		double springConst = 0.01;
+		std::vector<double> springConsts = {38, 0.2} ;
 
 		void initViaPoints( MuscInfo &myoMuscle );
 		void calculateTendonForceProgression();
