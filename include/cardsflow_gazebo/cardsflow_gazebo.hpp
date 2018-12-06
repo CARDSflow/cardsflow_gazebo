@@ -5,12 +5,12 @@
 #include <geometry_msgs/Pose.h>
 #include <moveit_msgs/DisplayRobotState.h>
 #include <sensor_msgs/JointState.h>
-#include <roboy_communication_middleware/MotorCommand.h>
-#include <roboy_communication_middleware/MotorStatus.h>
-#include <roboy_communication_middleware/MotorConfigService.h>
-#include <roboy_communication_middleware/ControlMode.h>
-#include <roboy_communication_middleware/TorqueControl.h>
-#include <roboy_communication_simulation/Tendon.h>
+#include <roboy_middleware_msgs/MotorCommand.h>
+#include <roboy_middleware_msgs/MotorStatus.h>
+#include <roboy_middleware_msgs/MotorConfigService.h>
+#include <roboy_middleware_msgs/ControlMode.h>
+#include <roboy_middleware_msgs/TorqueControl.h>
+#include <roboy_simulation_msgs/Tendon.h>
 #include <std_srvs/SetBool.h>
 #include <sensor_msgs/JointState.h>
 #include "cardsflow_gazebo/muscle/IMuscle.hpp"
@@ -81,21 +81,21 @@ private:
      *   Callback for motor commands
      *   @param msg
     */
-    void MotorCommand(const roboy_communication_middleware::MotorCommand::ConstPtr &msg);
+    void MotorCommand(const roboy_middleware_msgs::MotorCommand::ConstPtr &msg);
 
     void MotorStatusPublisher();
 
-    bool MotorConfigService(roboy_communication_middleware::MotorConfigService::Request &req,
-                            roboy_communication_middleware::MotorConfigService::Response &res);
+    bool MotorConfigService(roboy_middleware_msgs::MotorConfigService::Request &req,
+                            roboy_middleware_msgs::MotorConfigService::Response &res);
 
-    bool ControlModeService(roboy_communication_middleware::ControlMode::Request &req,
-                            roboy_communication_middleware::ControlMode::Response &res);
+    bool ControlModeService(roboy_middleware_msgs::ControlMode::Request &req,
+                            roboy_middleware_msgs::ControlMode::Response &res);
 
     bool EmergencyStopService(std_srvs::SetBool::Request &req,
                               std_srvs::SetBool::Response &res);
 
-    bool TorqueControlService(roboy_communication_middleware::TorqueControl::Request &req,
-                            roboy_communication_middleware::TorqueControl::Response &res);
+    bool TorqueControlService(roboy_middleware_msgs::TorqueControl::Request &req,
+                            roboy_middleware_msgs::TorqueControl::Response &res);
 
     bool emergency_stop = false;
 

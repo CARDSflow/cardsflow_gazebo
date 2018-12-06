@@ -12,7 +12,7 @@ CardsflowGazebo::CardsflowGazebo() {
     nh = ros::NodeHandlePtr(new ros::NodeHandle);
 
     motorCommand_sub = nh->subscribe("/roboy/middleware/MotorCommand", 1, &CardsflowGazebo::MotorCommand, this);
-    motorStatus_pub = nh->advertise<roboy_communication_middleware::MotorStatus>("/roboy/middleware/MotorStatus", 1);
+    motorStatus_pub = nh->advertise<roboy_middleware_msgs::MotorStatus>("/roboy/middleware/MotorStatus", 1);
     joint_state_pub = nh->advertise<sensor_msgs::JointState>("/joint_states", 1);
     floating_base_pub = nh->advertise<geometry_msgs::Pose>("/floating_base", 1);
     motorConfig_srv = nh->advertiseService("/roboy/middleware/MotorConfig", &CardsflowGazebo::MotorConfigService, this);
@@ -222,7 +222,7 @@ void CardsflowGazebo::Reset() {
     //reset acceleration of links and the actuator simulation.
 }
 
-void CardsflowGazebo::MotorCommand(const roboy_communication_middleware::MotorCommand::ConstPtr &msg) {
+void CardsflowGazebo::MotorCommand(const roboy_middleware_msgs::MotorCommand::ConstPtr &msg) {
     // update pid setvalues
     lock_guard<mutex> lock(mux);
     for (uint i = 0; i < msg->motors.size(); i++) {
@@ -230,21 +230,21 @@ void CardsflowGazebo::MotorCommand(const roboy_communication_middleware::MotorCo
             switch (muscles[msg->motors[i] + msg->id * NUMBER_OF_MOTORS_PER_FPGA]->PID->control_mode) {
                 case POSITION:
                     muscles[msg->motors[i] + msg->id * NUMBER_OF_MOTORS_PER_FPGA]->cmd =
-                            msg->setPoints[i] * 2.0 * M_PI / (2000.0f * 53.0f); // convert ticks to rad
+                            msg->set_points[i] * 2.0 * M_PI / (2000.0f * 53.0f); // convert ticks to rad
                     break;
                 case VELOCITY:
                     muscles[msg->motors[i] + msg->id * NUMBER_OF_MOTORS_PER_FPGA]->cmd =
-                            msg->setPoints[i] / (2000.0f * 53.0f); // convert ticks/s to 1/s
+                            msg->set_points[i] / (2000.0f * 53.0f); // convert ticks/s to 1/s
                     break;
                 case DISPLACEMENT:
-                    if (msg->setPoints[i] >= 0) // negative displacement doesnt make sense
-                        setPoints[i] = msg->setPoints[i];
+                    if (msg->set_points[i] >= 0) // negative displacement doesnt make sense
+                        setPoints[i] = msg->set_points[i];
                     else
                         setPoints[i] = 0;
                     break;
                 case FORCE:
-                    if (msg->setPoints[i] >= 0) // negative displacement doesnt make sense
-                        setPoints[i] = msg->setPoints[i];
+                    if (msg->set_points[i] >= 0) // negative displacement doesnt make sense
+                        setPoints[i] = msg->set_points[i];
                     else
                         setPoints[i] = 0;
                     break;
@@ -256,9 +256,9 @@ void CardsflowGazebo::MotorCommand(const roboy_communication_middleware::MotorCo
 void CardsflowGazebo::MotorStatusPublisher() {
     ros::Rate rate(100);
     while (motor_status_publishing) {
-        roboy_communication_middleware::MotorStatus msg;
+        roboy_middleware_msgs::MotorStatus msg;
         for (auto const &muscle:muscles) {
-            msg.pwmRef.push_back(muscle->cmd);
+            msg.pwm_ref.push_back(muscle->cmd);
             msg.position.push_back(
                     muscle->actuator.gear.position / (2.0 * M_PI / (2000.0f * 53.0f))); // convert to motor ticks
             msg.velocity.push_back(muscle->actuator.spindle.angVel * (2000.0f * 53.0f)); // convert 1/s to ticks/sec
@@ -270,8 +270,8 @@ void CardsflowGazebo::MotorStatusPublisher() {
     }
 }
 
-bool CardsflowGazebo::MotorConfigService(roboy_communication_middleware::MotorConfigService::Request &req,
-                                    roboy_communication_middleware::MotorConfigService::Response &res) {
+bool CardsflowGazebo::MotorConfigService(roboy_middleware_msgs::MotorConfigService::Request &req,
+                                    roboy_middleware_msgs::MotorConfigService::Response &res) {
     ROS_INFO("serving motor config service for %ld motors", req.config.motors.size());
     control_Parameters_t params;
     uint i = 0;
@@ -290,15 +290,15 @@ bool CardsflowGazebo::MotorConfigService(roboy_communication_middleware::MotorCo
 
 //        params.outputPosMax = req.config.outputPosMax[i];
 //        params.outputNegMax = req.config.outputNegMax[i];
-        params.spPosMax = req.config.spPosMax[i];
-        params.spNegMax = req.config.spNegMax[i];
-        params.Kp = req.config.Kp[i];
-        params.Ki = req.config.Ki[i];
-        params.Kd = req.config.Kd[i];
-        params.forwardGain = req.config.forwardGain[i];
-        params.deadBand = req.config.deadBand[i];
-        params.IntegralPosMax = req.config.IntegralPosMax[i];
-        params.IntegralNegMax = req.config.IntegralNegMax[i];
+        params.spPosMax = req.config.sp_pos_max[i];
+        params.spNegMax = req.config.sp_neg_max[i];
+        params.Kp = req.config.kp[i];
+        params.Ki = req.config.ki[i];
+        params.Kd = req.config.kd[i];
+        params.forwardGain = req.config.forward_gain[i];
+        params.deadBand = req.config.dead_band[i];
+        params.IntegralPosMax = req.config.integral_pos_max[i];
+        params.IntegralNegMax = req.config.integral_neg_max[i];
 
         muscles[sim_muscle_number]->PID->control_mode = req.config.control_mode[i];
         muscles[sim_muscle_number]->PID->params[req.config.control_mode[i]] = params;
@@ -308,8 +308,8 @@ bool CardsflowGazebo::MotorConfigService(roboy_communication_middleware::MotorCo
     return true;
 }
 
-bool CardsflowGazebo::ControlModeService(roboy_communication_middleware::ControlMode::Request &req,
-                                    roboy_communication_middleware::ControlMode::Response &res) {
+bool CardsflowGazebo::ControlModeService(roboy_middleware_msgs::ControlMode::Request &req,
+                                    roboy_middleware_msgs::ControlMode::Response &res) {
     if (!emergency_stop) {
         uint i = 0;
         switch (req.control_mode) {
@@ -365,8 +365,8 @@ bool CardsflowGazebo::EmergencyStopService(std_srvs::SetBool::Request &req, std_
     return true;
 }
 
-bool CardsflowGazebo::TorqueControlService(roboy_communication_middleware::TorqueControl::Request &req,
-                            roboy_communication_middleware::TorqueControl::Response &res){
+bool CardsflowGazebo::TorqueControlService(roboy_middleware_msgs::TorqueControl::Request &req,
+                            roboy_middleware_msgs::TorqueControl::Response &res){
     int i=0;
     lock_guard<mutex> lock(mux);
     for(auto joint_name:req.joint_names){
