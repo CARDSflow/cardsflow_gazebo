@@ -18,10 +18,10 @@ find_package(catkin REQUIRED COMPONENTS
 		message_generation
 		common_utilities
 		roboy_middleware_msgs
+		roboy_simulation_msgs
 		eigen_conversions
 )
-
-catkin_package( DEPENDS GAZEBO CATKIN_DEPENDS roboy_middleware_msgs common_utilities
+catkin_package( DEPENDS GAZEBO CATKIN_DEPENDS roboy_middleware_msgs roboy_simulation_msgs common_utilities
         INCLUDE_DIRS include)
 
 # Find includes in corresponding build directories
@@ -74,6 +74,7 @@ add_library(cardsflow_gazebo_plugin SHARED
 		)
 
 add_dependencies( cardsflow_gazebo_plugin roboy_middleware_msgs_gencpp roboy_simulation_msgs_gencpp )
+
 target_link_libraries(cardsflow_gazebo_plugin ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
 #==============================================================================
 # Installation
