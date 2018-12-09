@@ -109,7 +109,7 @@ private:
     static int roboyID_generator;
     ros::NodeHandlePtr nh;
     ros::Subscriber motorCommand_sub, pid_control_sub;
-    ros::Publisher motorStatus_pub, joint_state_pub, floating_base_pub;
+    ros::Publisher motorStatus_pub, joint_state_pub, floating_base_pub, tendon_state_pub;
     ros::ServiceServer motorConfig_srv, controlMode_srv, emergencyStop_srv, torque_srv;
     boost::shared_ptr<ros::AsyncSpinner> spinner;
 

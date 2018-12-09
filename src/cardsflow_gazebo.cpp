@@ -1,5 +1,4 @@
 #include "cardsflow_gazebo/cardsflow_gazebo.hpp"
-#include "../../../../devel/include/roboy_middleware_msgs/MotorStatus.h"
 
 int CardsflowGazebo::roboyID_generator = 0;
 
@@ -16,6 +15,7 @@ CardsflowGazebo::CardsflowGazebo() {
     motorStatus_pub = nh->advertise<roboy_middleware_msgs::MotorStatus>("/roboy/middleware/MotorStatus", 1);
     joint_state_pub = nh->advertise<sensor_msgs::JointState>("/joint_states", 1);
     floating_base_pub = nh->advertise<geometry_msgs::Pose>("/floating_base", 1);
+    tendon_state_pub = nh->advertise<roboy_simulation_msgs::Tendon>("/tendon_states", 1);
     motorConfig_srv = nh->advertiseService("/roboy/middleware/MotorConfig", &CardsflowGazebo::MotorConfigService, this);
     controlMode_srv = nh->advertiseService("/roboy/middleware/ControlMode", &CardsflowGazebo::ControlModeService, this);
     emergencyStop_srv = nh->advertiseService("/roboy/middleware/EmergencyStop", &CardsflowGazebo::EmergencyStopService,
@@ -211,6 +211,7 @@ void CardsflowGazebo::readSim(ros::Time time, ros::Duration period) {
 }
 
 void CardsflowGazebo::writeSim(ros::Time time, ros::Duration period) {
+    auto msg = new roboy_simulation_msgs::Tendon();
     for (uint muscle = 0; muscle < muscles.size(); muscle++) {
         for (int i = 0; i < muscles[muscle]->viaPoints.size(); i++) {
             cardsflow_gazebo::IViaPointsPtr vp = muscles[muscle]->viaPoints[i];
@@ -229,6 +230,7 @@ void CardsflowGazebo::writeSim(ros::Time time, ros::Duration period) {
         }
         updateTorques = false;
     }
+
 }
 
 void CardsflowGazebo::Reset() {
@@ -246,13 +248,13 @@ void CardsflowGazebo::MotorCommand(const roboy_middleware_msgs::MotorCommand::Co
             switch (muscles[msg->motors[i] + msg->id * NUMBER_OF_MOTORS_PER_FPGA]->PID->control_mode) {
                 case POSITION:
                     muscles[msg->motors[i] + msg->id * NUMBER_OF_MOTORS_PER_FPGA]->cmd =
-                            msg->set_points[i] * 2.0 * M_PI / (2000.0f * 53.0f); // convert ticks to rad
-                    setPoints[i] = msg->set_points[i] * 2.0 * M_PI / (2000.0f * 53.0f);
+                            msg->set_points[i]/myoMuscleEncoderTicksPerMeter(muscles[msg->motors[i] + msg->id * NUMBER_OF_MOTORS_PER_FPGA]->motor.getSpindleRadius());
+                    setPoints[i] = msg->set_points[i]/myoMuscleEncoderTicksPerMeter(muscles[msg->motors[i] + msg->id * NUMBER_OF_MOTORS_PER_FPGA]->motor.getSpindleRadius());
                     break;
                 case VELOCITY:
-                    muscles[msg->motors[i] + msg->id * NUMBER_OF_MOTORS_PER_FPGA]->cmd =
-                            msg->set_points[i] / (2000.0f * 53.0f); // convert ticks/s to 1/s
-                    setPoints[i] = msg->set_points[i] * 2.0 * M_PI / (2000.0f * 53.0f);
+                    muscles[msg->motors[i] + msg->id * NUMBER_OF_MOTORS_PER_FPGA]->cmd = myoMuscleMeterPerEncoderTick(msg->set_points[i]);
+//                            msg->set_points[i] * RADIANS_PER_ENCODER_COUNT;//(2000.0f * 53.0f); // convert ticks/s to 1/s
+                    setPoints[i] = myoMuscleMeterPerEncoderTick(msg->set_points[i]);// * RADIANS_PER_ENCODER_COUNT;// * 2.0 * M_PI / (2000.0f * 53.0f);
                     break;
                 case DISPLACEMENT:
                     if (msg->set_points[i] >= 0) // negative displacement doesnt make sense
@@ -275,16 +277,24 @@ void CardsflowGazebo::MotorStatusPublisher() {
     ros::Rate rate(100);
     while (motor_status_publishing) {
         roboy_middleware_msgs::MotorStatus msg;
+        roboy_simulation_msgs::Tendon tendons;
         msg.power_sense = true;
         for (auto const &muscle:muscles) {
             msg.pwm_ref.push_back(muscle->cmd);
             msg.position.push_back(
-                    muscle->motor.getPosition() / (2.0 * M_PI / (2000.0f * 53.0f))); // convert to motor ticks
-            msg.velocity.push_back(muscle->motor.getAngularVelocity() * (2000.0f * 53.0f)); // convert 1/s to ticks/sec
+                    myoMuscleEncoderTicksPerMeter(muscle->motor.getPosition() * (2 * M_PI * muscle->motor.getSpindleRadius() / 360))) ;// (2.0 * M_PI / (2000.0f * 53.0f))); // convert to motor ticks
+            msg.velocity.push_back(myoMuscleEncoderTicksPerMeter(muscle->motor.getLinearVelocity()));
             msg.displacement.push_back(muscle->see.deltaX / (0.01 * 0.001)); // convert m to displacement ticks
             msg.current.push_back(muscle->motor.getVoltage()); // this is actually the pid result
+
+            //TODO count spring displacement?
+            tendons.deltal.push_back(muscle->getInitialTendonLength() - muscle->getTendonLength()); //TODO fill in other info
+            tendons.force.push_back(muscle->getMuscleForce());
+            tendons.l.push_back(muscle->getTendonLength()); // or muscle length?
+            tendons.ld.push_back(muscle->motor.getLinearVelocity());
         }
         motorStatus_pub.publish(msg);
+        tendon_state_pub.publish(tendons);
         rate.sleep();
     }
 }

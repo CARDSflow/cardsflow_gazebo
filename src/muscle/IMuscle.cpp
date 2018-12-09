@@ -17,28 +17,28 @@ namespace cardsflow_gazebo {
 
         PID.reset(new MuscPID());
 
-        double Kp = 2, Ki = 0, Kd = 0;
-//        if (nh->hasParam("Kp")) {
-//            nh->getParam("Kp", Kp);
-//        }
+        double Kp = 10 , Ki = 1, Kd = 1;
+        if (nh->hasParam("musclemodel_Kp")) {
+            nh->getParam("musclemodel_Kp", Kp);
+        }
         PID->params[POSITION].Kp = Kp;
         PID->params[VELOCITY].Kp = Kp;
         PID->params[DISPLACEMENT].Kp = Kp;
         PID->params[FORCE].Kp = Kp;
         ROS_INFO_ONCE_NAMED("IMuscle", "using Kp %lf", Kp);
 
-//        if (nh->hasParam("Ki")) {
-//            nh->getParam("Ki", Ki);
-//        }
+        if (nh->hasParam("musclemodel_Ki")) {
+            nh->getParam("musclemodel_Ki", Ki);
+        }
         PID->params[POSITION].Ki = Ki;
         PID->params[VELOCITY].Ki = Ki;
         PID->params[DISPLACEMENT].Ki = Ki;
         PID->params[FORCE].Ki = Ki;
         ROS_INFO_ONCE_NAMED("IMuscle", "using Ki %lf", Ki);
 
-//        if (nh->hasParam("Kd")) {
-//            nh->getParam("Kd", Kd);
-//        }
+        if (nh->hasParam("musclemodel_Kd")) {
+            nh->getParam("musclemodel_Kd", Kd);
+        }
         PID->params[POSITION].Kd = Kd;
         PID->params[VELOCITY].Kd = Kd;
         PID->params[DISPLACEMENT].Kd = Kd;
@@ -75,7 +75,7 @@ namespace cardsflow_gazebo {
         motor.setGearboxRatio(128);
         motor.setMomentOfInertiaGearbox(0.4e-7);
         motor.setMomentOfInertiaMotor(14.5e-7);
-        motor.setSpindleRadius(0.003);
+        motor.setSpindleRadius(0.0045);
 
         motor.setVoltage(0.0);
         motor.setLoadTorque(0.0);
@@ -93,9 +93,11 @@ namespace cardsflow_gazebo {
 //            ROS_INFO_THROTTLE(1,"%s Applying cmd: %f", name.c_str(), cmd);
             switch (PID->control_mode) {
                 case POSITION:
+                    ROS_INFO_STREAM_THROTTLE(1, "PID cmd: " << cmd << " feedback: " << feedback.position);
                     actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.position);
                     break;
                 case VELOCITY:
+                    ROS_INFO_STREAM_THROTTLE(1, "PID cmd: " << cmd << " feedback: " << feedback.velocity);
                     actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.velocity);
                     break;
                 case DISPLACEMENT:
@@ -165,148 +167,46 @@ namespace cardsflow_gazebo {
             firstUpdate = false;
         }
 
+
         double springDisplacement = 0;
 
         if (!dummy) {
             springDisplacement = muscleLength - tendonLength ;
-//            see.deltaX = springDisplacement;
+            see.deltaX = springDisplacement;
             if (springDisplacement > 0) {
-                muscleForce = actuatorForce = springConsts[0] + springConsts[1]*(springDisplacement / (0.01 * 0.001)); //TODO move this to SEE class
+                muscleForce = actuatorForce = springConsts[0] + springConsts[1]*(springDisplacement / (0.1 * 0.001)); //TODO move this to SEE class
             } else {
                 muscleForce = actuatorForce = 0;
             }
 
-//            ROS_INFO_STREAM("spring displacement: " << springDisplacement);
             calculateTendonForceProgression();
             motor.setLoadTorque(motor.getSpindleRadius()*viaPoints[0]->fb);
             motor.setVoltage(actuator.motor.voltage);
             motor.step(period.toSec());
 
+            lock_guard<mutex> lock(mux);
+
             tendonLength = initialTendonLength - (motor.getInitialPosition() - motor.getPosition()) *
                     rl::math::DEG2RAD * motor.getSpindleRadius();
 
+            feedback.position = motor.getPosition();// radians
+            feedback.velocity = motor.getLinearVelocity(); // m/s
+            feedback.displacement = springDisplacement; // m
 
         }
         else {
             calculateTendonForceProgression();
+            feedback.displacement = cmd;
         }
 
-        ROS_INFO_STREAM("voltage: " << motor.getVoltage()
-                                                << "\t position: " << motor.getPosition()
-                                                << "\t force: " << viaPoints[0]->fb);
+//        ROS_INFO_STREAM_THROTTLE(5, "voltage: " << motor.getVoltage()
+//                                                << "\t position: " << motor.getPosition()
+//                                                << "\t displacement: " << springDisplacement / (0.01 * 0.001)
+//                                                << "\t force: " << viaPoints[0]->fb);
 
-        // TODO move conversions to common_utilities
-        feedback.position = motor.getPosition();// / (2.0 * M_PI / (2000.0f * 53.0f));
-        feedback.velocity = motor.getAngularVelocity();// * (2000.0f * 53.0f);
-        feedback.displacement = springDisplacement;// / (0.01 * 0.001);
 
         prevMuscleLength = muscleLength;
 
-
-        ////////////////////////////////////////////////////////////////
-
-//        //update force points and calculate muscle length for each Viapoint
-//        //muscleLength is set zero and then added up again
-//        if (!firstUpdate) {
-//            prevMuscleLength = muscleLength;
-//        }
-//        muscleLength = 0;
-//        for (int i = 0; i < viaPoints.size(); i++) {
-//            viaPoints[i]->UpdateForcePoints();
-//            muscleLength += viaPoints[i]->previousSegmentLength;
-//        }
-//        if (firstUpdate) initialTendonLength = muscleLength;
-////        ROS_INFO_THROTTLE(1, "update muscle");
-//
-//        if(!dummy) {
-//
-////            ROS_INFO_THROTTLE(1, "Integrating muscle");
-//            //calculate elastic force
-//            see.ElasticElementModel(tendonLength, muscleLength);
-//            see.applyTendonForce(muscleForce, actuator.elasticForce);
-//
-//
-//            // calculate the approximation of gear's efficiency
-//            actuator.gear.appEfficiency = actuator.EfficiencyApproximation();
-//
-//
-//
-//            // do 1 step of integration of DiffModel() at current time
-////            boost::numeric::odeint::integrate(
-////                    [this](const IActuator::state_type &x, IActuator::state_type &dxdt, double t) {
-////                        // This lambda function describes the differential model for the simulations of dynamics
-////                        // of a DC motor, a spindle, and a gear box`
-////                        // x[0] - motor electric current
-////                        // x[1] - spindle angular velocity
-////                        double totalIM =
-////                                actuator.motor.inertiaMoment + actuator.gear.inertiaMoment; // total moment of inertia
-////                        dxdt[0] = 1.0 / actuator.motor.inductance * (-actuator.motor.resistance * x[0]
-////                                                                     - actuator.motor.BEMFConst * actuator.gear.ratio *
-////                                                                       x[1]
-////                                                                     + actuator.motor.voltage);
-////                        dxdt[1] = actuator.motor.torqueConst * x[0] / (actuator.gear.ratio * totalIM) -
-////                                  actuator.spindle.radius * actuator.elasticForce /
-////                                  (actuator.gear.ratio * actuator.gear.ratio * totalIM * actuator.gear.appEfficiency);
-////                    }, x, time.toSec(), time.toSec() + period.toSec(), period.toSec());
-//
-//            motor.step(motor.getTimeStep());
-//            actuator.motor.current = motor.getCurrent();
-//            actuator.spindle.angVel = motor.getAngularVelocity();
-//
-//            // update gearposition
-//            actuator.gear.position += actuator.spindle.angVel * period.toSec();
-//
-//            // update tendonLength
-//            tendonLength = initialTendonLength - 2.0 * M_PI * actuator.spindle.radius * actuator.gear.position;
-//
-//            //calculate elastic force again after actuation. without the second update the motor will be a step ahead of the simulation. the spring is the comunication of force between robot and motor.
-//            see.ElasticElementModel(tendonLength, muscleLength);
-//            see.applyTendonForce(muscleForce, actuator.elasticForce);
-//
-//            calculateTendonForceProgression();
-//
-//            // feedback for PID-controller
-//            feedback.position = actuator.gear.position;
-//            feedback.velocity = actuator.spindle.angVel;
-//            feedback.displacement = see.deltaX;
-//
-////            ROS_INFO_STREAM_THROTTLE(1, "actuator position: " << actuator.gear.position << " displacement: " << see.deltaX << std::endl);
-//        }else{ // if dummy muscle we apply the cmd as a force directly
-//            calculateTendonForceProgression();
-//            // feedback for PID-controller
-////            feedback.displacement = cmd;
-//        }
-//
-//        ROS_INFO_STREAM("actuator elastic force: " << actuator.elasticForce << "\t actuator force: " << actuatorForce << std::endl);
-//
-//        if (firstUpdate){
-//            actuator.gear.position = 0;
-//
-//            stringstream str;
-//            str << "\n----------------" << muscleName << "---------------" << endl;
-//            //linked list
-//            physics::Joint_V joints = parent_model->GetJoints();
-//            for (int i = 0; i < viaPoints.size(); i++) {
-//                if (viaPoints[i]->joint != nullptr) {
-//                    str << "viapoints " << i << " and " << i + 1 << " spanning joint " << viaPoints[i]->joint->GetName()
-//                        << endl;
-//                }
-//            }
-//            for (int i = 1; i < viaPoints.size(); i++) {
-//                str << "segment " << i-1 << endl;
-//                str << "\tglobal coordinates " << i-1 << ":\t" << viaPoints[i-1]->globalCoordinates.x << " " <<
-//                    viaPoints[i-1]->globalCoordinates.y << " " <<
-//                    viaPoints[i-1]->globalCoordinates.z << endl;
-//                str << "\tglobal coordinates " << i << ":\t" << viaPoints[i]->globalCoordinates.x << " " <<
-//                    viaPoints[i]->globalCoordinates.y << " " <<
-//                    viaPoints[i]->globalCoordinates.z << endl;
-//                str << "\tsegmentlength " << viaPoints[i]->previousSegmentLength << endl;
-//            }
-//
-//            str << "total initial tendon length " << muscleLength;
-//            ROS_DEBUG_STREAM(str.str());
-//            firstUpdate = false;
-//        }
     }
 
     ////////////////////////////////////////////////////
@@ -376,5 +276,21 @@ namespace cardsflow_gazebo {
     double IMuscle::getMuscleLength()
     {
         return muscleLength;
+    }
+
+    double IMuscle::getInitialTendonLength() {
+        return initialTendonLength;
+    }
+
+    double IMuscle::getTendonLength() {
+        return tendonLength;
+    }
+
+    double IMuscle::getMuscleForce() {
+        return muscleForce;
+    }
+
+    double IMuscle::getTendonVelocity() {
+        return motor.getAngularVelocity()*motor.getSpindleRadius()*rl::math::RAD2DEG;
     }
 }

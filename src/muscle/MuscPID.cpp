@@ -60,8 +60,8 @@ void MuscPID::getDefaultControlParams(control_Parameters_t *params, int control_
             params->IntegralNegMax = -100;
             break;
         case VELOCITY:
-            params->spPosMax = 100;
-            params->spNegMax = -100;
+            params->spPosMax = 1000000;
+            params->spNegMax = -1000000;
             params->Kp = 1;
             params->Ki = 0;
             params->Kd = 0;
