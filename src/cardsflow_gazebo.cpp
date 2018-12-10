@@ -290,7 +290,7 @@ void CardsflowGazebo::MotorStatusPublisher() {
             //TODO count spring displacement?
             tendons.deltal.push_back(muscle->getInitialTendonLength() - muscle->getTendonLength()); //TODO fill in other info
             tendons.force.push_back(muscle->getMuscleForce());
-            tendons.l.push_back(muscle->getTendonLength()); // or muscle length?
+            tendons.l.push_back(muscle->getMuscleLength()); // or muscle length?
             tendons.ld.push_back(muscle->motor.getLinearVelocity());
         }
         motorStatus_pub.publish(msg);
