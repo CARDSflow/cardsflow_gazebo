@@ -24,11 +24,16 @@ CardsflowGazebo::CardsflowGazebo() {
 
 
     // needed for publishing tendon info to gazebo NRP
-    muscleInfoNode = transport::NodePtr(new transport::Node());
-    //TODO pass gazebo world name as node name
-    muscleInfoNode->Init("default");
-    muscleInfoPublisher =
-            this->muscleInfoNode->Advertise<msgs::OpenSimMuscles>("~/muscles", /*50*/ 10, 60);
+    string gazebo_version = string(GAZEBO_VERSION_FULL);
+    if(gazebo_version.find("hbp") != std::string::npos) draw_gazebo_tendons = true;
+
+    if (draw_gazebo_tendons) {
+        muscleInfoNode = transport::NodePtr(new transport::Node());
+        //TODO pass gazebo world name as node name
+        muscleInfoNode->Init("default");
+        muscleInfoPublisher =
+                this->muscleInfoNode->Advertise<msgs::OpenSimMuscles>("~/muscles", /*50*/ 10, 60);
+    }
 
     spinner.reset(new ros::AsyncSpinner(2));
     spinner->start();
@@ -51,7 +56,6 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
         ROS_ERROR_STREAM_NAMED("loadThread", "parent model is NULL");
         return;
     }
-
     // Check that ROS has been initialized
     if (!ros::isInitialized()) {
         ROS_FATAL("A ROS node for Gazebo has not been initialized, unable to load plugin.");
@@ -162,8 +166,10 @@ void CardsflowGazebo::Update() {
     readSim(sim_time_ros, sim_period);
     writeSim(sim_time_ros, sim_time_ros - last_write_sim_time_ros);
 
-    // TODO move it; rename it
-    publishOpenSimInfo(&muscles, parent_model->GetWorld()->GetSimTime());
+    if(draw_gazebo_tendons) {
+        // TODO move it; rename it
+        publishOpenSimInfo(&muscles, parent_model->GetWorld()->GetSimTime());
+    }
 }
 
 void CardsflowGazebo::readSim(ros::Time time, ros::Duration period) {
@@ -758,7 +764,6 @@ bool CardsflowGazebo::parseSDFusion(const string &sdf, vector<cardsflow_gazebo::
             endEffectors.marker.push_back(make_pair(link, Vector3d(x, y, z)));
         }
     }
-
     return true;
 }
 

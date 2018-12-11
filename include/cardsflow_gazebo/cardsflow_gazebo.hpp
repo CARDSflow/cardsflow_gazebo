@@ -147,6 +147,8 @@ private:
     int seq = 0;
     mutex mux;
 
+    bool draw_gazebo_tendons = false;
+
     /// \brief Node for protobuf communication.
     transport::NodePtr muscleInfoNode;
 
