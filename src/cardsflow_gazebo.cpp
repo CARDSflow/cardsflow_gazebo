@@ -22,18 +22,13 @@ CardsflowGazebo::CardsflowGazebo() {
                                              this);
     torque_srv = nh->advertiseService("/roboy/middleware/TorqueControl", &CardsflowGazebo::TorqueControlService, this);
 
-
-    // needed for publishing tendon info to gazebo NRP
-    string gazebo_version = string(GAZEBO_VERSION_FULL);
-    if(gazebo_version.find("hbp") != std::string::npos) draw_gazebo_tendons = true;
-
-    if (draw_gazebo_tendons) {
+    #ifdef PROTOBUF_opensim_5fmuscles_2eproto__INCLUDED
         muscleInfoNode = transport::NodePtr(new transport::Node());
         //TODO pass gazebo world name as node name
         muscleInfoNode->Init("default");
         muscleInfoPublisher =
                 this->muscleInfoNode->Advertise<msgs::OpenSimMuscles>("~/muscles", /*50*/ 10, 60);
-    }
+    #endif
 
     spinner.reset(new ros::AsyncSpinner(2));
     spinner->start();
@@ -166,10 +161,10 @@ void CardsflowGazebo::Update() {
     readSim(sim_time_ros, sim_period);
     writeSim(sim_time_ros, sim_time_ros - last_write_sim_time_ros);
 
-    if(draw_gazebo_tendons) {
+    #ifdef PROTOBUF_opensim_5fmuscles_2eproto__INCLUDED
         // TODO move it; rename it
         publishOpenSimInfo(&muscles, parent_model->GetWorld()->GetSimTime());
-    }
+    #endif
 }
 
 void CardsflowGazebo::readSim(ros::Time time, ros::Duration period) {
@@ -294,7 +289,6 @@ void CardsflowGazebo::MotorStatusPublisher() {
             msg.current.push_back(muscle->motor.getVoltage()); // this is actually the pid result
 
             //TODO count spring displacement?
-            tendons.deltal.push_back(muscle->getInitialTendonLength() - muscle->getTendonLength()); //TODO fill in other info
             tendons.force.push_back(muscle->getMuscleForce());
             tendons.l.push_back(muscle->getMuscleLength()); // or muscle length?
             tendons.ld.push_back(muscle->motor.getLinearVelocity());
@@ -417,6 +411,7 @@ bool CardsflowGazebo::TorqueControlService(roboy_middleware_msgs::TorqueControl:
     return true;
 }
 
+#ifdef PROTOBUF_opensim_5fmuscles_2eproto__INCLUDED
 void CardsflowGazebo::publishOpenSimInfo(vector<boost::shared_ptr<cardsflow_gazebo::IMuscle>> *muscles,
                                          common::Time simtime) {
     msgs::OpenSimMuscles muscles_msg = msgs::OpenSimMuscles();
@@ -459,6 +454,7 @@ void CardsflowGazebo::publishOpenSimInfo(vector<boost::shared_ptr<cardsflow_gaze
     // std::cout <<  muscles_msg.DebugString() << std::endl;
     this->muscleInfoPublisher->Publish(muscles_msg);
 }
+#endif
 
 bool CardsflowGazebo::parseSDFusion(const string &sdf, vector<cardsflow_gazebo::MuscInfo> &myoMuscles,
                                EndEffectorInfo &endEffectors) {
