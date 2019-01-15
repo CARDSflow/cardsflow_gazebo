@@ -17,7 +17,11 @@ namespace cardsflow_gazebo {
 
         PID.reset(new MuscPID());
 
+<<<<<<< HEAD
         double Kp = 100 , Ki = 0, Kd = 50;
+=======
+        double Kp = 10 , Ki = 0, Kd = 1;
+>>>>>>> b5dca32ba4e1c5eedd2828ef14a795fa5771f41c
         if (nh->hasParam("musclemodel_Kp")) {
             nh->getParam("musclemodel_Kp", Kp);
         }
