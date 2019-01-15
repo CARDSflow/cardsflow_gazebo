@@ -242,20 +242,20 @@ void CardsflowGazebo::Reset() {
 }
 
 void CardsflowGazebo::MotorCommand(const roboy_middleware_msgs::MotorCommand::ConstPtr &msg) {
+    if(msg->id!=5)
+        return;
     // update pid setvalues
     lock_guard<mutex> lock(mux);
     for (uint i = 0; i < msg->motors.size(); i++) {
-        if ((msg->motors[i] + msg->id * NUMBER_OF_MOTORS_PER_FPGA) < muscles.size()) {
-            switch (muscles[msg->motors[i] + msg->id * NUMBER_OF_MOTORS_PER_FPGA]->PID->control_mode) {
+        if (msg->motors[i] < muscles.size()) {
+            switch (muscles[msg->motors[i]]->PID->control_mode) {
                 case POSITION:
-                    muscles[msg->motors[i] + msg->id * NUMBER_OF_MOTORS_PER_FPGA]->cmd =
-                            msg->set_points[i]/myoMuscleEncoderTicksPerMeter(muscles[msg->motors[i] + msg->id * NUMBER_OF_MOTORS_PER_FPGA]->motor.getSpindleRadius());
-                    setPoints[i] = msg->set_points[i]/myoMuscleEncoderTicksPerMeter(muscles[msg->motors[i] + msg->id * NUMBER_OF_MOTORS_PER_FPGA]->motor.getSpindleRadius());
+                    muscles[msg->motors[i]]->cmd = myoMuscleMeterPerEncoderTick(msg->set_points[i]);
+                    setPoints[msg->motors[i]] = myoMuscleMeterPerEncoderTick(msg->set_points[i]);
                     break;
                 case VELOCITY:
-                    muscles[msg->motors[i] + msg->id * NUMBER_OF_MOTORS_PER_FPGA]->cmd = myoMuscleMeterPerEncoderTick(msg->set_points[i]);
-//                            msg->set_points[i] * RADIANS_PER_ENCODER_COUNT;//(2000.0f * 53.0f); // convert ticks/s to 1/s
-                    setPoints[i] = myoMuscleMeterPerEncoderTick(msg->set_points[i]);// * RADIANS_PER_ENCODER_COUNT;// * 2.0 * M_PI / (2000.0f * 53.0f);
+                    muscles[msg->motors[i]]->cmd = myoMuscleMeterPerEncoderTick(msg->set_points[i]);
+                    setPoints[msg->motors[i]] = myoMuscleMeterPerEncoderTick(msg->set_points[i]);// * RADIANS_PER_ENCODER_COUNT;// * 2.0 * M_PI / (2000.0f * 53.0f);
                     break;
                 case DISPLACEMENT:
                     if (msg->set_points[i] >= 0) // negative displacement doesnt make sense
@@ -284,7 +284,7 @@ void CardsflowGazebo::MotorStatusPublisher() {
             msg.pwm_ref.push_back(muscle->cmd);
             msg.position.push_back(
                     myoMuscleEncoderTicksPerMeter(muscle->motor.getPosition() * (2 * M_PI * muscle->motor.getSpindleRadius() / 360))) ;// (2.0 * M_PI / (2000.0f * 53.0f))); // convert to motor ticks
-            msg.velocity.push_back(myoMuscleEncoderTicksPerMeter(muscle->motor.getLinearVelocity()));
+            msg.velocity.push_back(myoMuscleEncoderTicksPerMeter(muscle->motor.getAngularVelocity()));
             msg.displacement.push_back(muscle->see.deltaX / (0.01 * 0.001)); // convert m to displacement ticks
             msg.current.push_back(muscle->motor.getVoltage()); // this is actually the pid result
 

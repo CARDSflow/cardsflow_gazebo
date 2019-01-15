@@ -17,7 +17,7 @@ namespace cardsflow_gazebo {
 
         PID.reset(new MuscPID());
 
-        double Kp = 10 , Ki = 1, Kd = 1;
+        double Kp = 100 , Ki = 0, Kd = 50;
         if (nh->hasParam("musclemodel_Kp")) {
             nh->getParam("musclemodel_Kp", Kp);
         }
@@ -69,12 +69,12 @@ namespace cardsflow_gazebo {
 
         motor.setAnchorResistance(0.516);
         motor.setAnchorInductance(5.73e-5);
-        motor.setBackEmfConstant(11.5e-3);
+        motor.setBackEmfConstant(7.75e-3);
         motor.setTorqueConstant(11.5e-3);
         motor.setGearboxEfficiency(0.59);
-        motor.setGearboxRatio(128);
-        motor.setMomentOfInertiaGearbox(0.4e-7);
-        motor.setMomentOfInertiaMotor(14.5e-7);
+        motor.setGearboxRatio(53);
+        motor.setMomentOfInertiaGearbox(0.8e-7);
+        motor.setMomentOfInertiaMotor(29.0e-7);
         motor.setSpindleRadius(0.0045);
 
         motor.setVoltage(0.0);
@@ -93,11 +93,11 @@ namespace cardsflow_gazebo {
 //            ROS_INFO_THROTTLE(1,"%s Applying cmd: %f", name.c_str(), cmd);
             switch (PID->control_mode) {
                 case POSITION:
-                    ROS_INFO_STREAM_THROTTLE(1, "PID cmd: " << cmd << " feedback: " << feedback.position);
+                    ROS_INFO_STREAM_THROTTLE(1, "PID position cmd: " << cmd << " current pos: " << feedback.position);
                     actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.position);
                     break;
                 case VELOCITY:
-                    ROS_INFO_STREAM_THROTTLE(1, "PID cmd: " << cmd << " feedback: " << feedback.velocity);
+                    ROS_INFO_STREAM_THROTTLE(1, "PID velocity cmd: " << cmd << " current vel: " << feedback.velocity);
                     actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.velocity);
                     break;
                 case DISPLACEMENT:
