@@ -17,7 +17,7 @@ namespace cardsflow_gazebo {
 
         PID.reset(new MuscPID());
 
-        double Kp = 10 , Ki = 1, Kd = 1;
+        double Kp = 10 , Ki = 0, Kd = 1;
         if (nh->hasParam("musclemodel_Kp")) {
             nh->getParam("musclemodel_Kp", Kp);
         }
@@ -93,11 +93,11 @@ namespace cardsflow_gazebo {
 //            ROS_INFO_THROTTLE(1,"%s Applying cmd: %f", name.c_str(), cmd);
             switch (PID->control_mode) {
                 case POSITION:
-                    ROS_INFO_STREAM_THROTTLE(1, "PID cmd: " << cmd << " feedback: " << feedback.position);
+                    // ROS_INFO_STREAM_THROTTLE(1, "PID cmd: " << cmd << " feedback: " << feedback.position);
                     actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.position);
                     break;
                 case VELOCITY:
-                    ROS_INFO_STREAM_THROTTLE(1, "PID cmd: " << cmd << " feedback: " << feedback.velocity);
+                    // ROS_INFO_STREAM_THROTTLE(1, "PID cmd: " << cmd << " feedback: " << feedback.velocity);
                     actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.velocity);
                     break;
                 case DISPLACEMENT:
