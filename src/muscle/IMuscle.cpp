@@ -17,11 +17,7 @@ namespace cardsflow_gazebo {
 
         PID.reset(new MuscPID());
 
-<<<<<<< HEAD
-        double Kp = 100 , Ki = 0, Kd = 50;
-=======
         double Kp = 10 , Ki = 0, Kd = 1;
->>>>>>> b5dca32ba4e1c5eedd2828ef14a795fa5771f41c
         if (nh->hasParam("musclemodel_Kp")) {
             nh->getParam("musclemodel_Kp", Kp);
         }
@@ -191,9 +187,9 @@ namespace cardsflow_gazebo {
             lock_guard<mutex> lock(mux);
 
             tendonLength = initialTendonLength - (motor.getInitialPosition() - motor.getPosition()) *
-                    rl::math::DEG2RAD * motor.getSpindleRadius();
+                    2.0 * M_PI * rl::math::DEG2RAD * motor.getSpindleRadius();
 
-            feedback.position = motor.getPosition();// radians
+            feedback.position = motor.getPosition() * 2.0 * M_PI * rl::math::DEG2RAD * motor.getSpindleRadius();// m
             feedback.velocity = motor.getLinearVelocity(); // m/s
             feedback.displacement = springDisplacement; // m
 

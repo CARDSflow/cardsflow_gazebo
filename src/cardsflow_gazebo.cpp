@@ -242,8 +242,10 @@ void CardsflowGazebo::Reset() {
 }
 
 void CardsflowGazebo::MotorCommand(const roboy_middleware_msgs::MotorCommand::ConstPtr &msg) {
-    if(msg->id!=5)
+    if(msg->id!=5) {
+        ROS_WARN_THROTTLE(10,"gazebo plugin is ignoring MotorCommand messages, because the id is not set to 5!");
         return;
+    }
     // update pid setvalues
     lock_guard<mutex> lock(mux);
     for (uint i = 0; i < msg->motors.size(); i++) {
@@ -282,10 +284,9 @@ void CardsflowGazebo::MotorStatusPublisher() {
         msg.power_sense = true;
         for (auto const &muscle:muscles) {
             msg.pwm_ref.push_back(muscle->cmd);
-            msg.position.push_back(
-                    myoMuscleEncoderTicksPerMeter(muscle->motor.getPosition() * (2 * M_PI * muscle->motor.getSpindleRadius() / 360))) ;// (2.0 * M_PI / (2000.0f * 53.0f))); // convert to motor ticks
-            msg.velocity.push_back(myoMuscleEncoderTicksPerMeter(muscle->motor.getAngularVelocity()));
-            msg.displacement.push_back(muscle->see.deltaX / (0.01 * 0.001)); // convert m to displacement ticks
+            msg.position.push_back(muscle->motor.getPosition()) ;// (2.0 * M_PI / (2000.0f * 53.0f))); // convert to motor ticks
+            msg.velocity.push_back(muscle->motor.getLinearVelocity());
+            msg.displacement.push_back(muscle->see.deltaX); // convert m to displacement ticks / (0.01 * 0.001)
             msg.current.push_back(muscle->motor.getVoltage()); // this is actually the pid result
 
             //TODO count spring displacement?
