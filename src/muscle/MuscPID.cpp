@@ -42,8 +42,8 @@ double MuscPID::calculate( double dt, double setpoint, double pv ) {
 }
 
 void MuscPID::getDefaultControlParams(control_Parameters_t *params, int control_mode) {
-    params->outputPosMax = 24;
-    params->outputNegMax = -24;
+    params->outputPosMax = 1000;
+    params->outputNegMax = -1000;
 
     params->radPerEncoderCount = 2 * 3.14159265359 / (2000.0 * 53.0);
 

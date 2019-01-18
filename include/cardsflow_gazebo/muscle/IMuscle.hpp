@@ -100,13 +100,14 @@ namespace cardsflow_gazebo {
     public:
 		//Motorforce is the force getting applied onto the first Viapoint
 		double muscleForce = 0;
-    private:
+		double Kp = 10 , Ki = 0, Kd = 1;
+    public:
 		//muscleLength describes the TendonLength from the first Viapoint to the last viapoint. (TendonLength outside the myoMotor)
         double muscleLength = 0;
 		// prevMuscleLength is needded to calculate the actual angVel of the motor
 		double prevMuscleLength;
 		//tendonLength describes the total TendonLength from then Motor until the last viapoint. (TendonLength excluding the tendon coiled up on the motor)
-        double tendonLength;
+        double tendonLength = 0, tendonLength_prev = 0;
 		//initial TendonLength describes the initial total tendonlength
         double initialTendonLength;
 		//actual angVel

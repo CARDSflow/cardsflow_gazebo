@@ -1,5 +1,6 @@
 #include <rl-0.7.0/rl/math/Unit.h>
 #include <include/cardsflow_gazebo/muscle/IMuscle.hpp>
+#include <common_utilities/CommonDefinitions.h>
 #include "cardsflow_gazebo/muscle/IMuscle.hpp"
 
 
@@ -17,7 +18,6 @@ namespace cardsflow_gazebo {
 
         PID.reset(new MuscPID());
 
-        double Kp = 10 , Ki = 0, Kd = 1;
         if (nh->hasParam("musclemodel_Kp")) {
             nh->getParam("musclemodel_Kp", Kp);
         }
@@ -69,12 +69,12 @@ namespace cardsflow_gazebo {
 
         motor.setAnchorResistance(0.516);
         motor.setAnchorInductance(5.73e-5);
-        motor.setBackEmfConstant(7.75e-3);
+        motor.setBackEmfConstant(11.5e-3);
         motor.setTorqueConstant(11.5e-3);
         motor.setGearboxEfficiency(0.59);
-        motor.setGearboxRatio(53);
-        motor.setMomentOfInertiaGearbox(0.8e-7);
-        motor.setMomentOfInertiaMotor(29.0e-7);
+        motor.setGearboxRatio(128);
+        motor.setMomentOfInertiaGearbox(0.4e-7);
+        motor.setMomentOfInertiaMotor(14.5e-7);
         motor.setSpindleRadius(0.0045);
 
         motor.setVoltage(0.0);
@@ -88,66 +88,11 @@ namespace cardsflow_gazebo {
     }
 
     void IMuscle::Update(ros::Time &time, ros::Duration &period) {
-        if (pid_control) {
-//            muscleForce = cmd;
-//            ROS_INFO_THROTTLE(1,"%s Applying cmd: %f", name.c_str(), cmd);
-            switch (PID->control_mode) {
-                case POSITION:
-                    ROS_INFO_STREAM_THROTTLE(1, "PID position cmd: " << cmd << " current pos: " << feedback.position);
-                    actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.position);
-                    break;
-                case VELOCITY:
-                    ROS_INFO_STREAM_THROTTLE(1, "PID velocity cmd: " << cmd << " current vel: " << feedback.velocity);
-                    actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.velocity);
-                    break;
-                case DISPLACEMENT:
-                    if(cmd>=0) // negative displacement doesnt make sense
-                        actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.displacement);
-                    else
-                        actuator.motor.voltage = PID->calculate(period.toSec(), 0, feedback.displacement);
-                    break;
-                case FORCE:
-//                    if(cmd>0)
-                        muscleForce = cmd;
-                        ROS_DEBUG_THROTTLE(1,"Applying cmd: %f", cmd);
-//                    else
-//                        muscleForce = 0;
-                    break;
-                default:
-                    actuator.motor.voltage = 0;
-                    break;
-            }
-
-        } else {
-            actuator.motor.voltage = cmd * 24;//simulated PWM
-        }
-
-
         for (int i = 0; i < viaPoints.size(); i++) {
             // update viaPoint coordinates
             // absolute position + relative position=actual position of each via point
             viaPoints[i]->globalCoordinates = viaPoints[i]->linkPosition +
                                               viaPoints[i]->linkRotation.RotateVector(viaPoints[i]->localCoordinates);
-
-
-//            switch (viaPoints[i]->type){
-//                case IViaPoints::FIXPOINT:
-//                    viaPoints[i]->globalCoordinates = viaPoints[i]->linkPosition +
-//                                                      viaPoints[i]->linkRotation.RotateVector(viaPoints[i]->localCoordinates);
-//                    break;
-//                case IViaPoints::CYLINDRICAL:
-//                    if(this->spanningJoint!=nullptr)
-//                        viaPoints[i]->globalCoordinates = this->spanningJoint->GetWorldPose().pos;
-//                    break;
-//                case IViaPoints::SPHERICAL:
-//                    if(this->spanningJoint!=nullptr)
-//                        viaPoints[i]->globalCoordinates = this->spanningJoint->GetWorldPose().pos;
-//                    break;
-//                case IViaPoints::MESH:
-//                    viaPoints[i]->globalCoordinates = viaPoints[i]->linkPosition +
-//                                                      viaPoints[i]->linkRotation.RotateVector(viaPoints[i]->localCoordinates);
-//                    break;
-//            }
         }
 
         for (int i = 0; i < viaPoints.size(); i++) {
@@ -168,6 +113,87 @@ namespace cardsflow_gazebo {
         }
 
 
+        if (pid_control) {
+//            muscleForce = cmd;
+//            ROS_INFO_THROTTLE(1,"%s Applying cmd: %f", name.c_str(), cmd);
+            if(!dummy) {
+                switch (PID->control_mode) {
+                    case POSITION:
+//                        ROS_INFO_STREAM_THROTTLE(1, "PID cmd: " << cmd << " feedback: " << feedback.position);
+                        actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.position);
+                        break;
+                    case VELOCITY:
+//                        ROS_INFO_STREAM_THROTTLE(1, "PID cmd: " << cmd << " feedback: " << feedback.velocity);
+                        actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.velocity);
+                        break;
+                    case DISPLACEMENT:
+                        if (cmd >= 0) // negative displacement doesnt make sense
+                            actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.displacement);
+                        else
+                            actuator.motor.voltage = PID->calculate(period.toSec(), 0, feedback.displacement);
+                        break;
+                    case FORCE:
+//                    if(cmd>0)
+                        muscleForce = cmd;
+                        ROS_DEBUG_THROTTLE(1, "Applying cmd: %f", cmd);
+//                    else
+//                        muscleForce = 0;
+                        break;
+                    default:
+                        actuator.motor.voltage = 0;
+                        break;
+                }
+            }else{
+                ROS_WARN_THROTTLE(30,"dummy muscle active");
+                calculateTendonForceProgression();
+                static double error = 0, error_prev = 0;
+                switch (PID->control_mode) {
+                    case POSITION: {
+                        error = (tendonLength-cmd);
+                        double tendonVelocity = 0;
+                        if (period.toSec() > 0)
+                            tendonVelocity = (tendonLength - tendonLength_prev) ;
+                        muscleForce = Kp * error + Kd * (tendonVelocity);
+                        error_prev = error;
+//                        ROS_INFO_STREAM_THROTTLE(1,
+//                                                 "PID position cmd: " << cmd << " tendonLength: " << tendonLength <<" tendonVelocity: " << tendonVelocity << " force: "
+//                                                             << muscleForce);
+
+                        break;
+                    }
+                    case VELOCITY: {
+                        double tendonVelocity = 0;
+                        if (period.toSec() > 0)
+                            tendonVelocity = (tendonLength - tendonLength_prev) / period.toSec();
+                        error = (tendonVelocity-cmd);
+                        muscleForce = Kp*error + Kd * (error_prev-error);
+                        error_prev = error;
+//                        ROS_INFO_STREAM_THROTTLE(1, "PID velocity cmd: " << cmd << " tendonLengthVelocity: " << tendonVelocity << " force: " << muscleForce);
+                        break;
+                    }
+                    case DISPLACEMENT:
+                        if(cmd>=0) // negative displacement doesnt make sense
+                            feedback.displacement = PID->calculate(period.toSec(), cmd, feedback.displacement);
+                        else
+                            feedback.displacement = PID->calculate(period.toSec(), 0, feedback.displacement);
+                        break;
+                    case FORCE:
+//                    if(cmd>0)
+                        muscleForce = cmd;
+                        ROS_DEBUG_THROTTLE(1,"Applying cmd: %f", cmd);
+//                    else
+//                        muscleForce = 0;
+                        break;
+                    default:
+                        actuator.motor.voltage = 0;
+                        break;
+                }
+            }
+
+        } else {
+            actuator.motor.voltage = cmd * 24;//simulated PWM
+        }
+
         double springDisplacement = 0;
 
         if (!dummy) {
@@ -187,16 +213,11 @@ namespace cardsflow_gazebo {
             lock_guard<mutex> lock(mux);
 
             tendonLength = initialTendonLength - (motor.getInitialPosition() - motor.getPosition()) *
-                    2.0 * M_PI * rl::math::DEG2RAD * motor.getSpindleRadius();
+                                                 rl::math::DEG2RAD * motor.getSpindleRadius();
 
-            feedback.position = motor.getPosition() * 2.0 * M_PI * rl::math::DEG2RAD * motor.getSpindleRadius();// m
+            feedback.position = motor.getPosition()*rl::math::DEG2RAD * motor.getSpindleRadius();// radians
             feedback.velocity = motor.getLinearVelocity(); // m/s
             feedback.displacement = springDisplacement; // m
-
-        }
-        else {
-            calculateTendonForceProgression();
-            feedback.displacement = cmd;
         }
 
 //        ROS_INFO_STREAM_THROTTLE(5, "voltage: " << motor.getVoltage()

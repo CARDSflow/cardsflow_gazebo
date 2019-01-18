@@ -13,7 +13,7 @@ CardsflowGazebo::CardsflowGazebo() {
 
     motorCommand_sub = nh->subscribe("/roboy/middleware/MotorCommand", 1, &CardsflowGazebo::MotorCommand, this);
     motorStatus_pub = nh->advertise<roboy_middleware_msgs::MotorStatus>("/roboy/middleware/MotorStatus", 1);
-    joint_state_pub = nh->advertise<sensor_msgs::JointState>("/joint_states", 1);
+    joint_state_pub = nh->advertise<sensor_msgs::JointState>("/joint_states", 100);
     floating_base_pub = nh->advertise<geometry_msgs::Pose>("/floating_base", 1);
     tendon_state_pub = nh->advertise<roboy_simulation_msgs::Tendon>("/tendon_states", 1);
     motorConfig_srv = nh->advertiseService("/roboy/middleware/MotorConfig", &CardsflowGazebo::MotorConfigService, this);
@@ -22,13 +22,13 @@ CardsflowGazebo::CardsflowGazebo() {
                                              this);
     torque_srv = nh->advertiseService("/roboy/middleware/TorqueControl", &CardsflowGazebo::TorqueControlService, this);
 
-    #ifdef PROTOBUF_opensim_5fmuscles_2eproto__INCLUDED
-        muscleInfoNode = transport::NodePtr(new transport::Node());
-        //TODO pass gazebo world name as node name
-        muscleInfoNode->Init("default");
-        muscleInfoPublisher =
-                this->muscleInfoNode->Advertise<msgs::OpenSimMuscles>("~/muscles", /*50*/ 10, 60);
-    #endif
+#ifdef PROTOBUF_opensim_5fmuscles_2eproto__INCLUDED
+    muscleInfoNode = transport::NodePtr(new transport::Node());
+    //TODO pass gazebo world name as node name
+    muscleInfoNode->Init("default");
+    muscleInfoPublisher =
+            this->muscleInfoNode->Advertise<msgs::OpenSimMuscles>("~/muscles", /*50*/ 10, 60);
+#endif
 
     spinner.reset(new ros::AsyncSpinner(2));
     spinner->start();
@@ -74,7 +74,7 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
 //    if (!presetManager->SetCurrentProfileParam("solver", "world")) {
 //        ROS_ERROR("Couldn't set parameter, did you pass a valid key/value pair?");
 //    }
-    parent_model->GetWorld()->SetGravity(ignition::math::Vector3d(0,0,-9.81));
+    parent_model->GetWorld()->SetGravity(ignition::math::Vector3d(0, 0, -9.81));
 
 //    // Get the Gazebo solver type
 //    std::string solver_type = boost::any_cast<std::string>(physics_engine->GetParam("solver_type"));
@@ -104,7 +104,7 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
 
     ROS_INFO("Parsing musc muscles");
     string cardsflow_xml;
-    nh->getParam("cardsflow_xml",cardsflow_xml);
+    nh->getParam("cardsflow_xml", cardsflow_xml);
     if (!parseSDFusion(cardsflow_xml, musc_info, endEffectors))
         ROS_WARN("ERROR parsing musc muscles, check your cardsflow xml file.");
     numberOfMuscles = musc_info.size();
@@ -115,7 +115,7 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
         muscles.push_back(
                 boost::shared_ptr<cardsflow_gazebo::IMuscle>(new cardsflow_gazebo::IMuscle(parent_model)));
         muscles.back()->Init(musc_info[muscle]);
-        muscles.back()->dummy = false;
+        muscles.back()->dummy = true;
         muscles.back()->muscleID = muscle;
     }
 
@@ -145,7 +145,7 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
         joint_state_msg.effort.push_back(0);
     }
 
-    world_to_link_transform.reset(new map<string, Matrix4d>);
+    world_to_link_transform.reset(new map <string, Matrix4d>);
 
     ROS_INFO("CardsflowGazebo ready now");
 }
@@ -161,10 +161,10 @@ void CardsflowGazebo::Update() {
     readSim(sim_time_ros, sim_period);
     writeSim(sim_time_ros, sim_time_ros - last_write_sim_time_ros);
 
-    #ifdef PROTOBUF_opensim_5fmuscles_2eproto__INCLUDED
-        // TODO move it; rename it
-        publishOpenSimInfo(&muscles, parent_model->GetWorld()->GetSimTime());
-    #endif
+#ifdef PROTOBUF_opensim_5fmuscles_2eproto__INCLUDED
+    // TODO move it; rename it
+    publishOpenSimInfo(&muscles, parent_model->GetWorld()->GetSimTime());
+#endif
 }
 
 void CardsflowGazebo::readSim(ros::Time time, ros::Duration period) {
@@ -178,10 +178,10 @@ void CardsflowGazebo::readSim(ros::Time time, ros::Duration period) {
         Quaterniond q(pose.rot.w, pose.rot.x, pose.rot.y, pose.rot.z);
         transform.block(0, 0, 3, 3) << q.matrix();
         (*world_to_link_transform.get())[link_names[i]] = transform;
-        if(link_names[i]=="base"){
+        if (link_names[i] == "base") {
             Isometry3d iso(transform);
             geometry_msgs::Pose msg;
-            tf::poseEigenToMsg(iso,msg);
+            tf::poseEigenToMsg(iso, msg);
             floating_base_pub.publish(msg);
         }
         i++;
@@ -207,6 +207,12 @@ void CardsflowGazebo::readSim(ros::Time time, ros::Duration period) {
         }
         muscles[muscle]->world_to_link_transform = world_to_link_transform;
         muscles[muscle]->cmd = setPoints[muscle];
+        muscles[muscle]->tendonLength = 0;
+        for (int vp = 1; vp < muscles[muscle]->viaPoints.size(); vp++) {
+            muscles[muscle]->tendonLength += (muscles[muscle]->viaPoints[vp]->globalCoordinates -
+                                              muscles[muscle]->viaPoints[vp - 1]->globalCoordinates).GetLength();
+        }
+
         muscles[muscle]->Update(time, period);
     }
 }
@@ -225,7 +231,7 @@ void CardsflowGazebo::writeSim(ros::Time time, ros::Duration period) {
             }
         }
     }
-    if(updateTorques) {
+    if (updateTorques) {
         for (auto joint:joints) {
             joint->SetForce(0, torques[joint->GetName()]);
         }
@@ -242,8 +248,8 @@ void CardsflowGazebo::Reset() {
 }
 
 void CardsflowGazebo::MotorCommand(const roboy_middleware_msgs::MotorCommand::ConstPtr &msg) {
-    if(msg->id!=5) {
-        ROS_WARN_THROTTLE(10,"gazebo plugin is ignoring MotorCommand messages, because the id is not set to 5!");
+    if (msg->id != 5) {
+        ROS_WARN_THROTTLE(10, "gazebo plugin is ignoring MotorCommand messages, because the id is not set to 5!");
         return;
     }
     // update pid setvalues
@@ -252,12 +258,12 @@ void CardsflowGazebo::MotorCommand(const roboy_middleware_msgs::MotorCommand::Co
         if (msg->motors[i] < muscles.size()) {
             switch (muscles[msg->motors[i]]->PID->control_mode) {
                 case POSITION:
-                    muscles[msg->motors[i]]->cmd = myoMuscleMeterPerEncoderTick(msg->set_points[i]);
-                    setPoints[msg->motors[i]] = myoMuscleMeterPerEncoderTick(msg->set_points[i]);
+                    muscles[msg->motors[i]]->cmd = msg->set_points[i];
+                    setPoints[msg->motors[i]] = msg->set_points[i];
                     break;
                 case VELOCITY:
-                    muscles[msg->motors[i]]->cmd = myoMuscleMeterPerEncoderTick(msg->set_points[i]);
-                    setPoints[msg->motors[i]] = myoMuscleMeterPerEncoderTick(msg->set_points[i]);// * RADIANS_PER_ENCODER_COUNT;// * 2.0 * M_PI / (2000.0f * 53.0f);
+                    muscles[msg->motors[i]]->cmd = msg->set_points[i];
+                    setPoints[msg->motors[i]] = msg->set_points[i];// * RADIANS_PER_ENCODER_COUNT;// * 2.0 * M_PI / (2000.0f * 53.0f);
                     break;
                 case DISPLACEMENT:
                     if (msg->set_points[i] >= 0) // negative displacement doesnt make sense
@@ -284,7 +290,8 @@ void CardsflowGazebo::MotorStatusPublisher() {
         msg.power_sense = true;
         for (auto const &muscle:muscles) {
             msg.pwm_ref.push_back(muscle->cmd);
-            msg.position.push_back(muscle->motor.getPosition()) ;// (2.0 * M_PI / (2000.0f * 53.0f))); // convert to motor ticks
+            msg.position.push_back(
+                    muscle->motor.getPosition());// (2.0 * M_PI / (2000.0f * 53.0f))); // convert to motor ticks
             msg.velocity.push_back(muscle->motor.getLinearVelocity());
             msg.displacement.push_back(muscle->see.deltaX); // convert m to displacement ticks / (0.01 * 0.001)
             msg.current.push_back(muscle->motor.getVoltage()); // this is actually the pid result
@@ -301,14 +308,14 @@ void CardsflowGazebo::MotorStatusPublisher() {
 }
 
 bool CardsflowGazebo::MotorConfigService(roboy_middleware_msgs::MotorConfigService::Request &req,
-                                    roboy_middleware_msgs::MotorConfigService::Response &res) {
+                                         roboy_middleware_msgs::MotorConfigService::Response &res) {
     ROS_INFO("serving motor config service for %ld motors", req.config.motors.size());
     control_Parameters_t params;
     uint i = 0;
     for (auto motor:req.config.motors) {
         if (req.config.control_mode[i] < POSITION || req.config.control_mode[i] > DISPLACEMENT) {
             ROS_ERROR("trying to set an invalid control mode %d, available control modes: "
-                      "[0]Position [1]Velocity [2]Displacement", req.config.control_mode[i]);
+                              "[0]Position [1]Velocity [2]Displacement", req.config.control_mode[i]);
             continue;
         }
 
@@ -339,7 +346,7 @@ bool CardsflowGazebo::MotorConfigService(roboy_middleware_msgs::MotorConfigServi
 }
 
 bool CardsflowGazebo::ControlModeService(roboy_middleware_msgs::ControlMode::Request &req,
-                                    roboy_middleware_msgs::ControlMode::Response &res) {
+                                         roboy_middleware_msgs::ControlMode::Response &res) {
     if (!emergency_stop) {
         uint i = 0;
         switch (req.control_mode) {
@@ -396,13 +403,13 @@ bool CardsflowGazebo::EmergencyStopService(std_srvs::SetBool::Request &req, std_
 }
 
 bool CardsflowGazebo::TorqueControlService(roboy_middleware_msgs::TorqueControl::Request &req,
-                            roboy_middleware_msgs::TorqueControl::Response &res){
-    int i=0;
+                                           roboy_middleware_msgs::TorqueControl::Response &res) {
+    int i = 0;
     lock_guard<mutex> lock(mux);
-    for(auto joint_name:req.joint_names){
+    for (auto joint_name:req.joint_names) {
         gazebo::physics::JointPtr joint = parent_model->GetJoint(joint_name);
-        if(joint!=nullptr){
-            if(isfinite(abs(req.torque[i])))
+        if (joint != nullptr) {
+            if (isfinite(abs(req.torque[i])))
                 torques[joint_name] = req.torque[i];
 //            ROS_INFO("%s %f", joint_name.c_str(), torques[joint_name] );
         }
@@ -458,7 +465,7 @@ void CardsflowGazebo::publishOpenSimInfo(vector<boost::shared_ptr<cardsflow_gaze
 #endif
 
 bool CardsflowGazebo::parseSDFusion(const string &sdf, vector<cardsflow_gazebo::MuscInfo> &myoMuscles,
-                               EndEffectorInfo &endEffectors) {
+                                    EndEffectorInfo &endEffectors) {
     // initialize TiXmlDocument doc with a string
     TiXmlDocument doc(sdf.c_str());
     if (!doc.LoadFile()) {
