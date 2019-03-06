@@ -115,7 +115,7 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
         muscles.push_back(
                 boost::shared_ptr<cardsflow_gazebo::IMuscle>(new cardsflow_gazebo::IMuscle(parent_model)));
         muscles.back()->Init(musc_info[muscle]);
-        muscles.back()->dummy = false;
+        muscles.back()->dummy = true;
         muscles.back()->muscleID = muscle;
     }
 
@@ -283,7 +283,7 @@ void CardsflowGazebo::MotorStatusPublisher() {
             msg.position.push_back(
                     myoMuscleEncoderTicksPerMeter(muscle->motor.getPosition() * (2 * M_PI * muscle->motor.getSpindleRadius() / 360))) ;// (2.0 * M_PI / (2000.0f * 53.0f))); // convert to motor ticks
             msg.velocity.push_back(myoMuscleEncoderTicksPerMeter(muscle->motor.getLinearVelocity()));
-            msg.displacement.push_back(muscle->see.deltaX / (0.01 * 0.001)); // convert m to displacement ticks
+            msg.displacement.push_back(muscle->see.deltaX);// / (0.01 * 0.001)); // convert m to displacement ticks
             msg.current.push_back(muscle->motor.getVoltage()); // this is actually the pid result
 
             //TODO count spring displacement?

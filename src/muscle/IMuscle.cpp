@@ -151,15 +151,18 @@ namespace cardsflow_gazebo {
                     actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.velocity);
                     break;
                 case DISPLACEMENT:
-                    if(cmd>=0) // negative displacement doesnt make sense
-                        actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.displacement);
-                    else
-                        actuator.motor.voltage = PID->calculate(period.toSec(), 0, feedback.displacement);
-                    break;
+                    actuatorForce = muscleForce = springConsts[0] + springConsts[1]*cmd;//(cmd / (0.1 * 0.001));
+//                    ROS_INFO_THROTTLE(1,"Applying cmd: %f", cmd);
+                    ROS_INFO_THROTTLE(1,"applying force: %f N", actuatorForce);
+//                    if(cmd>=0) // negative displacement doesnt make sense
+//                        actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.displacement);
+//                    else
+//                        actuator.motor.voltage = PID->calculate(period.toSec(), 0, feedback.displacement);
+//                    break;
                 case FORCE:
 //                    if(cmd>0)
-                        muscleForce = cmd;
-                        ROS_DEBUG_THROTTLE(1,"Applying cmd: %f", cmd);
+                        muscleForce = actuatorForce = cmd;
+                        ROS_INFO_THROTTLE(1,"Applying cmd: %f", cmd);
 //                    else
 //                        muscleForce = 0;
                     break;
@@ -245,8 +248,8 @@ namespace cardsflow_gazebo {
 
         }
         else {
+            see.deltaX = cmd;
             calculateTendonForceProgression();
-            feedback.displacement = cmd;
         }
 
 //        ROS_INFO_STREAM_THROTTLE(5, "voltage: " << motor.getVoltage()
