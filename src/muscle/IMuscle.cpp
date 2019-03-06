@@ -17,7 +17,9 @@ namespace cardsflow_gazebo {
 
         PID.reset(new MuscPID());
 
-        double Kp = 10 , Ki = 0, Kd = 1;
+        // velocity gains Kp = 200 , Ki = 5, Kd = 1
+
+        double Kp = 200 , Ki = 5, Kd = 1;
         if (nh->hasParam("musclemodel_Kp")) {
             nh->getParam("musclemodel_Kp", Kp);
         }
@@ -88,12 +90,60 @@ namespace cardsflow_gazebo {
     }
 
     void IMuscle::Update(ros::Time &time, ros::Duration &period) {
+
+
+      double Ki_new, Kp_new, Kd_new;
+      if (nh->hasParam("musclemodel_Kp")) {
+        nh->getParam("musclemodel_Kp", Kp_new);
+        if (Kp_new != PID->params[POSITION].Kp)
+        {
+          PID->params[POSITION].Kp = Kp_new;
+          PID->params[VELOCITY].Kp = Kp_new;
+          PID->params[DISPLACEMENT].Kp = Kp_new;
+          PID->params[FORCE].Kp = Kp_new;
+          ROS_INFO_NAMED("IMuscle", "using Kp %lf", Kp_new);
+        }
+      }
+
+
+
+      ROS_INFO_ONCE_NAMED("IMuscle", "using Kp %lf", Kp_new);
+
+      if (nh->hasParam("musclemodel_Ki")) {
+
+          nh->getParam("musclemodel_Ki", Ki_new);
+          if (Ki_new != PID->params[POSITION].Ki)
+          {
+            PID->params[POSITION].Ki = Ki_new;
+            PID->params[VELOCITY].Ki = Ki_new;
+            PID->params[DISPLACEMENT].Ki = Ki_new;
+            PID->params[FORCE].Ki = Ki_new;
+            ROS_INFO_ONCE("IMuscle", "using Ki %lf", Ki_new);
+          }
+      }
+
+      ROS_INFO_ONCE_NAMED("IMuscle", "using Ki %lf", Ki_new);
+
+      if (nh->hasParam("musclemodel_Kd")) {
+        nh->getParam("musclemodel_Kd", Kd_new);
+        if (Kd_new != PID->params[POSITION].Kd)
+        {
+          PID->params[POSITION].Kd = Kd_new;
+          PID->params[VELOCITY].Kd = Kd_new;
+          PID->params[DISPLACEMENT].Kd = Kd_new;
+          PID->params[FORCE].Kd = Kd_new;
+          ROS_INFO("IMuscle", "using Kd %lf", Kd_new);
+        }
+      }
+
+      ROS_INFO_ONCE_NAMED("IMuscle", "using Kd %lf", Kd_new);
+
         if (pid_control) {
 //            muscleForce = cmd;
 //            ROS_INFO_THROTTLE(1,"%s Applying cmd: %f", name.c_str(), cmd);
             switch (PID->control_mode) {
                 case POSITION:
-                    // ROS_INFO_STREAM_THROTTLE(1, "PID cmd: " << cmd << " feedback: " << feedback.position);
+                    ROS_INFO_STREAM_THROTTLE(1, "PID cmd: " << cmd << " feedback: " << feedback.position);
                     actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.position);
                     break;
                 case VELOCITY:
