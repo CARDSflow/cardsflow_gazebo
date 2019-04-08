@@ -249,23 +249,23 @@ void CardsflowGazebo::MotorCommand(const roboy_middleware_msgs::MotorCommand::Co
             switch (muscles[msg->motors[i]]->PID->control_mode) {
                 case POSITION:
                     muscles[msg->motors[i]]->cmd =myoMuscleMeterPerEncoderTick(msg->set_points[i]);
-                    setPoints[i] = myoMuscleMeterPerEncoderTick(msg->set_points[i]);
+                    setPoints[msg->motors[i]] = myoMuscleMeterPerEncoderTick(msg->set_points[i]);
                     break;
                 case VELOCITY:
                     muscles[msg->motors[i]]->cmd = myoMuscleMeterPerEncoderTick(msg->set_points[i]);
-                    setPoints[i] = myoMuscleMeterPerEncoderTick(msg->set_points[i]);// * RADIANS_PER_ENCODER_COUNT;// * 2.0 * M_PI / (2000.0f * 53.0f);
+                    setPoints[msg->motors[i]] = myoMuscleMeterPerEncoderTick(msg->set_points[i]);// * RADIANS_PER_ENCODER_COUNT;// * 2.0 * M_PI / (2000.0f * 53.0f);
                     break;
                 case DISPLACEMENT:
                     if (msg->set_points[i] >= 0) // negative displacement doesnt make sense
-                        setPoints[i] = msg->set_points[i];
+                        setPoints[msg->motors[i]] = msg->set_points[i];
                     else
-                        setPoints[i] = 0;
+                        setPoints[msg->motors[i]] = 0;
                     break;
                 case FORCE:
                     if (msg->set_points[i] >= 0) // negative displacement doesnt make sense
-                        setPoints[i] = msg->set_points[i];
+                        setPoints[msg->motors[i]] = msg->set_points[i];
                     else
-                        setPoints[i] = 0;
+                        setPoints[msg->motors[i]] = 0;
                     break;
             }
         }
