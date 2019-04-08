@@ -16,8 +16,8 @@ namespace cardsflow_gazebo
 
     public:
         SphericalWrapping();
-        SphericalWrapping(math::Vector3 point, physics::LinkPtr link);
-        SphericalWrapping(math::Vector3 point, double radius, int state, int counter, physics::LinkPtr link);
+        SphericalWrapping(ignition::math::Vector3d point, physics::LinkPtr link);
+        SphericalWrapping(ignition::math::Vector3d point, double radius, int state, int counter, physics::LinkPtr link);
 
         ////////////////////
         /// \brief This function updates the position of the attachment point.
@@ -32,9 +32,9 @@ namespace cardsflow_gazebo
     public:
         StateMachine stateMachine;
         double radius;
-        math::Vector3 prevCoord;
-        math::Vector3 nextCoord;
-        math::Vector3 normal;
+        ignition::math::Vector3d prevCoord;
+        ignition::math::Vector3d nextCoord;
+        ignition::math::Vector3d normal;
         double arcAngle;
 	};
 

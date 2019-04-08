@@ -26,7 +26,7 @@ double MuscPID::calculate( double dt, double setpoint, double pv ) {
         dterm = ((err - last_error)/dt * params[control_mode].Kd);
         ffterm = (params[control_mode].forwardGain * setpoint);
         result = ffterm + pterm + iterm + dterm;
-        ROS_DEBUG_THROTTLE(1,"pterm: %lf iterm: %lf dterm: %lf result: %lf setpoint: %lf pv: %lf", pterm, iterm, dterm, result, setpoint, pv);
+        ROS_INFO_THROTTLE(1,"pterm: %lf iterm: %lf dterm: %lf result: %lf setpoint: %lf pv: %lf", pterm, iterm, dterm, result, setpoint, pv);
     }else{
         result = iterm;
     }
@@ -51,7 +51,7 @@ void MuscPID::getDefaultControlParams(control_Parameters_t *params, int control_
         case POSITION:
             params->spPosMax = 10000000;
             params->spNegMax = -10000000;
-            params->Kp = 1;
+            params->Kp = 1000;
             params->Ki = 0;
             params->Kd = 0;
             params->forwardGain = 0;
@@ -60,8 +60,8 @@ void MuscPID::getDefaultControlParams(control_Parameters_t *params, int control_
             params->IntegralNegMax = -100;
             break;
         case VELOCITY:
-            params->spPosMax = 100;
-            params->spNegMax = -100;
+            params->spPosMax = 1000000;
+            params->spNegMax = -1000000;
             params->Kp = 1;
             params->Ki = 0;
             params->Kd = 0;

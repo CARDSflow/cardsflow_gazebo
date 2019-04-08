@@ -2,24 +2,24 @@
 
 namespace cardsflow_gazebo {
 
-    StateMachine::StateMachine() : firstUpdate(true), state(NOTWRAPPING), normal(math::Vector3(0, 0, 0)), revCounter(0),
+    StateMachine::StateMachine() : firstUpdate(true), state(NOTWRAPPING), normal(ignition::math::Vector3d(0, 0, 0)), revCounter(0),
                                    projection(0) {
 
     };
 
-    void StateMachine::UpdateState(math::Vector3 &prevPoint, math::Vector3 &nextPoint, math::Vector3 &center,
+    void StateMachine::UpdateState(ignition::math::Vector3d &prevPoint, ignition::math::Vector3d &nextPoint, ignition::math::Vector3d &center,
                                    double radius) {
         //compute unit vectors and according length
         double l_j1 = (prevPoint - center).GetLength();
-        math::Vector3 j1 = (prevPoint - center) / l_j1;
+        ignition::math::Vector3d j1 = (prevPoint - center) / l_j1;
         double l_j2 = (nextPoint - center).GetLength();
-        math::Vector3 j2 = (nextPoint - center) / l_j2;
+        ignition::math::Vector3d j2 = (nextPoint - center) / l_j2;
 
         //compute normal
-        math::Vector3 normal = j1.Cross(j2);
+        ignition::math::Vector3d normal = j1.Cross(j2);
 
         //calculate height = distance between straight line from previous point to next point and sphere center
-        math::Vector3 diff = prevPoint - nextPoint;
+        ignition::math::Vector3d diff = prevPoint - nextPoint;
         double height = l_j1 * sin(acos((j1).Dot(diff / diff.GetLength())));
 
         //if(counter%update == 0)

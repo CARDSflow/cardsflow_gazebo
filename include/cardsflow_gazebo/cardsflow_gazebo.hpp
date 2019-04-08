@@ -17,6 +17,12 @@
 #include <mutex>
 #include <eigen_conversions/eigen_msg.h>
 
+#include "gazebo/transport/Node.hh"
+#include "gazebo/transport/Publisher.hh"
+#include "gazebo/msgs/msgs.hh"
+
+#include <tinyxml.h>
+
 using namespace gazebo;
 using namespace std;
 using namespace chrono;
@@ -67,6 +73,9 @@ public:
     /** Called on world reset */
     void Reset();
 
+    /** using protobuf msgs to publish tendon info to gazebo (NRP version */
+    void publishOpenSimInfo(vector<boost::shared_ptr<cardsflow_gazebo::IMuscle>> *muscles, common::Time simtime);
+
 private:
     /** This function parses a sdf string for myoMuscle parameters
      * @param sdf string
@@ -102,7 +111,7 @@ private:
     static int roboyID_generator;
     ros::NodeHandlePtr nh;
     ros::Subscriber motorCommand_sub, pid_control_sub;
-    ros::Publisher motorStatus_pub, joint_state_pub, floating_base_pub;
+    ros::Publisher motorStatus_pub, joint_state_pub, floating_base_pub, tendon_state_pub;
     ros::ServiceServer motorConfig_srv, controlMode_srv, emergencyStop_srv, torque_srv;
     boost::shared_ptr<ros::AsyncSpinner> spinner;
 
@@ -139,4 +148,12 @@ private:
     vector<double> joint_pos, joint_vel, joint_vel_prev, joint_acc; /// of kinematic chain
     int seq = 0;
     mutex mux;
+
+    bool draw_gazebo_tendons = false;
+
+    /// \brief Node for protobuf communication.
+    transport::NodePtr muscleInfoNode;
+
+    /// \brief Info publisher on opensim muscles.
+    transport::PublisherPtr muscleInfoPublisher;
 };

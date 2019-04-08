@@ -22,7 +22,6 @@
     <depend>geometry_msgs</depend>
     <depend>common_utilities</depend>
     <depend>roboy_middleware_msgs</depend>
-    <depend>roboy_simulation_msgs</depend>
 
     <export>
         <roboy_simulation plugin="${prefix}/cardsflow_gazebo_plugin.xml"/>
