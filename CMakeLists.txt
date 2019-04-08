@@ -29,7 +29,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt5 REQUIRED COMPONENTS Widgets Core Gui)
+#find_package(Qt5 REQUIRED COMPONENTS Widgets Core Gui)
 
 find_package(gazebo REQUIRED)
 include_directories(${GAZEBO_INCLUDE_DIRS})
@@ -42,9 +42,9 @@ include_directories(${LibXML++_INCLUDE_DIRS})
 include_directories(
 		include/
         ${catkin_INCLUDE_DIRS}
-		${Qt5Widgets_INCLUDE_DIRS}
-		${Qt5Core_INCLUDE_DIRS}
-		${Qt5Gui_INCLUDE_DIRS}
+#		${Qt5Widgets_INCLUDE_DIRS}
+#		${Qt5Core_INCLUDE_DIRS}
+#		${Qt5Gui_INCLUDE_DIRS}
 )
 
 #roboticslibrary

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <gazebo/physics/physics.hh>
-#include <gazebo/math/Vector3.hh>
+#include <ignition/math/Vector3.hh>
 #include <math.h>
 
 namespace cardsflow_gazebo
@@ -34,7 +34,7 @@ namespace cardsflow_gazebo
         /// \param[in] nextPoint the nextattachment point
         /// \param[in] center the center of the wrapping surface
         /// \param[in] radius the radius of the wrapping surface
-        void UpdateState(math::Vector3& prevPoint, math::Vector3& nextPoint, math::Vector3& center, double radius);
+        void UpdateState(ignition::math::Vector3d& prevPoint, ignition::math::Vector3d& nextPoint, ignition::math::Vector3d& center, double radius);
 
         ////////////////////////////////////////
         /// \brief updates the RevCounter
@@ -46,7 +46,7 @@ namespace cardsflow_gazebo
         int revCounter;
     private:
         bool firstUpdate;
-        math::Vector3 normal;
+        ignition::math::Vector3d normal;
         double projection;
     };
 }

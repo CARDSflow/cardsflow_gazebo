@@ -21,6 +21,8 @@
 #include "gazebo/transport/Publisher.hh"
 #include "gazebo/msgs/msgs.hh"
 
+#include <tinyxml.h>
+
 using namespace gazebo;
 using namespace std;
 using namespace chrono;

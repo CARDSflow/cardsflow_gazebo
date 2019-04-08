@@ -2,20 +2,20 @@
 
 namespace cardsflow_gazebo {
 
-    SphericalWrapping::SphericalWrapping() : IViaPoints(math::Vector3(0, 0, 0), Type::SPHERICAL, nullptr),
+    SphericalWrapping::SphericalWrapping() : IViaPoints(ignition::math::Vector3d(0, 0, 0), Type::SPHERICAL, nullptr),
                                              stateMachine(StateMachine()),
-                                             radius(0), prevCoord(math::Vector3(0, 0, 0)),
-                                             nextCoord(math::Vector3(0, 0, 0)),
-                                             normal(math::Vector3(0, 0, 0)), arcAngle(0) {
+                                             radius(0), prevCoord(ignition::math::Vector3d(0, 0, 0)),
+                                             nextCoord(ignition::math::Vector3d(0, 0, 0)),
+                                             normal(ignition::math::Vector3d(0, 0, 0)), arcAngle(0) {
 
     };
 
-    SphericalWrapping::SphericalWrapping(math::Vector3 point, physics::LinkPtr link) : SphericalWrapping() {
+    SphericalWrapping::SphericalWrapping(ignition::math::Vector3d point, physics::LinkPtr link) : SphericalWrapping() {
         localCoordinates = point;
         this->link = link;
     };
 
-    SphericalWrapping::SphericalWrapping(math::Vector3 point, double radius, int state, int counter,
+    SphericalWrapping::SphericalWrapping(ignition::math::Vector3d point, double radius, int state, int counter,
                                          physics::LinkPtr link) : SphericalWrapping(point, link) {
         this->radius = radius;
         this->stateMachine.state = (StateMachine::State) state;
@@ -38,20 +38,20 @@ namespace cardsflow_gazebo {
 
             //compute tangent points
             //compute unit vectors and according length
-            double l_j1 = (prevCoord - this->globalCoordinates).GetLength();
-            math::Vector3 j1 = (prevCoord - this->globalCoordinates) / l_j1;
-            double l_j2 = (nextCoord - this->globalCoordinates).GetLength();
-            math::Vector3 j2 = (nextCoord - this->globalCoordinates) / l_j2;
+            double l_j1 = (prevCoord - this->globalCoordinates).Length();
+            ignition::math::Vector3d j1 = (prevCoord - this->globalCoordinates) / l_j1;
+            double l_j2 = (nextCoord - this->globalCoordinates).Length();
+            ignition::math::Vector3d j2 = (nextCoord - this->globalCoordinates) / l_j2;
 
             //compute normal,
-            math::Vector3 normal_temp = j1.Cross(j2);
-            normal = normal_temp / normal_temp.GetLength();
+            ignition::math::Vector3d normal_temp = j1.Cross(j2);
+            normal = normal_temp / normal_temp.Length();
 
             //compute k1, k2
-            math::Vector3 k1 = j1.Cross(normal);
-            k1 = k1 / k1.GetLength();
-            math::Vector3 k2 = normal.Cross(j2);
-            k2 = k2 / k2.GetLength();
+            ignition::math::Vector3d k1 = j1.Cross(normal);
+            k1 = k1 / k1.Length();
+            ignition::math::Vector3d k2 = normal.Cross(j2);
+            k2 = k2 / k2.Length();
 
             //compute length of a1, a2, b1, b2
             double a1 = radius * radius / l_j1;
@@ -73,12 +73,12 @@ namespace cardsflow_gazebo {
 
             //calculate the wrapping angle
             double angle = acos(
-                    1 - (pow((this->prevForcePoint - this->nextForcePoint).GetLength(), 2) / (2 * radius * radius)));
+                    1 - (pow((this->prevForcePoint - this->nextForcePoint).Length(), 2) / (2 * radius * radius)));
             arcAngle = 2 * (boost::math::constants::pi<double>()) * ceil(stateMachine.revCounter / 2);
             arcAngle += (stateMachine.revCounter % 2 == 0) ? (angle) : (-angle);
 
             //calculate the lines of action and the muscle's length
-            previousSegmentLength = (prevCoord - this->prevForcePoint).GetLength() + arcAngle * radius;
+            previousSegmentLength = (prevCoord - this->prevForcePoint).Length() + arcAngle * radius;
         }
     };
 
@@ -95,12 +95,12 @@ namespace cardsflow_gazebo {
         }
 
         if (prevPoint) {
-            math::Vector3 A = prevPoint->nextForcePoint - this->prevForcePoint;
-            prevForce = A / A.GetLength() * fa;
+            ignition::math::Vector3d A = prevPoint->nextForcePoint - this->prevForcePoint;
+            prevForce = A / A.Length() * fa;
             //link->AddForceAtRelativePosition(Fa, this->prevForcePoint);
         } else if (nextPoint) {
-            math::Vector3 B = nextPoint->prevForcePoint - this->nextForcePoint;
-            nextForce = B / B.GetLength() * fb;
+            ignition::math::Vector3d B = nextPoint->prevForcePoint - this->nextForcePoint;
+            nextForce = B / B.Length() * fb;
             //link->AddForceAtRelativePosition(Fb, this->nextForcePoint);
         }
     };

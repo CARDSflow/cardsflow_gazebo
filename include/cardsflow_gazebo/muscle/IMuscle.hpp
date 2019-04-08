@@ -7,8 +7,8 @@
 #include <gazebo/common/common.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/util/system.hh>
-#include <gazebo/math/Vector3.hh>
-#include <gazebo/math/Pose.hh>
+#include <ignition/math/Vector3.hh>
+#include <ignition/math/Pose3.hh>
 #include "IActuator.hpp"
 #include "ISee.hpp"
 #include "IViaPoints.hpp"
@@ -78,7 +78,7 @@ namespace cardsflow_gazebo {
 
         vector<string> link_names;
 
-		math::Vector3 momentArm;
+		ignition::math::Vector3d momentArm;
         physics::ModelPtr parent_model;
         physics::LinkPtr parent_link;
         boost::shared_ptr<map<string, Matrix4d>> world_to_link_transform;
