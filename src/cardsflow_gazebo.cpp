@@ -563,14 +563,16 @@ bool CardsflowGazebo::parseSDFusion(const string &sdf, vector<cardsflow_gazebo::
             }
 
             TiXmlElement *motor_child = myoMuscle_it->FirstChildElement("motor");
+            double value;
             if (motor_child) {
                 // bemf_constant
                 TiXmlElement *bemf_constant_child = motor_child->FirstChildElement("bemf_constant");
                 if (bemf_constant_child) {
-                    if (sscanf(bemf_constant_child->GetText(), "%lf", &myoMuscle.motor.BEMFConst) != 1) {
+                    if (sscanf(bemf_constant_child->GetText(), "%lf", &value) != 1) {
                         ROS_ERROR_STREAM_NAMED("parser", "error reading bemf_constant constant");
                         return false;
                     }
+                    myoMuscle.actuator.setBackEmfConstant(value);
                 } else {
                     ROS_ERROR_STREAM_NAMED("parser", "No bemf_constant element found in myoMuscle '"
                             << myoMuscle.name << "' motor element.");
@@ -579,10 +581,11 @@ bool CardsflowGazebo::parseSDFusion(const string &sdf, vector<cardsflow_gazebo::
                 // torque_constant
                 TiXmlElement *torque_constant_child = motor_child->FirstChildElement("torque_constant");
                 if (torque_constant_child) {
-                    if (sscanf(torque_constant_child->GetText(), "%lf", &myoMuscle.motor.torqueConst) != 1) {
+                    if (sscanf(torque_constant_child->GetText(), "%lf", &value) != 1) {
                         ROS_ERROR_STREAM_NAMED("parser", "error reading torque_constant constant");
                         return false;
                     }
+                    myoMuscle.actuator.setTorqueConstant(value);
                 } else {
                     ROS_ERROR_STREAM_NAMED("parser", "No torque_constant element found in myoMuscle '"
                             << myoMuscle.name << "' motor element.");
@@ -591,10 +594,11 @@ bool CardsflowGazebo::parseSDFusion(const string &sdf, vector<cardsflow_gazebo::
                 // inductance
                 TiXmlElement *inductance_child = motor_child->FirstChildElement("inductance");
                 if (inductance_child) {
-                    if (sscanf(inductance_child->GetText(), "%lf", &myoMuscle.motor.inductance) != 1) {
+                    if (sscanf(inductance_child->GetText(), "%lf", &value) != 1) {
                         ROS_ERROR_STREAM_NAMED("parser", "error reading inductance constant");
                         return false;
                     }
+                    myoMuscle.actuator.setAnchorInductance(value);
                 } else {
                     ROS_ERROR_STREAM_NAMED("parser", "No inductance element found in myoMuscle '"
                             << myoMuscle.name << "' motor element.");
@@ -603,10 +607,11 @@ bool CardsflowGazebo::parseSDFusion(const string &sdf, vector<cardsflow_gazebo::
                 // resistance
                 TiXmlElement *resistance_child = motor_child->FirstChildElement("resistance");
                 if (resistance_child) {
-                    if (sscanf(resistance_child->GetText(), "%lf", &myoMuscle.motor.resistance) != 1) {
+                    if (sscanf(resistance_child->GetText(), "%lf", &value) != 1) {
                         ROS_ERROR_STREAM_NAMED("parser", "error reading resistance constant");
                         return false;
                     }
+                    myoMuscle.actuator.setAnchorResistance(value);
                 } else {
                     ROS_ERROR_STREAM_NAMED("parser", "No resistance element found in myoMuscle '"
                             << myoMuscle.name << "' motor element.");
@@ -615,10 +620,11 @@ bool CardsflowGazebo::parseSDFusion(const string &sdf, vector<cardsflow_gazebo::
                 // inertiaMoment
                 TiXmlElement *inertiaMoment_child = motor_child->FirstChildElement("inertiaMoment");
                 if (inertiaMoment_child) {
-                    if (sscanf(inertiaMoment_child->GetText(), "%lf", &myoMuscle.motor.inertiaMoment) != 1) {
+                    if (sscanf(inertiaMoment_child->GetText(), "%lf", &value) != 1) {
                         ROS_ERROR_STREAM_NAMED("parser", "error reading inertiaMoment constant");
                         return false;
                     }
+                    myoMuscle.actuator.setMomentOfInertiaMotor(value);
                 } else {
                     ROS_ERROR_STREAM_NAMED("parser", "No inertiaMoment element found in myoMuscle '"
                             << myoMuscle.name << "' motor element.");
@@ -634,10 +640,11 @@ bool CardsflowGazebo::parseSDFusion(const string &sdf, vector<cardsflow_gazebo::
                 // ratio
                 TiXmlElement *ratio_child = gear_child->FirstChildElement("ratio");
                 if (ratio_child) {
-                    if (sscanf(ratio_child->GetText(), "%lf", &myoMuscle.gear.ratio) != 1) {
+                    if (sscanf(ratio_child->GetText(), "%lf", &value) != 1) {
                         ROS_ERROR_STREAM_NAMED("parser", "error reading ratio constant");
                         return false;
                     }
+                    myoMuscle.actuator.setGearboxRatio(value);
                 } else {
                     ROS_ERROR_STREAM_NAMED("parser", "No ratio element found in myoMuscle '"
                             << myoMuscle.name << "' gear element.");
@@ -646,10 +653,11 @@ bool CardsflowGazebo::parseSDFusion(const string &sdf, vector<cardsflow_gazebo::
                 // ratio
                 TiXmlElement *efficiency_child = gear_child->FirstChildElement("efficiency");
                 if (efficiency_child) {
-                    if (sscanf(efficiency_child->GetText(), "%lf", &myoMuscle.gear.efficiency) != 1) {
+                    if (sscanf(efficiency_child->GetText(), "%lf", &value) != 1) {
                         ROS_ERROR_STREAM_NAMED("parser", "error reading efficiency constant");
                         return false;
                     }
+                    myoMuscle.actuator.setGearboxEfficiency(value);
                 } else {
                     ROS_ERROR_STREAM_NAMED("parser", "No efficiency element found in myoMuscle '"
                             << myoMuscle.name << "' gear element.");
@@ -658,10 +666,11 @@ bool CardsflowGazebo::parseSDFusion(const string &sdf, vector<cardsflow_gazebo::
                 // inertiaMoment
                 TiXmlElement *inertiaMoment_child = gear_child->FirstChildElement("inertiaMoment");
                 if (inertiaMoment_child) {
-                    if (sscanf(inertiaMoment_child->GetText(), "%lf", &myoMuscle.gear.inertiaMoment) != 1) {
+                    if (sscanf(inertiaMoment_child->GetText(), "%lf", &value) != 1) {
                         ROS_ERROR_STREAM_NAMED("parser", "error reading inertiaMoment constant");
                         return false;
                     }
+                    myoMuscle.actuator.setMomentOfInertiaGearbox(value);
                 } else {
                     ROS_ERROR_STREAM_NAMED("parser", "No inertiaMoment element found in myoMuscle '"
                             << myoMuscle.name << "' gear element.");
@@ -677,10 +686,11 @@ bool CardsflowGazebo::parseSDFusion(const string &sdf, vector<cardsflow_gazebo::
                 // radius
                 TiXmlElement *radius_child = spindle_child->FirstChildElement("radius");
                 if (radius_child) {
-                    if (sscanf(radius_child->GetText(), "%lf", &myoMuscle.spindle.radius) != 1) {
+                    if (sscanf(radius_child->GetText(), "%lf", &value) != 1) {
                         ROS_ERROR_STREAM_NAMED("parser", "error reading radius constant");
                         return false;
                     }
+                    myoMuscle.actuator.setSpindleRadius(value);
                 } else {
                     ROS_ERROR_STREAM_NAMED("parser", "No radius element found in myoMuscle '"
                             << myoMuscle.name << "' spindle element.");

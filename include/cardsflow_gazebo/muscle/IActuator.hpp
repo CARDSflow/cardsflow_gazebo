@@ -32,7 +32,8 @@ namespace cardsflow_gazebo{
         double radius = 4.5e-03; // [m]
 	};
 
-    class IActuator {
+
+    class [[deprecated]] IActuator {
 		// state vector for differential model
 	public:
         typedef boost::array< double , 2 > state_type;

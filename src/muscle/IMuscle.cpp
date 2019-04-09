@@ -15,37 +15,39 @@ namespace cardsflow_gazebo {
         }
         nh = ros::NodeHandlePtr(new ros::NodeHandle);
 
+
+//       PID = boost::shared_ptr<MuscPID>(new MuscPID());
         PID.reset(new MuscPID());
 
         // velocity gains Kp = 200 , Ki = 5, Kd = 1
 
-        // double Kp = 200 , Ki = 5, Kd = 1;
-        // if (nh->hasParam("musclemodel_Kp")) {
-        //     nh->getParam("musclemodel_Kp", Kp);
-        // }
-        // PID->params[POSITION].Kp = Kp;
-        // PID->params[VELOCITY].Kp = Kp;
-        // PID->params[DISPLACEMENT].Kp = Kp;
-        // PID->params[FORCE].Kp = Kp;
-        // ROS_INFO_ONCE_NAMED("IMuscle", "using Kp %lf", Kp);
-        //
-        // if (nh->hasParam("musclemodel_Ki")) {
-        //     nh->getParam("musclemodel_Ki", Ki);
-        // }
-        // PID->params[POSITION].Ki = Ki;
-        // PID->params[VELOCITY].Ki = Ki;
-        // PID->params[DISPLACEMENT].Ki = Ki;
-        // PID->params[FORCE].Ki = Ki;
-        // ROS_INFO_ONCE_NAMED("IMuscle", "using Ki %lf", Ki);
-        //
-        // if (nh->hasParam("musclemodel_Kd")) {
-        //     nh->getParam("musclemodel_Kd", Kd);
-        // }
-        // PID->params[POSITION].Kd = Kd;
-        // PID->params[VELOCITY].Kd = Kd;
-        // PID->params[DISPLACEMENT].Kd = Kd;
-        // PID->params[FORCE].Kd = Kd;
-        // ROS_INFO_ONCE_NAMED("IMuscle", "using Kd %lf", Kd);
+         double Kp = 0.1 , Ki = 0, Kd = 0;
+         if (nh->hasParam("musclemodel_Kp")) {
+             nh->getParam("musclemodel_Kp", Kp);
+         }
+         PID->params[POSITION].Kp = Kp;
+         PID->params[VELOCITY].Kp = Kp;
+         PID->params[DISPLACEMENT].Kp = Kp;
+         PID->params[FORCE].Kp = Kp;
+         ROS_INFO_ONCE_NAMED("IMuscle", "using Kp %lf", Kp);
+
+         if (nh->hasParam("musclemodel_Ki")) {
+             nh->getParam("musclemodel_Ki", Ki);
+         }
+         PID->params[POSITION].Ki = Ki;
+         PID->params[VELOCITY].Ki = Ki;
+         PID->params[DISPLACEMENT].Ki = Ki;
+         PID->params[FORCE].Ki = Ki;
+         ROS_INFO_ONCE_NAMED("IMuscle", "using Ki %lf", Ki);
+
+         if (nh->hasParam("musclemodel_Kd")) {
+             nh->getParam("musclemodel_Kd", Kd);
+         }
+         PID->params[POSITION].Kd = Kd;
+         PID->params[VELOCITY].Kd = Kd;
+         PID->params[DISPLACEMENT].Kd = Kd;
+         PID->params[FORCE].Kd = Kd;
+         ROS_INFO_ONCE_NAMED("IMuscle", "using Kd %lf", Kd);
 
 
 
@@ -68,8 +70,8 @@ namespace cardsflow_gazebo {
     void IMuscle::Init(MuscInfo &muscInfo) {
 
         //state initialization
-        x[0] = 0.0;
-        x[1] = 0.0;
+//        x[0] = 0.0;
+//        x[1] = 0.0;
 //        actuator.motor.voltage = 0.0;
 //        actuator.spindle.angVel = 0;
 
@@ -84,6 +86,7 @@ namespace cardsflow_gazebo {
         see.see.expansion = 0.0;
         see.see.force = 0.0;
 
+        //TODO read motor params from SDF
         motor.setAnchorResistance(0.797);
         motor.setAnchorInductance(1.8e-4);
         motor.setBackEmfConstant(1.42e-2);
@@ -152,6 +155,7 @@ namespace cardsflow_gazebo {
       }
 
       ROS_INFO_ONCE_NAMED("IMuscle", "using Kd %lf", Kd_new);
+
       double voltage = 0;
         if (pid_control) {
 //            muscleForce = cmd;
@@ -276,14 +280,15 @@ namespace cardsflow_gazebo {
 //                                                << "\t force: " << viaPoints[0]->fb);
 
         // log setpoint and current value
-        status["cmd"] = myoMuscleEncoderTicksPerMeter(cmd);
-        status["position"] = myoMuscleEncoderTicksPerMeter(feedback.position);
-        status["velocity"] = myoMuscleEncoderTicksPerMeter(feedback.velocity);
+        status["cmd"] = cmd;
+        status["position"] = feedback.position;
+        status["velocity"] = feedback.velocity;
         status["displacement"] = feedback.displacement;
         status["force"] = actuatorForce;
         status["voltage"] =  motor.getVoltage();
         status["muscleLengthChange"] = prevMuscleLength - muscleLength;
         status["tendonLengthChangeTotal"] = initialTendonLength - tendonLength;
+        status["current"] = motor.getCurrent();
 
         log[time.now().toNSec()] = status;
 
