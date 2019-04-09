@@ -15,20 +15,17 @@
 #include "SphericalWrapping.hpp"
 #include "CylindricalWrapping.hpp"
 #include "MeshWrapping.hpp"
-
 #include <boost/numeric/odeint.hpp>
 #include <boost/bind.hpp>
 #include <math.h>
 #include <map>
 #include <vector>
 #include "cardsflow_gazebo/muscle/MuscPID.hpp"
-
 #include "cardsflow_gazebo/eccerobotMuscle/physics/Actuator.h"
-
 #include <Eigen/Core>
 #include <Eigen/Dense>
-
 #include <mutex>
+#include <common_utilities/CommonDefinitions.h>
 
 namespace cardsflow_gazebo {
 
