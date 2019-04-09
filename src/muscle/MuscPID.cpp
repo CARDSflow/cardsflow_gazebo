@@ -8,13 +8,15 @@ MuscPID::MuscPID(){
 }
 
 double MuscPID::calculate( double dt, double setpoint, double pv ) {
-    if(dt == 0.0)
+    if(dt == 0.0){
+        ROS_WARN_THROTTLE(1,"timestep 0, returning");
         return 0;
+    }
 
     double result = 0;
 
     err = setpoint - pv;
-    if (fabs(err)>params[control_mode].deadBand) {
+    if (fabs(err)>=params[control_mode].deadBand) {
         pterm = params[control_mode].Kp * err;
         if ((pterm < params[control_mode].outputPosMax) || (pterm > params[control_mode].outputNegMax)){
             iterm = iterm + (params[control_mode].Ki * err); //add to the iterm
@@ -26,7 +28,8 @@ double MuscPID::calculate( double dt, double setpoint, double pv ) {
         dterm = ((err - last_error)/dt * params[control_mode].Kd);
         ffterm = (params[control_mode].forwardGain * setpoint);
         result = ffterm + pterm + iterm + dterm;
-        ROS_INFO_THROTTLE(1,"pterm: %lf iterm: %lf dterm: %lf result: %lf setpoint: %lf pv: %lf", pterm, iterm, dterm, result, setpoint, pv);
+        ROS_INFO_THROTTLE(1,"Kp %f Ki %f Kd %f , pterm: %lf iterm: %lf dterm: %lf result: %lf setpoint: %lf pv: %lf",params[control_mode].Kp ,params[control_mode].Ki ,params[control_mode].Kd,
+                pterm, iterm, dterm, result, setpoint, pv);
     }else{
         result = iterm;
     }
@@ -51,7 +54,7 @@ void MuscPID::getDefaultControlParams(control_Parameters_t *params, int control_
         case POSITION:
             params->spPosMax = 10000000;
             params->spNegMax = -10000000;
-            params->Kp = 1000;
+            params->Kp = 0.001;
             params->Ki = 0;
             params->Kd = 0;
             params->forwardGain = 0;
@@ -62,7 +65,7 @@ void MuscPID::getDefaultControlParams(control_Parameters_t *params, int control_
         case VELOCITY:
             params->spPosMax = 1000000;
             params->spNegMax = -1000000;
-            params->Kp = 1;
+            params->Kp = 0.001;
             params->Ki = 0;
             params->Kd = 0;
             params->forwardGain = 0;
@@ -73,7 +76,7 @@ void MuscPID::getDefaultControlParams(control_Parameters_t *params, int control_
         case DISPLACEMENT:
             params->spPosMax = 1000;
             params->spNegMax = 0;
-            params->Kp = 3000;
+            params->Kp = 0.001;
             params->Ki = 0;
             params->Kd = 0;
             params->forwardGain = 0;

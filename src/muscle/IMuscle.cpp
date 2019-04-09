@@ -19,33 +19,33 @@ namespace cardsflow_gazebo {
 
         // velocity gains Kp = 200 , Ki = 5, Kd = 1
 
-        double Kp = 200 , Ki = 5, Kd = 1;
-        if (nh->hasParam("musclemodel_Kp")) {
-            nh->getParam("musclemodel_Kp", Kp);
-        }
-        PID->params[POSITION].Kp = Kp;
-        PID->params[VELOCITY].Kp = Kp;
-        PID->params[DISPLACEMENT].Kp = Kp;
-        PID->params[FORCE].Kp = Kp;
-        ROS_INFO_ONCE_NAMED("IMuscle", "using Kp %lf", Kp);
-
-        if (nh->hasParam("musclemodel_Ki")) {
-            nh->getParam("musclemodel_Ki", Ki);
-        }
-        PID->params[POSITION].Ki = Ki;
-        PID->params[VELOCITY].Ki = Ki;
-        PID->params[DISPLACEMENT].Ki = Ki;
-        PID->params[FORCE].Ki = Ki;
-        ROS_INFO_ONCE_NAMED("IMuscle", "using Ki %lf", Ki);
-
-        if (nh->hasParam("musclemodel_Kd")) {
-            nh->getParam("musclemodel_Kd", Kd);
-        }
-        PID->params[POSITION].Kd = Kd;
-        PID->params[VELOCITY].Kd = Kd;
-        PID->params[DISPLACEMENT].Kd = Kd;
-        PID->params[FORCE].Kd = Kd;
-        ROS_INFO_ONCE_NAMED("IMuscle", "using Kd %lf", Kd);
+        // double Kp = 200 , Ki = 5, Kd = 1;
+        // if (nh->hasParam("musclemodel_Kp")) {
+        //     nh->getParam("musclemodel_Kp", Kp);
+        // }
+        // PID->params[POSITION].Kp = Kp;
+        // PID->params[VELOCITY].Kp = Kp;
+        // PID->params[DISPLACEMENT].Kp = Kp;
+        // PID->params[FORCE].Kp = Kp;
+        // ROS_INFO_ONCE_NAMED("IMuscle", "using Kp %lf", Kp);
+        //
+        // if (nh->hasParam("musclemodel_Ki")) {
+        //     nh->getParam("musclemodel_Ki", Ki);
+        // }
+        // PID->params[POSITION].Ki = Ki;
+        // PID->params[VELOCITY].Ki = Ki;
+        // PID->params[DISPLACEMENT].Ki = Ki;
+        // PID->params[FORCE].Ki = Ki;
+        // ROS_INFO_ONCE_NAMED("IMuscle", "using Ki %lf", Ki);
+        //
+        // if (nh->hasParam("musclemodel_Kd")) {
+        //     nh->getParam("musclemodel_Kd", Kd);
+        // }
+        // PID->params[POSITION].Kd = Kd;
+        // PID->params[VELOCITY].Kd = Kd;
+        // PID->params[DISPLACEMENT].Kd = Kd;
+        // PID->params[FORCE].Kd = Kd;
+        // ROS_INFO_ONCE_NAMED("IMuscle", "using Kd %lf", Kd);
 
 
 
@@ -108,7 +108,7 @@ namespace cardsflow_gazebo {
 
     void IMuscle::Update(ros::Time &time, ros::Duration &period) {
 
-
+//
       double Ki_new, Kp_new, Kd_new;
       if (nh->hasParam("musclemodel_Kp")) {
         nh->getParam("musclemodel_Kp", Kp_new);
@@ -118,13 +118,11 @@ namespace cardsflow_gazebo {
           PID->params[VELOCITY].Kp = Kp_new;
           PID->params[DISPLACEMENT].Kp = Kp_new;
           PID->params[FORCE].Kp = Kp_new;
-          ROS_INFO_NAMED("IMuscle", "using Kp %lf", Kp_new);
+//          ROS_INFO_NAMED("IMuscle", "using Kp %lf", Kp_new);
         }
       }
 
-
-
-      ROS_INFO_ONCE_NAMED("IMuscle", "using Kp %lf", Kp_new);
+//      ROS_INFO_ONCE_NAMED("IMuscle", "using Kp %lf", Kp_new);
 
       if (nh->hasParam("musclemodel_Ki")) {
 
@@ -135,11 +133,11 @@ namespace cardsflow_gazebo {
             PID->params[VELOCITY].Ki = Ki_new;
             PID->params[DISPLACEMENT].Ki = Ki_new;
             PID->params[FORCE].Ki = Ki_new;
-            ROS_INFO_ONCE("IMuscle", "using Ki %lf", Ki_new);
+//            ROS_INFO_ONCE("IMuscle", "using Ki %lf", Ki_new);
           }
       }
 
-      ROS_INFO_ONCE_NAMED("IMuscle", "using Ki %lf", Ki_new);
+//      ROS_INFO_ONCE_NAMED("IMuscle", "using Ki %lf", Ki_new);
 
       if (nh->hasParam("musclemodel_Kd")) {
         nh->getParam("musclemodel_Kd", Kd_new);
@@ -149,7 +147,7 @@ namespace cardsflow_gazebo {
           PID->params[VELOCITY].Kd = Kd_new;
           PID->params[DISPLACEMENT].Kd = Kd_new;
           PID->params[FORCE].Kd = Kd_new;
-          ROS_INFO("IMuscle", "using Kd %lf", Kd_new);
+//          ROS_INFO("IMuscle", "using Kd %lf", Kd_new);
         }
       }
 
@@ -246,11 +244,11 @@ namespace cardsflow_gazebo {
         if (!dummy) {
             springDisplacement = muscleLength - tendonLength ;
             see.deltaX = springDisplacement;
-            if (springDisplacement > 0) {
+//            if (springDisplacement > 0) {
                 muscleForce = actuatorForce = springConsts[0] + springConsts[1]*(springDisplacement / (0.1 * 0.001)); //TODO move this to SEE class
-            } else {
-                muscleForce = actuatorForce = 0;
-            }
+//            } else {
+//                muscleForce = actuatorForce = 0;
+//            }
 
             calculateTendonForceProgression();
             motor.setLoadTorque(motor.getSpindleRadius()*viaPoints[0]->fb);
@@ -262,8 +260,8 @@ namespace cardsflow_gazebo {
             tendonLength = initialTendonLength - (motor.getInitialPosition() - motor.getPosition()) *
                     rl::math::DEG2RAD * motor.getSpindleRadius();
 
-            feedback.position = motor.getPosition();// radians
-            feedback.velocity = motor.getLinearVelocity(); // m/s
+            feedback.position = myoMuscleEncoderTicksPerMeter(motor.getPosition()*motor.getSpindleRadius()* 2.0 * M_PI/360.0);// winch_radius*2pi*radians = m
+            feedback.velocity = myoMuscleEncoderTicksPerMeter(motor.getLinearVelocity()); // m/s
             feedback.displacement = springDisplacement; // m
 
         }
