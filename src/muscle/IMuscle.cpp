@@ -299,6 +299,8 @@ namespace cardsflow_gazebo {
 //                                                << "\t displacement: " << springDisplacement / (0.01 * 0.001)
 //                                                << "\t force: " << viaPoints[0]->fb);
 
+
+    #ifdef ENABLE_LOGGING
         // log setpoint and current value
         status["cmd"] = cmd;
         status["position"] = feedback.position;
@@ -311,6 +313,7 @@ namespace cardsflow_gazebo {
         status["current"] = motor.getCurrent();
 
         log[time.now().toNSec()] = status;
+    #endif
 
         prevMuscleLength = muscleLength;
     }

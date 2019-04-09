@@ -35,12 +35,15 @@
 #include <ignition/math.hh>
 #include <ignition/msgs.hh>
 
+//#define ENABLE_LOGGING
+
 namespace cardsflow_gazebo {
 
 	using namespace std;
 	using namespace boost::numeric::odeint;
 	using namespace gazebo;
 	using namespace Eigen;
+
 
 	struct MuscInfo{
 		string name;
