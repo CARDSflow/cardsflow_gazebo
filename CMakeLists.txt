@@ -30,6 +30,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
 #find_package(Qt5 REQUIRED COMPONENTS Widgets Core Gui)
+find_package(nlohmann_json REQUIRED)
 
 find_package(gazebo REQUIRED)
 include_directories(${GAZEBO_INCLUDE_DIRS})
@@ -81,7 +82,7 @@ add_library(cardsflow_gazebo_plugin SHARED
 		)
 
 add_dependencies( cardsflow_gazebo_plugin roboy_middleware_msgs_gencpp roboy_simulation_msgs_gencpp )
-target_link_libraries(cardsflow_gazebo_plugin ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES} ${RL_LIBRARIES})
+target_link_libraries(cardsflow_gazebo_plugin ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES} ${RL_LIBRARIES} nlohmann_json)
 
 add_executable(testMuscle src/testMuscle.cpp
 		src/eccerobotMuscle/physics/Actuator.cpp

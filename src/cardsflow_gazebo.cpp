@@ -278,6 +278,7 @@ void CardsflowGazebo::MotorStatusPublisher() {
         roboy_middleware_msgs::MotorStatus msg;
         roboy_simulation_msgs::Tendon tendons;
         msg.power_sense = true;
+        msg.id = 3;
         for (auto const &muscle:muscles) {
             msg.pwm_ref.push_back(muscle->cmd);
             msg.position.push_back(

@@ -24,11 +24,14 @@
 #include "cardsflow_gazebo/muscle/MuscPID.hpp"
 
 #include "cardsflow_gazebo/eccerobotMuscle/physics/Actuator.h"
+#include "std_srvs/Trigger.h"
 
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
 #include <mutex>
+
+#include <nlohmann/json.hpp>
 
 namespace cardsflow_gazebo {
 
@@ -63,6 +66,8 @@ namespace cardsflow_gazebo {
         double getTendonLength();
         double getMuscleForce();
         double getTendonVelocity(); // in m/s
+        bool saveDataService(std_srvs::Trigger::Request &req,std_srvs::Trigger::Response &res);
+        ros::ServiceServer xx;
 		string name;
 		vector<IViaPointsPtr> viaPoints;
 		double cmd = 0;
@@ -90,7 +95,7 @@ namespace cardsflow_gazebo {
         string muscleName;
         ofstream *file;
 		ISee see;
-		IActuator actuator;
+//		IActuator actuator;
 		Actuator motor;
 
     private:
@@ -117,6 +122,8 @@ namespace cardsflow_gazebo {
 
 		void initViaPoints( MuscInfo &myoMuscle );
 		void calculateTendonForceProgression();
+		std::map<uint64_t, std::map<string,double>> log;
+        std::map<string,double> status;
 
 		mutex mux;
 	};
