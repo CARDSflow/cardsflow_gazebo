@@ -31,6 +31,10 @@
 
 #include <nlohmann/json.hpp>
 
+#include <ignition/transport.hh>
+#include <ignition/math.hh>
+#include <ignition/msgs.hh>
+
 namespace cardsflow_gazebo {
 
 	using namespace std;
@@ -66,7 +70,6 @@ namespace cardsflow_gazebo {
         double getMuscleForce();
         double getTendonVelocity(); // in m/s
         bool saveDataService(std_srvs::Trigger::Request &req,std_srvs::Trigger::Response &res);
-        ros::ServiceServer xx;
 		string name;
 		vector<IViaPointsPtr> viaPoints;
 		double cmd = 0;
@@ -88,7 +91,8 @@ namespace cardsflow_gazebo {
         boost::shared_ptr<map<string, Matrix4d>> world_to_link_transform;
 	private:
         ros::NodeHandlePtr nh;
-
+        ignition::transport::Node node;
+        ignition::msgs::Marker markerMsg;
     public:
         int muscleID;
         string muscleName;

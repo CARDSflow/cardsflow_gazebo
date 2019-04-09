@@ -14,7 +14,16 @@ namespace cardsflow_gazebo {
                       ros::init_options::NoSigintHandler | ros::init_options::AnonymousName);
         }
         nh = ros::NodeHandlePtr(new ros::NodeHandle);
+        markerMsg.set_ns("default");
+        markerMsg.set_id(0);
+        markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
 
+        ignition::msgs::Material *matMsg = markerMsg.mutable_material();
+        matMsg->mutable_script()->set_name("Gazebo/BlueLaser");
+        ignition::msgs::Set(markerMsg.mutable_pose(),
+                            ignition::math::Pose3d(0, 0, 0, 0, 0, 0));
+        markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
+        markerMsg.set_type(ignition::msgs::Marker::LINE_STRIP);
 
 //       PID = boost::shared_ptr<MuscPID>(new MuscPID());
         PID.reset(new MuscPID());
@@ -83,6 +92,9 @@ namespace cardsflow_gazebo {
 //        actuator.spindle = muscInfo.spindle;
         see.see = muscInfo.see;
         name = muscInfo.name;
+        string num = name.substr(5, name.back());
+        muscleID = std::stoi(num.c_str());
+
         see.see.expansion = 0.0;
         see.see.force = 0.0;
 
@@ -105,8 +117,8 @@ namespace cardsflow_gazebo {
                 Actuator::RungeKutta4);
         motor.setTimeStep(0.0001);
 
-        xx = nh->advertiseService("/roboy/simulation/SaveData/"+name, &IMuscle::saveDataService, this);
-
+        nh->advertiseService("/roboy/simulation/SaveData/"+name, &IMuscle::saveDataService, this);
+        ROS_INFO_STREAM("Initialized muscle with id: " << muscleID);
     }
 
     void IMuscle::Update(ros::Time &time, ros::Duration &period) {
@@ -198,13 +210,18 @@ namespace cardsflow_gazebo {
             voltage = cmd*24;
         }
 
+        markerMsg.set_id(muscleID);
+        markerMsg.clear_point();
+
+
+
         for (int i = 0; i < viaPoints.size(); i++) {
             // update viaPoint coordinates
             // absolute position + relative position=actual position of each via point
             viaPoints[i]->globalCoordinates = viaPoints[i]->linkPosition +
                                               viaPoints[i]->linkRotation.RotateVector(viaPoints[i]->localCoordinates);
 
-
+            ignition::msgs::Set(markerMsg.add_point(), viaPoints[i]->globalCoordinates);
 //            switch (viaPoints[i]->type){
 //                case IViaPoints::FIXPOINT:
 //                    viaPoints[i]->globalCoordinates = viaPoints[i]->linkPosition +
@@ -224,6 +241,9 @@ namespace cardsflow_gazebo {
 //                    break;
 //            }
         }
+
+
+        node.Request("/marker", markerMsg);
 
         for (int i = 0; i < viaPoints.size(); i++) {
             viaPoints[i]->UpdateForcePoints();
