@@ -35,7 +35,7 @@
 #include <ignition/math.hh>
 #include <ignition/msgs.hh>
 
-//#define ENABLE_LOGGING
+#define ENABLE_LOGGING
 
 namespace cardsflow_gazebo {
 
@@ -79,6 +79,7 @@ namespace cardsflow_gazebo {
 		bool pid_control = true;
         bool dummy = false;
         boost::shared_ptr<MuscPID> PID;
+        ros::ServiceServer save_srv;
 
         struct{
             double position = 0;
@@ -124,7 +125,7 @@ namespace cardsflow_gazebo {
 		double sim_angVel;
         bool firstUpdate;
 		double sinParm = 0;
-		std::vector<double> springConsts = {0, 0.1} ;
+		std::vector<double> springConsts = {0, 0.01} ;
 
 		void initViaPoints( MuscInfo &myoMuscle );
 		void calculateTendonForceProgression();

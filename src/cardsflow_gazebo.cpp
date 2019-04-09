@@ -115,8 +115,7 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
         muscles.push_back(
                 boost::shared_ptr<cardsflow_gazebo::IMuscle>(new cardsflow_gazebo::IMuscle(parent_model)));
         muscles.back()->Init(musc_info[muscle]);
-        muscles.back()->dummy = true;
-        muscles.back()->muscleID = muscle;
+        muscles.back()->dummy = false;
 
     }
 
@@ -277,17 +276,21 @@ void CardsflowGazebo::MotorStatusPublisher() {
     ros::Rate rate(100);
     while (motor_status_publishing) {
         roboy_middleware_msgs::MotorStatus msg;
-        msg.id = 4;
         roboy_simulation_msgs::Tendon tendons;
         msg.power_sense = true;
         msg.id = 3;
         for (auto const &muscle:muscles) {
+            ROS_INFO_STREAM_THROTTLE(1, "current: " << 1000*muscle->motor.getCurrent());
+            ROS_INFO_STREAM_THROTTLE(1, "position: " <<  myoMuscleEncoderTicksPerMeter(muscle->motor.getPosition() * (2.0 * M_PI * muscle->motor.getSpindleRadius() / 360.0)));
+            ROS_INFO_STREAM_THROTTLE(1, "velocity: " << myoMuscleEncoderTicksPerMeter(muscle->motor.getLinearVelocity()));
+
+            msg.current.push_back(1000*muscle->motor.getCurrent()); // mA; this is actually the pid result
             msg.pwm_ref.push_back(muscle->cmd);
             msg.position.push_back(
                     myoMuscleEncoderTicksPerMeter(muscle->motor.getPosition() * (2.0 * M_PI * muscle->motor.getSpindleRadius() / 360.0))) ;// )// (2.0 * M_PI / (2000.0f * 53.0f))); // convert to motor ticks
             msg.velocity.push_back(myoMuscleEncoderTicksPerMeter(muscle->motor.getLinearVelocity()));
-            msg.displacement.push_back(muscle->see.deltaX);// / (0.01 * 0.001)); // convert m to displacement ticks
-            msg.current.push_back(muscle->motor.getVoltage()); // this is actually the pid result
+            msg.displacement.push_back(springEncoderTicksPerMeter(muscle->see.deltaX));// / (0.01 * 0.001)); // convert m to displacement ticks
+
 
             //TODO count spring displacement?
             tendons.force.push_back(muscle->getMuscleForce());

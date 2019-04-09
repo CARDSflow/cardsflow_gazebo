@@ -54,7 +54,7 @@ void MuscPID::getDefaultControlParams(control_Parameters_t *params, int control_
         case POSITION:
             params->spPosMax = 10000000;
             params->spNegMax = -10000000;
-            params->Kp = 0.001;
+            params->Kp = 0.0001;
             params->Ki = 0;
             params->Kd = 0;
             params->forwardGain = 0;

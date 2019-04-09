@@ -30,35 +30,35 @@ namespace cardsflow_gazebo {
 
         // velocity gains Kp = 200 , Ki = 5, Kd = 1
 
-         double Kp = 0.1 , Ki = 0, Kd = 0;
+         double Kp, Ki, Kd;
          if (nh->hasParam("musclemodel_Kp")) {
              nh->getParam("musclemodel_Kp", Kp);
+             PID->params[POSITION].Kp = Kp;
+             PID->params[VELOCITY].Kp = Kp;
+             PID->params[DISPLACEMENT].Kp = Kp;
+             PID->params[FORCE].Kp = Kp;
+             ROS_INFO_ONCE_NAMED("IMuscle", "using Kp %lf", Kp);
          }
-         PID->params[POSITION].Kp = Kp;
-         PID->params[VELOCITY].Kp = Kp;
-         PID->params[DISPLACEMENT].Kp = Kp;
-         PID->params[FORCE].Kp = Kp;
-         ROS_INFO_ONCE_NAMED("IMuscle", "using Kp %lf", Kp);
+
 
          if (nh->hasParam("musclemodel_Ki")) {
              nh->getParam("musclemodel_Ki", Ki);
+             PID->params[POSITION].Ki = Ki;
+             PID->params[VELOCITY].Ki = Ki;
+             PID->params[DISPLACEMENT].Ki = Ki;
+             PID->params[FORCE].Ki = Ki;
+             ROS_INFO_ONCE_NAMED("IMuscle", "using Ki %lf", Ki);
          }
-         PID->params[POSITION].Ki = Ki;
-         PID->params[VELOCITY].Ki = Ki;
-         PID->params[DISPLACEMENT].Ki = Ki;
-         PID->params[FORCE].Ki = Ki;
-         ROS_INFO_ONCE_NAMED("IMuscle", "using Ki %lf", Ki);
+
 
          if (nh->hasParam("musclemodel_Kd")) {
              nh->getParam("musclemodel_Kd", Kd);
+             PID->params[POSITION].Kd = Kd;
+             PID->params[VELOCITY].Kd = Kd;
+             PID->params[DISPLACEMENT].Kd = Kd;
+             PID->params[FORCE].Kd = Kd;
+             ROS_INFO_ONCE_NAMED("IMuscle", "using Kd %lf", Kd);
          }
-         PID->params[POSITION].Kd = Kd;
-         PID->params[VELOCITY].Kd = Kd;
-         PID->params[DISPLACEMENT].Kd = Kd;
-         PID->params[FORCE].Kd = Kd;
-         ROS_INFO_ONCE_NAMED("IMuscle", "using Kd %lf", Kd);
-
-
 
     }
 
@@ -117,56 +117,56 @@ namespace cardsflow_gazebo {
                 Actuator::RungeKutta4);
         motor.setTimeStep(0.0001);
 
-        nh->advertiseService("/roboy/simulation/SaveData/"+name, &IMuscle::saveDataService, this);
+        save_srv = nh->advertiseService("/roboy/simulation/SaveData/"+name, &IMuscle::saveDataService, this);
         ROS_INFO_STREAM("Initialized muscle with id: " << muscleID);
     }
 
     void IMuscle::Update(ros::Time &time, ros::Duration &period) {
 
 //
-      double Ki_new, Kp_new, Kd_new;
-      if (nh->hasParam("musclemodel_Kp")) {
-        nh->getParam("musclemodel_Kp", Kp_new);
-        if (Kp_new != PID->params[POSITION].Kp)
-        {
-          PID->params[POSITION].Kp = Kp_new;
-          PID->params[VELOCITY].Kp = Kp_new;
-          PID->params[DISPLACEMENT].Kp = Kp_new;
-          PID->params[FORCE].Kp = Kp_new;
-//          ROS_INFO_NAMED("IMuscle", "using Kp %lf", Kp_new);
-        }
-      }
-
-//      ROS_INFO_ONCE_NAMED("IMuscle", "using Kp %lf", Kp_new);
-
-      if (nh->hasParam("musclemodel_Ki")) {
-
-          nh->getParam("musclemodel_Ki", Ki_new);
-          if (Ki_new != PID->params[POSITION].Ki)
-          {
-            PID->params[POSITION].Ki = Ki_new;
-            PID->params[VELOCITY].Ki = Ki_new;
-            PID->params[DISPLACEMENT].Ki = Ki_new;
-            PID->params[FORCE].Ki = Ki_new;
-//            ROS_INFO_ONCE("IMuscle", "using Ki %lf", Ki_new);
-          }
-      }
-
-//      ROS_INFO_ONCE_NAMED("IMuscle", "using Ki %lf", Ki_new);
-
-      if (nh->hasParam("musclemodel_Kd")) {
-        nh->getParam("musclemodel_Kd", Kd_new);
-        if (Kd_new != PID->params[POSITION].Kd)
-        {
-          PID->params[POSITION].Kd = Kd_new;
-          PID->params[VELOCITY].Kd = Kd_new;
-          PID->params[DISPLACEMENT].Kd = Kd_new;
-          PID->params[FORCE].Kd = Kd_new;
-//          ROS_INFO("IMuscle", "using Kd %lf", Kd_new);
-        }
-      }
-
-      ROS_INFO_ONCE_NAMED("IMuscle", "using Kd %lf", Kd_new);
+//      double Ki_new, Kp_new, Kd_new;
+//      if (nh->hasParam("musclemodel_Kp")) {
+//        nh->getParam("musclemodel_Kp", Kp_new);
+//        if (Kp_new != PID->params[POSITION].Kp)
+//        {
+//          PID->params[POSITION].Kp = Kp_new;
+//          PID->params[VELOCITY].Kp = Kp_new;
+//          PID->params[DISPLACEMENT].Kp = Kp_new;
+//          PID->params[FORCE].Kp = Kp_new;
+////          ROS_INFO_NAMED("IMuscle", "using Kp %lf", Kp_new);
+//        }
+//      }
+//
+////      ROS_INFO_ONCE_NAMED("IMuscle", "using Kp %lf", Kp_new);
+//
+//      if (nh->hasParam("musclemodel_Ki")) {
+//
+//          nh->getParam("musclemodel_Ki", Ki_new);
+//          if (Ki_new != PID->params[POSITION].Ki)
+//          {
+//            PID->params[POSITION].Ki = Ki_new;
+//            PID->params[VELOCITY].Ki = Ki_new;
+//            PID->params[DISPLACEMENT].Ki = Ki_new;
+//            PID->params[FORCE].Ki = Ki_new;
+////            ROS_INFO_ONCE("IMuscle", "using Ki %lf", Ki_new);
+//          }
+//      }
+//
+////      ROS_INFO_ONCE_NAMED("IMuscle", "using Ki %lf", Ki_new);
+//
+//      if (nh->hasParam("musclemodel_Kd")) {
+//        nh->getParam("musclemodel_Kd", Kd_new);
+//        if (Kd_new != PID->params[POSITION].Kd)
+//        {
+//          PID->params[POSITION].Kd = Kd_new;
+//          PID->params[VELOCITY].Kd = Kd_new;
+//          PID->params[DISPLACEMENT].Kd = Kd_new;
+//          PID->params[FORCE].Kd = Kd_new;
+////          ROS_INFO("IMuscle", "using Kd %lf", Kd_new);
+//        }
+//      }
+//
+//      ROS_INFO_ONCE_NAMED("IMuscle", "using Kd %lf", Kd_new);
 
       double voltage = 0;
         if (pid_control) {
@@ -269,7 +269,8 @@ namespace cardsflow_gazebo {
             springDisplacement = muscleLength - tendonLength ;
             see.deltaX = springDisplacement;
 //            if (springDisplacement > 0) {
-                muscleForce = actuatorForce = springConsts[0] + springConsts[1]*(springDisplacement / (0.1 * 0.001)); //TODO move this to SEE class
+            //TODO muscleForce != actuatorForce
+            muscleForce = actuatorForce = springConsts[0] + springConsts[1]*(springEncoderTicksPerMeter(springDisplacement)); //TODO move this to SEE class
 //            } else {
 //                muscleForce = actuatorForce = 0;
 //            }
