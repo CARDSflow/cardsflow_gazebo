@@ -116,6 +116,7 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
                 boost::shared_ptr<cardsflow_gazebo::IMuscle>(new cardsflow_gazebo::IMuscle(parent_model)));
         muscles.back()->Init(musc_info[muscle]);
         muscles.back()->dummy = false;
+        muscles.back()->pid_control = true;
 
     }
 
@@ -280,9 +281,9 @@ void CardsflowGazebo::MotorStatusPublisher() {
         msg.power_sense = true;
         msg.id = 3;
         for (auto const &muscle:muscles) {
-            ROS_INFO_STREAM_THROTTLE(1, "current: " << 1000*muscle->motor.getCurrent());
-            ROS_INFO_STREAM_THROTTLE(1, "position: " <<  myoMuscleEncoderTicksPerMeter(muscle->motor.getPosition() * (2.0 * M_PI * muscle->motor.getSpindleRadius() / 360.0)));
-            ROS_INFO_STREAM_THROTTLE(1, "velocity: " << myoMuscleEncoderTicksPerMeter(muscle->motor.getLinearVelocity()));
+//            ROS_INFO_STREAM_THROTTLE(1, "current: " << 1000*muscle->motor.getCurrent());
+//            ROS_INFO_STREAM_THROTTLE(1, "position: " <<  myoMuscleEncoderTicksPerMeter(muscle->motor.getPosition() * (2.0 * M_PI * muscle->motor.getSpindleRadius() / 360.0)));
+//            ROS_INFO_STREAM_THROTTLE(1, "velocity: " << myoMuscleEncoderTicksPerMeter(muscle->motor.getLinearVelocity()));
 
             msg.current.push_back(1000*muscle->motor.getCurrent()); // mA; this is actually the pid result
             msg.pwm_ref.push_back(muscle->cmd);

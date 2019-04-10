@@ -184,14 +184,17 @@ namespace cardsflow_gazebo {
                     voltage = PID->calculate(period.toSec(), cmd, feedback.velocity);
                     break;
                 case DISPLACEMENT:
-                    actuatorForce = muscleForce = springConsts[0] + springConsts[1]*cmd;//(cmd / (0.1 * 0.001));
+//                    actuatorForce = muscleForce = springConsts[0] + springConsts[1]*cmd;//(cmd / (0.1 * 0.001));
 //                    ROS_INFO_THROTTLE(1,"Applying cmd: %f", cmd);
-                    ROS_INFO_THROTTLE(1,"applying force: %f N", actuatorForce);
-//                    if(cmd>=0) // negative displacement doesnt make sense
-//                        actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.displacement);
-//                    else
-//                        actuator.motor.voltage = PID->calculate(period.toSec(), 0, feedback.displacement);
-//                    break;
+//                    ROS_INFO_THROTTLE(1,"applying force: %f N", actuatorForce);
+                    if(cmd>=0) // negative displacement doesnt make sense
+                    {
+                        ROS_INFO_STREAM_THROTTLE(1, "cmd " << cmd << " feedback " << feedback.displacement);
+                        voltage = (-1)*PID->calculate(period.toSec(), cmd, feedback.displacement);
+                    }
+                    else
+                        voltage = (-1)*PID->calculate(period.toSec(), 0, feedback.displacement);
+                    break;
                 case FORCE:
 //                    if(cmd>0)
                         muscleForce = actuatorForce = cmd;
@@ -213,7 +216,7 @@ namespace cardsflow_gazebo {
         markerMsg.set_id(muscleID);
         markerMsg.clear_point();
 
-
+        ROS_INFO_STREAM_THROTTLE(1, "voltage: " << voltage);
 
         for (int i = 0; i < viaPoints.size(); i++) {
             // update viaPoint coordinates
@@ -287,7 +290,7 @@ namespace cardsflow_gazebo {
 
             feedback.position = myoMuscleEncoderTicksPerMeter(motor.getPosition()*motor.getSpindleRadius()* 2.0 * M_PI/360.0);// winch_radius*2pi*radians = m
             feedback.velocity = myoMuscleEncoderTicksPerMeter(motor.getLinearVelocity()); // m/s
-            feedback.displacement = springDisplacement; // m
+            feedback.displacement = springEncoderTicksPerMeter(springDisplacement); // m
 
         }
         else {
