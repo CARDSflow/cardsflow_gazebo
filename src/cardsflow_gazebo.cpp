@@ -3,13 +3,17 @@
 int CardsflowGazebo::roboyID_generator = 0;
 
 CardsflowGazebo::CardsflowGazebo() {
+
+
     if (!ros::isInitialized()) {
-        int argc = 0;
-        char **argv = NULL;
-        ros::init(argc, argv, "CardsflowGazebo",
-                  ros::init_options::NoSigintHandler | ros::init_options::AnonymousName);
+        ROS_FATAL_STREAM_NAMED("cardsflow_gazebo", "A ROS node for gazebo has not been initialized, unable to load plugin.");
+//        int argc = 0;
+//        char **argv = NULL;
+//        ros::init(argc, argv, "cardsflow_gazebo");
+//                  ros::init_options::NoSigintHandler);
     }
-    nh = ros::NodeHandlePtr(new ros::NodeHandle);
+    nh = new ros::NodeHandle();
+//    nh.reset(new ros::NodeHandle());
 
     motorCommand_sub = nh->subscribe("/roboy/middleware/MotorCommand", 1, &CardsflowGazebo::MotorCommand, this);
     motorStatus_pub = nh->advertise<roboy_middleware_msgs::MotorStatus>("/roboy/middleware/MotorStatus", 1);
@@ -21,14 +25,9 @@ CardsflowGazebo::CardsflowGazebo() {
     emergencyStop_srv = nh->advertiseService("/roboy/middleware/EmergencyStop", &CardsflowGazebo::EmergencyStopService,
                                              this);
     torque_srv = nh->advertiseService("/roboy/middleware/TorqueControl", &CardsflowGazebo::TorqueControlService, this);
+    joint_srv =nh->advertiseService("/roboy/simulation/joint/detach", &CardsflowGazebo::DetachJointService, this);
+    step_srv = nh->advertiseService("/roboy/simulation/step", &CardsflowGazebo::DoStep, this);
 
-    #ifdef PROTOBUF_opensim_5fmuscles_2eproto__INCLUDED
-        muscleInfoNode = transport::NodePtr(new transport::Node());
-        //TODO pass gazebo world name as node name
-        muscleInfoNode->Init("default");
-        muscleInfoPublisher =
-                this->muscleInfoNode->Advertise<msgs::OpenSimMuscles>("~/muscles", /*50*/ 10, 60);
-    #endif
 
     spinner.reset(new ros::AsyncSpinner(2));
     spinner->start();
@@ -38,9 +37,19 @@ CardsflowGazebo::~CardsflowGazebo() {
     motor_status_publishing = false;
     if (motor_status_publisher != nullptr)
         motor_status_publisher->join();
+    nh->shutdown();
 }
 
 void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sdf_) {
+
+#ifdef PROTOBUF_opensim_5fmuscles_2eproto__INCLUDED
+        muscleInfoNode = transport::NodePtr(new transport::Node());
+        //TODO pass gazebo world name as node name
+        muscleInfoNode->Init("default");
+        muscleInfoPublisher =
+                this->muscleInfoNode->Advertise<msgs::OpenSimMuscles>("~/muscles", /*50*/ 10, 60);
+#endif
+
     ROS_INFO("Loading CardsflowGazebo plugin");
     // Save pointers to the model
     parent_model = parent_;
@@ -115,7 +124,7 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
         muscles.push_back(
                 boost::shared_ptr<cardsflow_gazebo::IMuscle>(new cardsflow_gazebo::IMuscle(parent_model)));
         muscles.back()->Init(musc_info[muscle]);
-        muscles.back()->dummy = false;
+        muscles.back()->dummy = true;
         muscles.back()->pid_control = true;
 
     }
@@ -149,6 +158,8 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
     world_to_link_transform.reset(new map<string, Matrix4d>);
 
     ROS_INFO("CardsflowGazebo ready now");
+
+    parent_model->GetWorld()->SetPaused(true);
 }
 
 void CardsflowGazebo::Update() {
@@ -239,6 +250,26 @@ void CardsflowGazebo::Reset() {
     // Reset timing variables to not pass negative update periods to controllers on world reset
     last_update_sim_time_ros = ros::Time();
     last_write_sim_time_ros = ros::Time();
+    musc_info.clear();
+    ROS_INFO("Parsing musc muscles");
+    string cardsflow_xml;
+    nh->getParam("cardsflow_xml",cardsflow_xml);
+    if (!parseSDFusion(cardsflow_xml, musc_info, endEffectors))
+        ROS_WARN("ERROR parsing musc muscles, check your cardsflow xml file.");
+    numberOfMuscles = musc_info.size();
+    ROS_INFO("Found %d musc muscles in cardsflow xml file", numberOfMuscles);
+
+    muscles.clear();
+    for (uint muscle = 0; muscle < musc_info.size(); muscle++) {
+        muscles.push_back(
+                boost::shared_ptr<cardsflow_gazebo::IMuscle>(new cardsflow_gazebo::IMuscle(parent_model)));
+        muscles.back()->Init(musc_info[muscle]);
+        muscles.back()->dummy = false;
+        muscles.back()->pid_control = true;
+
+    }
+
+    parent_model->GetWorld()->SetPaused(true);
     //reset acceleration of links and the actuator simulation.
 }
 
@@ -302,6 +333,21 @@ void CardsflowGazebo::MotorStatusPublisher() {
         tendon_state_pub.publish(tendons);
         rate.sleep();
     }
+}
+
+bool CardsflowGazebo::DetachJointService(std_srvs::Trigger::Request &req,
+        std_srvs::Trigger::Response &res) {
+
+    parent_model->GetJoint("ball_joint")->Detach();
+    return true;
+}
+
+bool CardsflowGazebo::DoStep(std_srvs::Trigger::Request &req,
+                             std_srvs::Trigger::Response &res) {
+    parent_model->GetWorld()->Step(100);
+    res.success = true;
+    res.message = "1 step at a time";
+    return true;
 }
 
 bool CardsflowGazebo::MotorConfigService(roboy_middleware_msgs::MotorConfigService::Request &req,

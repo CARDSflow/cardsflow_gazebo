@@ -109,6 +109,7 @@ namespace cardsflow_gazebo {
         motor.setMomentOfInertiaMotor(4.09e-7);
         motor.setSpindleRadius(0.0045);
 
+
         motor.setVoltage(0.0);
         motor.setLoadTorque(0.0);
 
@@ -117,7 +118,8 @@ namespace cardsflow_gazebo {
                 Actuator::RungeKutta4);
         motor.setTimeStep(0.0001);
 
-        save_srv = nh->advertiseService("/roboy/simulation/SaveData/"+name, &IMuscle::saveDataService, this);
+        if (save_srv.getService() == "")
+            save_srv = nh->advertiseService("/roboy/simulation/SaveData/"+name, &IMuscle::saveDataService, this);
         ROS_INFO_STREAM("Initialized muscle with id: " << muscleID);
     }
 
@@ -270,6 +272,12 @@ namespace cardsflow_gazebo {
 
         if (!dummy) {
             springDisplacement = muscleLength - tendonLength ;
+            if (springDisplacement < 0)
+                springDisplacement = 0;
+//            else if (springDisplacement > 0.05) {
+//                springConsts[1] = 50.0;
+////                springDisplacement = 0.05;
+//            }
             see.deltaX = springDisplacement;
 //            if (springDisplacement > 0) {
             //TODO muscleForce != actuatorForce
@@ -279,6 +287,7 @@ namespace cardsflow_gazebo {
 //            }
 
             calculateTendonForceProgression();
+
             motor.setLoadTorque(motor.getSpindleRadius()*viaPoints[0]->fb);
             motor.setVoltage(voltage);
             motor.step(period.toSec());
@@ -315,6 +324,7 @@ namespace cardsflow_gazebo {
         status["muscleLengthChange"] = prevMuscleLength - muscleLength;
         status["tendonLengthChangeTotal"] = initialTendonLength - tendonLength;
         status["current"] = motor.getCurrent();
+        status["force"] = muscleForce;
 
         log[time.now().toNSec()] = status;
     #endif

@@ -12,6 +12,7 @@
 #include <roboy_middleware_msgs/TorqueControl.h>
 #include <roboy_simulation_msgs/Tendon.h>
 #include <std_srvs/SetBool.h>
+#include <std_srvs/Trigger.h>
 #include <sensor_msgs/JointState.h>
 #include "cardsflow_gazebo/muscle/IMuscle.hpp"
 #include <mutex>
@@ -106,13 +107,18 @@ private:
     bool TorqueControlService(roboy_middleware_msgs::TorqueControl::Request &req,
                             roboy_middleware_msgs::TorqueControl::Response &res);
 
+    bool DetachJointService(std_srvs::Trigger::Request &req,
+                                             std_srvs::Trigger::Response &res);
+    bool DoStep(std_srvs::Trigger::Request &req,
+                            std_srvs::Trigger::Response &res);
+
     bool emergency_stop = false;
 
     static int roboyID_generator;
-    ros::NodeHandlePtr nh;
+    ros::NodeHandle* nh;
     ros::Subscriber motorCommand_sub, pid_control_sub;
     ros::Publisher motorStatus_pub, joint_state_pub, floating_base_pub, tendon_state_pub;
-    ros::ServiceServer motorConfig_srv, controlMode_srv, emergencyStop_srv, torque_srv;
+    ros::ServiceServer motorConfig_srv, controlMode_srv, emergencyStop_srv, torque_srv, joint_srv, step_srv;
     boost::shared_ptr<ros::AsyncSpinner> spinner;
 
     bool motor_status_publishing = true;
@@ -151,9 +157,6 @@ private:
 
     bool draw_gazebo_tendons = false;
 
-    /// \brief Node for protobuf communication.
-    transport::NodePtr muscleInfoNode;
-
-    /// \brief Info publisher on opensim muscles.
-    transport::PublisherPtr muscleInfoPublisher;
+    transport::NodePtr gzNode;
+    transport::PublisherPtr gzPublisher;
 };
