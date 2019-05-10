@@ -16,6 +16,8 @@ CardsflowGazebo::CardsflowGazebo() {
 //    nh.reset(new ros::NodeHandle());
 
     motorCommand_sub = nh->subscribe("/roboy/middleware/MotorCommand", 1, &CardsflowGazebo::MotorCommand, this);
+    step_sub = nh->subscribe("/roboy/simulation/step", 1, &CardsflowGazebo::StepCb, this);
+    detach_sub = nh->subscribe("/roboy/simulation/joint/detach", 1, &CardsflowGazebo::DetachCb, this);
     motorStatus_pub = nh->advertise<roboy_middleware_msgs::MotorStatus>("/roboy/middleware/MotorStatus", 1);
     joint_state_pub = nh->advertise<sensor_msgs::JointState>("/joint_states", 1);
     floating_base_pub = nh->advertise<geometry_msgs::Pose>("/floating_base", 1);
@@ -26,9 +28,10 @@ CardsflowGazebo::CardsflowGazebo() {
                                              this);
     torque_srv = nh->advertiseService("/roboy/middleware/TorqueControl", &CardsflowGazebo::TorqueControlService, this);
     joint_srv =nh->advertiseService("/roboy/simulation/joint/detach", &CardsflowGazebo::DetachJointService, this);
+    atach_srv =nh->advertiseService("/roboy/simulation/joint/atach", &CardsflowGazebo::AtachJointService, this);
     step_srv = nh->advertiseService("/roboy/simulation/step", &CardsflowGazebo::DoStep, this);
 
-
+    pauseGazebo = nh->serviceClient<std_srvs::Empty>("/gazebo/pause_physics");
     spinner.reset(new ros::AsyncSpinner(2));
     spinner->start();
 }
@@ -37,6 +40,9 @@ CardsflowGazebo::~CardsflowGazebo() {
     motor_status_publishing = false;
     if (motor_status_publisher != nullptr)
         motor_status_publisher->join();
+    step_srv.shutdown();
+    joint_srv.shutdown();
+
     nh->shutdown();
 }
 
@@ -160,6 +166,11 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
     ROS_INFO("CardsflowGazebo ready now");
 
     parent_model->GetWorld()->SetPaused(true);
+
+    pose = parent_model->GetJoint("ball_joint")->InitialAnchorPose();
+    ROS_INFO_STREAM("position: " << parent_model->GetJoint("ball_joint")->Position(0)
+    << "anchor: " << parent_model->GetJoint("ball_joint")->Anchor(0)
+    << "anchor error pose: " << parent_model->GetJoint("ball_joint")->AnchorErrorPose());
 }
 
 void CardsflowGazebo::Update() {
@@ -173,6 +184,7 @@ void CardsflowGazebo::Update() {
     readSim(sim_time_ros, sim_period);
     writeSim(sim_time_ros, sim_time_ros - last_write_sim_time_ros);
 
+//    ROS_INFO_STREAM_THROTTLE(1, parent_model->GetJoint("ball_joint")->AnchorErrorPose());
     #ifdef PROTOBUF_opensim_5fmuscles_2eproto__INCLUDED
         // TODO move it; rename it
         publishOpenSimInfo(&muscles, parent_model->GetWorld()->GetSimTime());
@@ -248,6 +260,74 @@ void CardsflowGazebo::writeSim(ros::Time time, ros::Duration period) {
 
 void CardsflowGazebo::Reset() {
     // Reset timing variables to not pass negative update periods to controllers on world reset
+//    std_srvs::Empty empty;
+//    pauseGazebo.call(empty);
+//    pose.Set(0.238225,0.295141, 0.500279, 0.0, 0.0, 0.0);
+//    parent_model->GetWorld()->Physics()->RemoveModel("musc-le-ball");
+
+//    parent_model->GetLink("ball")->SetWorldPose(pose);
+    parent_model->GetLink("ball")->ResetPhysicsStates();
+    parent_model->GetLink("ball")->Reset();
+//    parent_model->Reset();
+//    parent_model->GetJoint("ball_joint")->Init();
+//    parent_model->GetJoint("ball_joint")->Reset();
+//    parent_model->GetJoint("ball_joint")->SetAnchor(0, ignition::math::Vector3<double>(0,0,0));
+//    parent_model->GetJoint("ball_joint")->Attach(parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"));
+//
+
+
+//
+    pose.Set(0.0, 0.0, 0, 0.0, 0.0, 0.0);
+//    pose.Pos().Z() = 10.0;
+//////    pose.Set(-0.581338, 0.008394, 0.372690, -1.727463, 0.0, 0.0);
+//
+//
+
+//
+
+////    auto _sdf = parent_model->GetJoint("ball_joint")->GetSDF();
+////    ROS_INFO_STREAM(_sdf);
+////    joint->Load(_sdf);
+////    parent_model->Load(sdf);
+//
+//    joint->Load(parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"), pose );
+////
+//    joint->Attach(parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"));
+
+//    parent_model->CreateJoint("ball_joint", "fixed", parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"));
+//    parent_model->Reset();
+//    parent_model->GetJoint("ball_joint")->Load(sdf);
+//    ROS_INFO_STREAM("position: " << parent_model->GetJoint("ball_joint")->Position(0)
+//                                 << "anchor: " << parent_model->GetJoint("ball_joint")->Anchor(0)
+//                                 << "anchor error pose: " << parent_model->GetJoint("ball_joint")->AnchorErrorPose());
+//    ROS_INFO_STREAM("axis frame: " << parent_model->GetJoint("ball_joint")->AxisFrame(0) << "axis frame offset: " << parent_model->GetJoint("ball_joint")->AxisFrameOffset(0));
+    if (! parent_model->GetJoint("ball_joint")){//->GetChild() != parent_model->GetLink("ball") ) {
+            ROS_INFO("creating joint");
+        physics::JointPtr joint;
+    //    parent_model->GetWorld()->SetPaused(true);
+        joint = parent_model->GetWorld()->Physics()->CreateJoint("fixed", parent_model);
+        joint->Load(parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"), pose );
+        joint->Attach(parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"));
+        joint->SetModel(parent_model);
+        joint->Init();
+        joint->SetName("ball_joint");
+//        parent_model->GetJoint("ball_joint")->AddChild(parent_model->GetLink("ball"));
+//        ROS_INFO_STREAM("pose: " << pose);
+//        parent_model->GetJoint("ball_joint")->Reset();
+//
+//        parent_model->GetLink("ball")->AddParentJoint(parent_model->GetJoint("ball_joint"));
+//        parent_model->GetLink("upper_arm")->AddChildJoint(parent_model->GetJoint("ball_joint"));
+////        parent_model->GetJoint("ball_joint")->Load(parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"), pose );
+//        parent_model->GetJoint("ball_joint")->Attach(parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"));
+//        parent_model->GetJoint("ball_joint")->SetAnchor(0, ignition::math::Vector3d(0,0.43,0.64));
+//        parent_model->GetJoint("ball_joint")->Update();
+//
+//        ROS_INFO_STREAM("position: " << parent_model->GetJoint("ball_joint")->Position(0)
+//                                     << "anchor: " << parent_model->GetJoint("ball_joint")->Anchor(0)
+//                                     << "anchor error pose: " << parent_model->GetJoint("ball_joint")->AnchorErrorPose());
+    }
+
+
     last_update_sim_time_ros = ros::Time();
     last_write_sim_time_ros = ros::Time();
     musc_info.clear();
@@ -269,9 +349,11 @@ void CardsflowGazebo::Reset() {
 
     }
 
-    parent_model->GetWorld()->SetPaused(true);
+
     //reset acceleration of links and the actuator simulation.
 }
+
+
 
 void CardsflowGazebo::MotorCommand(const roboy_middleware_msgs::MotorCommand::ConstPtr &msg) {
     // update pid setvalues
@@ -304,6 +386,15 @@ void CardsflowGazebo::MotorCommand(const roboy_middleware_msgs::MotorCommand::Co
     }
 }
 
+void CardsflowGazebo::StepCb(const std_msgs::Int32::ConstPtr &msg) {
+    parent_model->GetWorld()->Step(msg->data);
+}
+
+void CardsflowGazebo::DetachCb(const std_msgs::Bool::ConstPtr &msg) {
+    parent_model->GetJoint("ball_joint")->Detach();
+}
+
+
 void CardsflowGazebo::MotorStatusPublisher() {
     ros::Rate rate(100);
     while (motor_status_publishing) {
@@ -335,16 +426,44 @@ void CardsflowGazebo::MotorStatusPublisher() {
     }
 }
 
+bool CardsflowGazebo::AtachJointService(std_srvs::Trigger::Request &req,
+        std_srvs::Trigger::Response &res) {
+    auto links = {"ball", "upper_arm", "lower_arm"};
+    for (auto l: links){
+        parent_model->GetLink(l)->ResetPhysicsStates();
+        parent_model->GetLink(l)->Reset();
+        parent_model->GetLink(l)->Update();
+    }
+
+    parent_model->GetJoint("ball_joint")->Attach(parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"));
+    parent_model->GetWorld()->SetPaused(true);
+    return true;
+
+//    ROS_INFO("creating joint");
+//    physics::JointPtr joint;
+//    //    parent_model->GetWorld()->SetPaused(true);
+//    joint = parent_model->GetWorld()->Physics()->CreateJoint("fixed", parent_model);
+//    joint->Load(parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"), pose );
+//    joint->Attach(parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"));
+//    joint->SetModel(parent_model);
+//    joint->Init();
+//    joint->SetName("ball_joint");
+
+}
+
 bool CardsflowGazebo::DetachJointService(std_srvs::Trigger::Request &req,
         std_srvs::Trigger::Response &res) {
-
+//    pose = parent_model->GetJoint("ball_joint")->InitialAnchorPose();// ChildWorldPose();
+//    parent_model->GetJoint("ball_joint")->RemoveChild("musc-le-ball::ball");
     parent_model->GetJoint("ball_joint")->Detach();
+//    parent_model->RemoveJoint("ball_joint");
+
     return true;
 }
 
 bool CardsflowGazebo::DoStep(std_srvs::Trigger::Request &req,
                              std_srvs::Trigger::Response &res) {
-    parent_model->GetWorld()->Step(100);
+    parent_model->GetWorld()->Step(200);
     res.success = true;
     res.message = "1 step at a time";
     return true;

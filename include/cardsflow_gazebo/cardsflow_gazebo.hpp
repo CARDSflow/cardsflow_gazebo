@@ -10,9 +10,12 @@
 #include <roboy_middleware_msgs/MotorConfigService.h>
 #include <roboy_middleware_msgs/ControlMode.h>
 #include <roboy_middleware_msgs/TorqueControl.h>
+#include <std_msgs/Int32.h>
+#include <std_msgs/Bool.h>
 #include <roboy_simulation_msgs/Tendon.h>
 #include <std_srvs/SetBool.h>
 #include <std_srvs/Trigger.h>
+#include <std_srvs/Empty.h>
 #include <sensor_msgs/JointState.h>
 #include "cardsflow_gazebo/muscle/IMuscle.hpp"
 #include <mutex>
@@ -93,6 +96,9 @@ private:
     */
     void MotorCommand(const roboy_middleware_msgs::MotorCommand::ConstPtr &msg);
 
+    void StepCb(const std_msgs::Int32::ConstPtr &msg);
+    void DetachCb(const std_msgs::Bool::ConstPtr &msg);
+
     void MotorStatusPublisher();
 
     bool MotorConfigService(roboy_middleware_msgs::MotorConfigService::Request &req,
@@ -109,6 +115,10 @@ private:
 
     bool DetachJointService(std_srvs::Trigger::Request &req,
                                              std_srvs::Trigger::Response &res);
+
+    bool AtachJointService(std_srvs::Trigger::Request &req,
+                            std_srvs::Trigger::Response &res);
+
     bool DoStep(std_srvs::Trigger::Request &req,
                             std_srvs::Trigger::Response &res);
 
@@ -116,10 +126,11 @@ private:
 
     static int roboyID_generator;
     ros::NodeHandle* nh;
-    ros::Subscriber motorCommand_sub, pid_control_sub;
+    ros::Subscriber motorCommand_sub, pid_control_sub, step_sub, detach_sub;
     ros::Publisher motorStatus_pub, joint_state_pub, floating_base_pub, tendon_state_pub;
-    ros::ServiceServer motorConfig_srv, controlMode_srv, emergencyStop_srv, torque_srv, joint_srv, step_srv;
+    ros::ServiceServer motorConfig_srv, controlMode_srv, emergencyStop_srv, torque_srv, joint_srv, step_srv, atach_srv;
     boost::shared_ptr<ros::AsyncSpinner> spinner;
+    ros::ServiceClient pauseGazebo;
 
     bool motor_status_publishing = true;
     boost::shared_ptr<boost::thread> motor_status_publisher = nullptr;
@@ -132,6 +143,7 @@ private:
     // Pointer to the model
     gazebo::physics::ModelPtr parent_model;
     sdf::ElementPtr sdf;
+    ignition::math::Pose3<double> pose;
 
     double gazebo_max_step_size = 0.003;
     // Pointer to the update event connection
