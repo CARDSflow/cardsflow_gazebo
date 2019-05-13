@@ -22,6 +22,7 @@ CardsflowGazebo::CardsflowGazebo() {
     joint_state_pub = nh->advertise<sensor_msgs::JointState>("/joint_states", 1);
     floating_base_pub = nh->advertise<geometry_msgs::Pose>("/floating_base", 1);
     tendon_state_pub = nh->advertise<roboy_simulation_msgs::Tendon>("/tendon_states", 1);
+    ball_pub = nh->advertise<std_msgs::Float64>("/roboy/simulation/ball/speed", 1);
     motorConfig_srv = nh->advertiseService("/roboy/middleware/MotorConfig", &CardsflowGazebo::MotorConfigService, this);
     controlMode_srv = nh->advertiseService("/roboy/middleware/ControlMode", &CardsflowGazebo::ControlModeService, this);
     emergencyStop_srv = nh->advertiseService("/roboy/middleware/EmergencyStop", &CardsflowGazebo::EmergencyStopService,
@@ -167,10 +168,10 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
 
     parent_model->GetWorld()->SetPaused(true);
 
-    pose = parent_model->GetJoint("ball_joint")->InitialAnchorPose();
-    ROS_INFO_STREAM("position: " << parent_model->GetJoint("ball_joint")->Position(0)
-    << "anchor: " << parent_model->GetJoint("ball_joint")->Anchor(0)
-    << "anchor error pose: " << parent_model->GetJoint("ball_joint")->AnchorErrorPose());
+//    pose = parent_model->GetJoint("ball_joint")->InitialAnchorPose();
+//    ROS_INFO_STREAM("position: " << parent_model->GetJoint("ball_joint")->Position(0)
+//    << "anchor: " << parent_model->GetJoint("ball_joint")->Anchor(0)
+//    << "anchor error pose: " << parent_model->GetJoint("ball_joint")->AnchorErrorPose());
 }
 
 void CardsflowGazebo::Update() {
@@ -223,6 +224,10 @@ void CardsflowGazebo::readSim(ros::Time time, ros::Duration period) {
     }
     joint_state_pub.publish(joint_state_msg);
 
+//    auto ball_msg = std_msgs::Float64();
+//    ball_msg.data = abs(parent_model->GetLink("ball")->WorldCoGLinearVel().Y());// + abs(parent_model->GetLink("ball")->WorldCoGLinearVel().Y());
+//    ball_pub.publish(ball_msg);
+
     for (uint muscle = 0; muscle < muscles.size(); muscle++) {
         for (int i = 0; i < muscles[muscle]->viaPoints.size(); i++) {
             ignition::math::Pose3d linkPose = muscles[muscle]->viaPoints[i]->link->WorldPose();
@@ -259,74 +264,6 @@ void CardsflowGazebo::writeSim(ros::Time time, ros::Duration period) {
 }
 
 void CardsflowGazebo::Reset() {
-    // Reset timing variables to not pass negative update periods to controllers on world reset
-//    std_srvs::Empty empty;
-//    pauseGazebo.call(empty);
-//    pose.Set(0.238225,0.295141, 0.500279, 0.0, 0.0, 0.0);
-//    parent_model->GetWorld()->Physics()->RemoveModel("musc-le-ball");
-
-//    parent_model->GetLink("ball")->SetWorldPose(pose);
-    parent_model->GetLink("ball")->ResetPhysicsStates();
-    parent_model->GetLink("ball")->Reset();
-//    parent_model->Reset();
-//    parent_model->GetJoint("ball_joint")->Init();
-//    parent_model->GetJoint("ball_joint")->Reset();
-//    parent_model->GetJoint("ball_joint")->SetAnchor(0, ignition::math::Vector3<double>(0,0,0));
-//    parent_model->GetJoint("ball_joint")->Attach(parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"));
-//
-
-
-//
-    pose.Set(0.0, 0.0, 0, 0.0, 0.0, 0.0);
-//    pose.Pos().Z() = 10.0;
-//////    pose.Set(-0.581338, 0.008394, 0.372690, -1.727463, 0.0, 0.0);
-//
-//
-
-//
-
-////    auto _sdf = parent_model->GetJoint("ball_joint")->GetSDF();
-////    ROS_INFO_STREAM(_sdf);
-////    joint->Load(_sdf);
-////    parent_model->Load(sdf);
-//
-//    joint->Load(parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"), pose );
-////
-//    joint->Attach(parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"));
-
-//    parent_model->CreateJoint("ball_joint", "fixed", parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"));
-//    parent_model->Reset();
-//    parent_model->GetJoint("ball_joint")->Load(sdf);
-//    ROS_INFO_STREAM("position: " << parent_model->GetJoint("ball_joint")->Position(0)
-//                                 << "anchor: " << parent_model->GetJoint("ball_joint")->Anchor(0)
-//                                 << "anchor error pose: " << parent_model->GetJoint("ball_joint")->AnchorErrorPose());
-//    ROS_INFO_STREAM("axis frame: " << parent_model->GetJoint("ball_joint")->AxisFrame(0) << "axis frame offset: " << parent_model->GetJoint("ball_joint")->AxisFrameOffset(0));
-    if (! parent_model->GetJoint("ball_joint")){//->GetChild() != parent_model->GetLink("ball") ) {
-            ROS_INFO("creating joint");
-        physics::JointPtr joint;
-    //    parent_model->GetWorld()->SetPaused(true);
-        joint = parent_model->GetWorld()->Physics()->CreateJoint("fixed", parent_model);
-        joint->Load(parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"), pose );
-        joint->Attach(parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"));
-        joint->SetModel(parent_model);
-        joint->Init();
-        joint->SetName("ball_joint");
-//        parent_model->GetJoint("ball_joint")->AddChild(parent_model->GetLink("ball"));
-//        ROS_INFO_STREAM("pose: " << pose);
-//        parent_model->GetJoint("ball_joint")->Reset();
-//
-//        parent_model->GetLink("ball")->AddParentJoint(parent_model->GetJoint("ball_joint"));
-//        parent_model->GetLink("upper_arm")->AddChildJoint(parent_model->GetJoint("ball_joint"));
-////        parent_model->GetJoint("ball_joint")->Load(parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"), pose );
-//        parent_model->GetJoint("ball_joint")->Attach(parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"));
-//        parent_model->GetJoint("ball_joint")->SetAnchor(0, ignition::math::Vector3d(0,0.43,0.64));
-//        parent_model->GetJoint("ball_joint")->Update();
-//
-//        ROS_INFO_STREAM("position: " << parent_model->GetJoint("ball_joint")->Position(0)
-//                                     << "anchor: " << parent_model->GetJoint("ball_joint")->Anchor(0)
-//                                     << "anchor error pose: " << parent_model->GetJoint("ball_joint")->AnchorErrorPose());
-    }
-
 
     last_update_sim_time_ros = ros::Time();
     last_write_sim_time_ros = ros::Time();

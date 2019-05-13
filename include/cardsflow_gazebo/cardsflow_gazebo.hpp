@@ -12,6 +12,7 @@
 #include <roboy_middleware_msgs/TorqueControl.h>
 #include <std_msgs/Int32.h>
 #include <std_msgs/Bool.h>
+#include <std_msgs/Float64.h>
 #include <roboy_simulation_msgs/Tendon.h>
 #include <std_srvs/SetBool.h>
 #include <std_srvs/Trigger.h>
@@ -127,7 +128,7 @@ private:
     static int roboyID_generator;
     ros::NodeHandle* nh;
     ros::Subscriber motorCommand_sub, pid_control_sub, step_sub, detach_sub;
-    ros::Publisher motorStatus_pub, joint_state_pub, floating_base_pub, tendon_state_pub;
+    ros::Publisher motorStatus_pub, joint_state_pub, floating_base_pub, tendon_state_pub, ball_pub;
     ros::ServiceServer motorConfig_srv, controlMode_srv, emergencyStop_srv, torque_srv, joint_srv, step_srv, atach_srv;
     boost::shared_ptr<ros::AsyncSpinner> spinner;
     ros::ServiceClient pauseGazebo;
