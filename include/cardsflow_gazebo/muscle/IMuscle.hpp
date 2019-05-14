@@ -36,6 +36,7 @@
 #include <ignition/msgs.hh>
 
 #define ENABLE_LOGGING
+#define springEncoderTicksPerMeter(meter) (meter*10000.0)
 
 namespace cardsflow_gazebo {
 
