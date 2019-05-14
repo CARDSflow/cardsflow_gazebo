@@ -30,7 +30,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
 #find_package(Qt5 REQUIRED COMPONENTS Widgets Core Gui)
-find_package(nlohmann_json REQUIRED)
+#find_package(nlohmann_json REQUIRED)
 
 find_package(gazebo REQUIRED)
 include_directories(${GAZEBO_INCLUDE_DIRS})
