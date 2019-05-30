@@ -196,11 +196,11 @@ namespace cardsflow_gazebo {
                         voltage = (-1)*PID->calculate(period.toSec(), 0, feedback.displacement);
                     break;
                 case FORCE:
-//                    if(cmd>0)
-                        muscleForce = actuatorForce = cmd;
-                        ROS_INFO_THROTTLE(1,"Applying cmd: %f", cmd);
-//                    else
-//                        muscleForce = 0;
+                    if(cmd>=0) {
+                        muscleForce = cmd;
+                        ROS_INFO_THROTTLE(1, "Applying force: %f", cmd);
+                    }else
+                        muscleForce = 0;
                     break;
                 default:
 //                    actuator.motor.voltage = 0;
@@ -371,6 +371,8 @@ namespace cardsflow_gazebo {
     // Calculates how the force goes along the tendon by going throught the Viapoint
     void IMuscle::calculateTendonForceProgression() {
         for (int i = 0; i < viaPoints.size(); i++) {
+            //CalculateForce differs for each wraping-type
+            viaPoints[i]->CalculateForce();
             if (viaPoints[i]->prevPoint && viaPoints[i]->nextPoint) {
                 viaPoints[i]->fa = viaPoints[i]->prevPoint->fb;
                 viaPoints[i]->fb = viaPoints[i]->prevPoint->fb;
@@ -381,8 +383,6 @@ namespace cardsflow_gazebo {
                 viaPoints[i]->fa = viaPoints[i]->prevPoint->fb;
                 viaPoints[i]->fb = 0;
             }
-            //CalculateForce differs for each wraping-type
-            viaPoints[i]->CalculateForce();
         }
     }
 

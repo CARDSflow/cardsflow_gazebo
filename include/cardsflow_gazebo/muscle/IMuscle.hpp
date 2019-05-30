@@ -78,7 +78,7 @@ namespace cardsflow_gazebo {
 		vector<IViaPointsPtr> viaPoints;
 		double cmd = 0;
 		bool pid_control = true;
-        bool dummy = false;
+        bool dummy = true;
         boost::shared_ptr<MuscPID> PID;
         ros::ServiceServer save_srv;
 
