@@ -31,6 +31,7 @@ CardsflowGazebo::CardsflowGazebo() {
     joint_srv =nh->advertiseService("/roboy/simulation/joint/detach", &CardsflowGazebo::DetachJointService, this);
     atach_srv =nh->advertiseService("/roboy/simulation/joint/atach", &CardsflowGazebo::AtachJointService, this);
     step_srv = nh->advertiseService("/roboy/simulation/step", &CardsflowGazebo::DoStep, this);
+    joint_vel_srv = nh->advertiseService("/roboy/simulation/joint/velocity", &CardsflowGazebo::GetJointVelocity, this);
 
     pauseGazebo = nh->serviceClient<std_srvs::Empty>("/gazebo/pause_physics");
     spinner.reset(new ros::AsyncSpinner(2));
@@ -190,6 +191,22 @@ void CardsflowGazebo::Update() {
         // TODO move it; rename it
         publishOpenSimInfo(&muscles, parent_model->GetWorld()->GetSimTime());
     #endif
+    double forceCoef = 0.0;
+    nh->getParam("forceCoef", forceCoef);
+    if (parent_model->GetLink("bike")) {
+        auto vel = parent_model->GetLink("bike")->WorldLinearVel();
+//        if (vel.X() < 0 ) {
+//            ignition::math::Vector3d force((-1)*forceCoef*vel.X(), 0, 0);
+//            parent_model->GetLink("bike")->SetForce(force);
+//        }
+        if (parent_model->GetJoint("joint_pedal")) {
+            for (auto j: {"joint_wheel_back", "joint_wheel_left", "joint_wheel_right"}) {
+                parent_model->GetJoint(j)->SetVelocity(0, parent_model->GetJoint("joint_pedal")->GetVelocity(0));
+            }
+        }
+
+
+    }
 }
 
 void CardsflowGazebo::readSim(ros::Time time, ros::Duration period) {
@@ -400,9 +417,16 @@ bool CardsflowGazebo::DetachJointService(std_srvs::Trigger::Request &req,
 
 bool CardsflowGazebo::DoStep(std_srvs::Trigger::Request &req,
                              std_srvs::Trigger::Response &res) {
-    parent_model->GetWorld()->Step(200);
+    parent_model->GetWorld()->Step(50);
     res.success = true;
     res.message = "1 step at a time";
+    return true;
+}
+
+bool CardsflowGazebo::GetJointVelocity(roboy_simulation_msgs::GetJointVelocity::Request &req,
+                                      roboy_simulation_msgs::GetJointVelocity::Response &res) {
+
+    res.velocity = parent_model->GetJoint(req.name)->GetVelocity(0);
     return true;
 }
 

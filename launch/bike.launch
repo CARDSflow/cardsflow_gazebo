@@ -13,7 +13,8 @@
     <arg name="debug" default="false"/>
     <arg name="physics" default="ode"/>
     <arg name="verbose" default="false"/>
-    <arg name="world_name" default="/home/missxa/workspace/cardsflow_ws/src/CARDSflow/robots/rikshaw/bike.world"/> <!-- Note: the world_name is with respect to GAZEBO_RESOURCE_PATH environmental variable -->
+    <arg name="world_name" default="empty.world"/>
+    <!--/home/missxa/workspace/cardsflow_ws/src/CARDSflow/robots/biking_legs3/bike.world"/> &lt;!&ndash; Note: the world_name is with respect to GAZEBO_RESOURCE_PATH environmental variable &ndash;&gt;-->
     <arg name="respawn_gazebo" default="false"/>
     <arg name="use_clock_frequency" default="false"/>
     <arg name="pub_clock_frequency" default="100"/>
@@ -21,7 +22,8 @@
 
     <!-- set use_sim_time flag -->
     <param name="/use_sim_time" value="$(arg use_sim_time)"/>
-    <param name="/cardsflow_xml" value="/home/missxa/.gazebo/models/rikshaw//cardsflow.xml" />
+    <param name="/cardsflow_xml" value="/home/missxa/.gazebo/models/biking_legs4/cardsflow.xml" />
+    <param name="/forceCoef" value="0.0" />
 
     <!-- set command arguments -->
     <arg unless="$(arg paused)" name="command_arg1" value=""/>
@@ -47,5 +49,11 @@
     <group if="$(arg gui)">
         <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen" args="$(arg command_arg3)"/>
     </group>
+
+    <node name="spawn_sdf" pkg="gazebo_ros" type="spawn_model" args="-file $(find robots)/biking_legs4/model.sdf -sdf
+    -J joint_knee_left -1.36
+    -J joint_knee_right 1.36
+    -model biking_legs4" />
+
 
 </launch>

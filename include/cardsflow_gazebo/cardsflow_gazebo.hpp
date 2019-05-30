@@ -10,6 +10,7 @@
 #include <roboy_middleware_msgs/MotorConfigService.h>
 #include <roboy_middleware_msgs/ControlMode.h>
 #include <roboy_middleware_msgs/TorqueControl.h>
+#include <roboy_simulation_msgs/GetJointVelocity.h>
 #include <std_msgs/Int32.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/Float64.h>
@@ -123,13 +124,16 @@ private:
     bool DoStep(std_srvs::Trigger::Request &req,
                             std_srvs::Trigger::Response &res);
 
+    bool GetJointVelocity(roboy_simulation_msgs::GetJointVelocity::Request &req,
+                         roboy_simulation_msgs::GetJointVelocity::Response &res);
+
     bool emergency_stop = false;
 
     static int roboyID_generator;
     ros::NodeHandle* nh;
     ros::Subscriber motorCommand_sub, pid_control_sub, step_sub, detach_sub;
     ros::Publisher motorStatus_pub, joint_state_pub, floating_base_pub, tendon_state_pub, ball_pub;
-    ros::ServiceServer motorConfig_srv, controlMode_srv, emergencyStop_srv, torque_srv, joint_srv, step_srv, atach_srv;
+    ros::ServiceServer motorConfig_srv, controlMode_srv, emergencyStop_srv, torque_srv, joint_srv, step_srv, atach_srv, joint_vel_srv;
     boost::shared_ptr<ros::AsyncSpinner> spinner;
     ros::ServiceClient pauseGazebo;
 
