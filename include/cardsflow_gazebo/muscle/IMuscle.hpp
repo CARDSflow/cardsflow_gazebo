@@ -126,7 +126,7 @@ namespace cardsflow_gazebo {
 		double sim_angVel;
         bool firstUpdate;
 		double sinParm = 0;
-		std::vector<double> springConsts = {15.6451, 0.2468019} ;
+		std::vector<double> springConsts = {0.0, 0.3247} ;
 
 		void initViaPoints( MuscInfo &myoMuscle );
 		void calculateTendonForceProgression();

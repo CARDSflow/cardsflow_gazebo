@@ -115,6 +115,7 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
         muscles.push_back(
                 boost::shared_ptr<cardsflow_gazebo::IMuscle>(new cardsflow_gazebo::IMuscle(parent_model)));
         muscles.back()->Init(musc_info[muscle]);
+        muscles.back()->dummy = true;
         muscles.back()->pid_control = true;
 
     }
@@ -269,28 +270,8 @@ void CardsflowGazebo::MotorCommand(const roboy_middleware_msgs::MotorCommand::Co
     lock_guard<mutex> lock(mux);
     for (uint i = 0; i < msg->motors.size(); i++) {
         if (msg->motors[i] < muscles.size()) {
-//            switch (muscles[msg->motors[i]]->PID->control_mode) {
-//                case POSITION:
                     muscles[msg->motors[i]]->cmd = msg->set_points[i];
                     setPoints[msg->motors[i]] =msg->set_points[i];
-//                    break;
-//                case VELOCITY:
-//                    muscles[msg->motors[i]]->cmd = myoMuscleMeterPerEncoderTick(msg->set_points[i]);
-//                    setPoints[msg->motors[i]] = myoMuscleMeterPerEncoderTick(msg->set_points[i]);// * RADIANS_PER_ENCODER_COUNT;// * 2.0 * M_PI / (2000.0f * 53.0f);
-//                    break;
-//                case DISPLACEMENT:
-//                    if (msg->set_points[i] >= 0) // negative displacement doesnt make sense
-//                        setPoints[msg->motors[i]] = msg->set_points[i];
-//                    else
-//                        setPoints[msg->motors[i]] = 0;
-//                    break;
-//                case FORCE:
-//                    if (msg->set_points[i] >= 0) // negative displacement doesnt make sense
-//                        setPoints[msg->motors[i]] = msg->set_points[i];
-//                    else
-//                        setPoints[msg->motors[i]] = 0;
-//                    break;
-//            }
         }
     }
 }
