@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: cardsflow_gazebo
+Description: Description of cardsflow_gazebo
+Version: 0.0.0
+Cflags: -I/usr/local/include
+Libs: -L/usr/local/lib 
+Requires: roboy_middleware_msgs common_utilities

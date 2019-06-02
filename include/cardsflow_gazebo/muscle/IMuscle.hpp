@@ -90,7 +90,7 @@ namespace cardsflow_gazebo {
 
         vector<string> link_names;
 
-		ignition::math::Vector3d momentArm;
+		gazebo::math::Vector3d momentArm;
         physics::ModelPtr parent_model;
         physics::LinkPtr parent_link;
         boost::shared_ptr<map<string, Matrix4d>> world_to_link_transform;

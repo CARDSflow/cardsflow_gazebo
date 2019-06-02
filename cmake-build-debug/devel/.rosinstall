@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/missxa/workspace/nrp_ws/src/cardsflow_gazebo/cmake-build-debug/devel/setup.sh

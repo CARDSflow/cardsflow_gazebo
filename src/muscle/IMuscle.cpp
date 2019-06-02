@@ -20,7 +20,7 @@ namespace cardsflow_gazebo {
         ignition::msgs::Material *matMsg = markerMsg.mutable_material();
         matMsg->mutable_script()->set_name("Gazebo/Blue");
         ignition::msgs::Set(markerMsg.mutable_pose(),
-                            ignition::math::Pose3d(0, 0, 0, 0, 0, 0));
+                            gazebo::math::Pose3d(0, 0, 0, 0, 0, 0));
         markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
         markerMsg.set_type(ignition::msgs::Marker::LINE_STRIP);
 

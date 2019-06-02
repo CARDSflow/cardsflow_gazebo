@@ -2,20 +2,20 @@
 
 namespace cardsflow_gazebo {
 
-    SphericalWrapping::SphericalWrapping() : IViaPoints(ignition::math::Vector3d(0, 0, 0), Type::SPHERICAL, nullptr),
+    SphericalWrapping::SphericalWrapping() : IViaPoints(gazebo::math::Vector3d(0, 0, 0), Type::SPHERICAL, nullptr),
                                              stateMachine(StateMachine()),
-                                             radius(0), prevCoord(ignition::math::Vector3d(0, 0, 0)),
-                                             nextCoord(ignition::math::Vector3d(0, 0, 0)),
-                                             normal(ignition::math::Vector3d(0, 0, 0)), arcAngle(0) {
+                                             radius(0), prevCoord(gazebo::math::Vector3d(0, 0, 0)),
+                                             nextCoord(gazebo::math::Vector3d(0, 0, 0)),
+                                             normal(gazebo::math::Vector3d(0, 0, 0)), arcAngle(0) {
 
     };
 
-    SphericalWrapping::SphericalWrapping(ignition::math::Vector3d point, physics::LinkPtr link) : SphericalWrapping() {
+    SphericalWrapping::SphericalWrapping(gazebo::math::Vector3d point, physics::LinkPtr link) : SphericalWrapping() {
         localCoordinates = point;
         this->link = link;
     };
 
-    SphericalWrapping::SphericalWrapping(ignition::math::Vector3d point, double radius, int state, int counter,
+    SphericalWrapping::SphericalWrapping(gazebo::math::Vector3d point, double radius, int state, int counter,
                                          physics::LinkPtr link) : SphericalWrapping(point, link) {
         this->radius = radius;
         this->stateMachine.state = (StateMachine::State) state;
@@ -39,18 +39,18 @@ namespace cardsflow_gazebo {
             //compute tangent points
             //compute unit vectors and according length
             double l_j1 = (prevCoord - this->globalCoordinates).Length();
-            ignition::math::Vector3d j1 = (prevCoord - this->globalCoordinates) / l_j1;
+            gazebo::math::Vector3d j1 = (prevCoord - this->globalCoordinates) / l_j1;
             double l_j2 = (nextCoord - this->globalCoordinates).Length();
-            ignition::math::Vector3d j2 = (nextCoord - this->globalCoordinates) / l_j2;
+            gazebo::math::Vector3d j2 = (nextCoord - this->globalCoordinates) / l_j2;
 
             //compute normal,
-            ignition::math::Vector3d normal_temp = j1.Cross(j2);
+            gazebo::math::Vector3d normal_temp = j1.Cross(j2);
             normal = normal_temp / normal_temp.Length();
 
             //compute k1, k2
-            ignition::math::Vector3d k1 = j1.Cross(normal);
+            gazebo::math::Vector3d k1 = j1.Cross(normal);
             k1 = k1 / k1.Length();
-            ignition::math::Vector3d k2 = normal.Cross(j2);
+            gazebo::math::Vector3d k2 = normal.Cross(j2);
             k2 = k2 / k2.Length();
 
             //compute length of a1, a2, b1, b2
@@ -95,11 +95,11 @@ namespace cardsflow_gazebo {
         }
 
         if (prevPoint) {
-            ignition::math::Vector3d A = prevPoint->nextForcePoint - this->prevForcePoint;
+            gazebo::math::Vector3d A = prevPoint->nextForcePoint - this->prevForcePoint;
             prevForce = A / A.Length() * fa;
             //link->AddForceAtRelativePosition(Fa, this->prevForcePoint);
         } else if (nextPoint) {
-            ignition::math::Vector3d B = nextPoint->prevForcePoint - this->nextForcePoint;
+            gazebo::math::Vector3d B = nextPoint->prevForcePoint - this->nextForcePoint;
             nextForce = B / B.Length() * fb;
             //link->AddForceAtRelativePosition(Fb, this->nextForcePoint);
         }

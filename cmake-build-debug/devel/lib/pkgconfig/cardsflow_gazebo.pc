@@ -1,0 +1,8 @@
+prefix=/home/missxa/workspace/nrp_ws/src/cardsflow_gazebo/cmake-build-debug/devel
+
+Name: cardsflow_gazebo
+Description: Description of cardsflow_gazebo
+Version: 0.0.0
+Cflags: -I/home/missxa/workspace/nrp_ws/src/cardsflow_gazebo/include
+Libs: -L/home/missxa/workspace/nrp_ws/src/cardsflow_gazebo/cmake-build-debug/devel/lib 
+Requires: roboy_middleware_msgs common_utilities

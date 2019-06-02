@@ -15,10 +15,10 @@ namespace cardsflow_gazebo
 	//using namespace gazebo;
 /*
     struct tendonType {
-		vector<ignition::math::Vector3> MidPoint;
-		vector<ignition::math::Vector3> Vector;
+		vector<gazebo::math::Vector3> MidPoint;
+		vector<gazebo::math::Vector3> Vector;
 		//might need it to calculate length
-		vector<ignition::math::Vector3> Orientation;
+		vector<gazebo::math::Vector3> Orientation;
 		vector<double> Pitch;
 		vector<double> Roll;
 	};

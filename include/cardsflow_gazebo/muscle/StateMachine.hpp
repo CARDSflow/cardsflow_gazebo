@@ -34,7 +34,7 @@ namespace cardsflow_gazebo
         /// \param[in] nextPoint the nextattachment point
         /// \param[in] center the center of the wrapping surface
         /// \param[in] radius the radius of the wrapping surface
-        void UpdateState(ignition::math::Vector3d& prevPoint, ignition::math::Vector3d& nextPoint, ignition::math::Vector3d& center, double radius);
+        void UpdateState(gazebo::math::Vector3d& prevPoint, gazebo::math::Vector3d& nextPoint, gazebo::math::Vector3d& center, double radius);
 
         ////////////////////////////////////////
         /// \brief updates the RevCounter
@@ -46,7 +46,7 @@ namespace cardsflow_gazebo
         int revCounter;
     private:
         bool firstUpdate;
-        ignition::math::Vector3d normal;
+        gazebo::math::Vector3d normal;
         double projection;
     };
 }

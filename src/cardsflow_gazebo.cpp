@@ -74,7 +74,7 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
 //    if (!presetManager->SetCurrentProfileParam("solver", "world")) {
 //        ROS_ERROR("Couldn't set parameter, did you pass a valid key/value pair?");
 //    }
-//    parent_model->GetWorld()->SetGravity(ignition::math::Vector3d(0,0,-9.81));
+//    parent_model->GetWorld()->SetGravity(gazebo::math::Vector3d(0,0,-9.81));
 
 //    // Get the Gazebo solver type
 //    std::string solver_type = boost::any_cast<std::string>(physics_engine->GetParam("solver_type"));
@@ -172,7 +172,7 @@ void CardsflowGazebo::readSim(ros::Time time, ros::Duration period) {
     // get link transforms
     int i = 0;
     for (auto &link:links) {
-        ignition::math::Pose3d pose = link->WorldPose();
+        gazebo::math::Pose3d pose = link->WorldPose();
         Matrix4d transform;
         transform.setIdentity();
         transform.block(0, 3, 3, 1) << pose.Pos().X(), pose.Pos().Y(), pose.Pos().Z();
@@ -202,7 +202,7 @@ void CardsflowGazebo::readSim(ros::Time time, ros::Duration period) {
 
     for (uint muscle = 0; muscle < muscles.size(); muscle++) {
         for (int i = 0; i < muscles[muscle]->viaPoints.size(); i++) {
-            ignition::math::Pose3d linkPose = muscles[muscle]->viaPoints[i]->link->WorldPose();
+            gazebo::math::Pose3d linkPose = muscles[muscle]->viaPoints[i]->link->WorldPose();
             muscles[muscle]->viaPoints[i]->linkPosition = linkPose.Pos();
             muscles[muscle]->viaPoints[i]->linkRotation = linkPose.Rot();
         }
@@ -428,11 +428,11 @@ void CardsflowGazebo::publishOpenSimInfo(vector<boost::shared_ptr<cardsflow_gaze
 
     for (auto muscle : *muscles)
     {
-        std::vector<gazebo::ignition::math::Vector3d> muscle_path_buf;
+        std::vector<gazebo::gazebo::math::Vector3d> muscle_path_buf;
         msgs::OpenSimMuscle* muscle_msg = muscles_msg.add_muscle();
 
         for (uint i = 0; i < muscle->viaPoints.size(); i++) {
-            gazebo::ignition::math::Vector3d p;
+            gazebo::gazebo::math::Vector3d p;
             p.x = muscle->viaPoints[i]->prevForcePoint.x;
             p.y = muscle->viaPoints[i]->prevForcePoint.y;
             p.z = muscle->viaPoints[i]->prevForcePoint.z;
@@ -500,7 +500,7 @@ bool CardsflowGazebo::parseSDFusion(const string &sdf, vector<cardsflow_gazebo::
                             ROS_ERROR_STREAM_NAMED("parser", "error reading [via point] (x y z)");
                             return false;
                         }
-                        vp.local_coordinates = ignition::math::Vector3d(x, y, z);
+                        vp.local_coordinates = gazebo::math::Vector3d(x, y, z);
                         if (viaPoint_child_it->Attribute("type")) {
                             string type = viaPoint_child_it->Attribute("type");
                             if (type == "FIXPOINT") {
