@@ -35,7 +35,7 @@
 #include <ignition/math.hh>
 #include <ignition/msgs.hh>
 
-#define ENABLE_LOGGING
+//#define ENABLE_LOGGING
 #define springEncoderTicksPerMeter(meter) (meter*10000.0)
 
 namespace cardsflow_gazebo {
@@ -126,7 +126,7 @@ namespace cardsflow_gazebo {
 		double sim_angVel;
         bool firstUpdate;
 		double sinParm = 0;
-		std::vector<double> springConsts = {0.0, 0.3247} ;
+		std::vector<double> springConsts = {0.0, 0.03247} ;
 
 		void initViaPoints( MuscInfo &myoMuscle );
 		void calculateTendonForceProgression();

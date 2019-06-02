@@ -115,7 +115,7 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
         muscles.push_back(
                 boost::shared_ptr<cardsflow_gazebo::IMuscle>(new cardsflow_gazebo::IMuscle(parent_model)));
         muscles.back()->Init(musc_info[muscle]);
-        muscles.back()->dummy = false;
+        muscles.back()->dummy = true;
         muscles.back()->pid_control = true;
 
     }
@@ -245,7 +245,7 @@ void CardsflowGazebo::writeSim(ros::Time time, ros::Duration period) {
                 str << "muscle " << muscle << "\t" << vp->link->GetName() << "\t" << vp->prevForce << "\t" << vp->nextForce << endl;
             }
         }
-        ROS_INFO_STREAM(str.str());
+//        ROS_INFO_STREAM(str.str());
         t0 = ros::Time::now();
     }
 

@@ -24,10 +24,7 @@ namespace cardsflow_gazebo {
         markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
         markerMsg.set_type(ignition::msgs::Marker::LINE_STRIP);
 
-//       PID = boost::shared_ptr<MuscPID>(new MuscPID());
         PID.reset(new MuscPID());
-
-        // velocity gains Kp = 200 , Ki = 5, Kd = 1
 
          double Kp, Ki, Kd;
          if (nh->hasParam("musclemodel_Kp")) {
@@ -77,18 +74,9 @@ namespace cardsflow_gazebo {
 
     void IMuscle::Init(MuscInfo &muscInfo) {
 
-        //state initialization
-//        x[0] = 0.0;
-//        x[1] = 0.0;
-//        actuator.motor.voltage = 0.0;
-//        actuator.spindle.angVel = 0;
-
         /// Build Linked Viapoint list with corresponding wraping
         initViaPoints(muscInfo);
 
-//        actuator.motor = muscInfo.motor;
-//        actuator.gear = muscInfo.gear;
-//        actuator.spindle = muscInfo.spindle;
         see.see = muscInfo.see;
         name = muscInfo.name;
         string num = name.substr(5, name.back());
@@ -111,7 +99,6 @@ namespace cardsflow_gazebo {
         motor.setVoltage(0.0);
         motor.setLoadTorque(0.0);
 
-        //motor.setIntegrator((de::caliper::sim::ext::actuators::er::physics::Actuator::Integrator) atoi(argv[1]));
         motor.setIntegrator(
                 Actuator::RungeKutta4);
         motor.setTimeStep(0.0001);
@@ -128,32 +115,19 @@ namespace cardsflow_gazebo {
 
       double voltage = 0;
         if (pid_control) {
-//            muscleForce = cmd;
-//            ROS_INFO_THROTTLE(1,"%s Applying cmd: %f", name.c_str(), cmd);
             switch (PID->control_mode) {
                 case POSITION:
 //                    ROS_INFO_STREAM_THROTTLE(1, "PID cmd: " << cmd << " feedback: " << feedback.position);
-//                    actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.position);
                     voltage = PID->calculate(period.toSec(), cmd, feedback.position);
                     break;
                 case VELOCITY:
                     // ROS_INFO_STREAM_THROTTLE(1, "PID cmd: " << cmd << " feedback: " << feedback.velocity);
-//                    actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.velocity);
                     voltage = PID->calculate(period.toSec(), cmd, feedback.velocity);
                     break;
                 case DISPLACEMENT:
                     actuatorForce = muscleForce = springConsts[0] + springConsts[1]*cmd;//(cmd / (0.1 * 0.001));
                     see.deltaX = springMeterPerEncoderTicks(cmd);
-//                    ROS_INFO_THROTTLE(1,"Applying cmd: %f", cmd);
-//                    ROS_INFO_THROTTLE(1,"applying force: %f N", muscleForce);
 
-//                    if(cmd>=0) // negative displacement doesnt make sense
-//                    {
-//                        ROS_INFO_STREAM_THROTTLE(1, "cmd " << cmd << " feedback " << feedback.displacement);
-//                        voltage = (-1)*PID->calculate(period.toSec(), cmd, feedback.displacement);
-//                    }
-//                    else
-//                        voltage = (-1)*PID->calculate(period.toSec(), 0, feedback.displacement);
                     break;
                 case FORCE:
                     if(cmd>=0) {
@@ -315,8 +289,7 @@ namespace cardsflow_gazebo {
     // Calculates how the force goes along the tendon by going throught the Viapoint
     void IMuscle::calculateTendonForceProgression() {
         for (int i = 0; i < viaPoints.size(); i++) {
-            //CalculateForce differs for each wraping-type
-            viaPoints[i]->CalculateForce();
+
             if (viaPoints[i]->prevPoint && viaPoints[i]->nextPoint) {
                 viaPoints[i]->fa = viaPoints[i]->prevPoint->fb;
                 viaPoints[i]->fb = viaPoints[i]->prevPoint->fb;
@@ -327,6 +300,8 @@ namespace cardsflow_gazebo {
                 viaPoints[i]->fa = viaPoints[i]->prevPoint->fb;
                 viaPoints[i]->fb = 0;
             }
+            //CalculateForce differs for each wraping-type
+            viaPoints[i]->CalculateForce();
         }
     }
 
