@@ -2,33 +2,33 @@
 
 namespace cardsflow_gazebo {
 
-    IViaPoints::IViaPoints() : linkPosition(gazebo::math::Vector3d(0, 0, 0)), linkRotation(gazebo::math::Quaterniond(0, 0, 0, 0)),
-                               localCoordinates(gazebo::math::Vector3d(0, 0, 0)),
-                               globalCoordinates(gazebo::math::Vector3d(0, 0, 0)), type(Type::FIXPOINT), prevPoint(nullptr),
+    IViaPoints::IViaPoints() : linkPosition(math::Vector3(0, 0, 0)), linkRotation(math::Quaternion(0, 0, 0, 0)),
+                               localCoordinates(math::Vector3(0, 0, 0)),
+                               globalCoordinates(math::Vector3(0, 0, 0)), type(Type::FIXPOINT), prevPoint(nullptr),
                                nextPoint(nullptr),
-                               prevForcePoint(gazebo::math::Vector3d(0, 0, 0)), nextForcePoint(gazebo::math::Vector3d(0, 0, 0)), fa(0),
-                               fb(0), prevForce(gazebo::math::Vector3d(0, 0, 0)),
-                               nextForce(gazebo::math::Vector3d(0, 0, 0)), previousSegmentLength(0), link(nullptr) {
+                               prevForcePoint(math::Vector3(0, 0, 0)), nextForcePoint(math::Vector3(0, 0, 0)), fa(0),
+                               fb(0), prevForce(math::Vector3(0, 0, 0)),
+                               nextForce(math::Vector3(0, 0, 0)), previousSegmentLength(0), link(nullptr) {
 
     };
 
-    IViaPoints::IViaPoints(gazebo::math::Vector3d point) : IViaPoints() {
+    IViaPoints::IViaPoints(math::Vector3 point) : IViaPoints() {
         localCoordinates = point;
     };
 
-    IViaPoints::IViaPoints(gazebo::math::Vector3d point, physics::LinkPtr link) : IViaPoints() {
+    IViaPoints::IViaPoints(math::Vector3 point, physics::LinkPtr link) : IViaPoints() {
         localCoordinates = point;
         this->link = link;
     };
 
-    IViaPoints::IViaPoints(gazebo::math::Vector3d point, Type t, physics::LinkPtr link) : IViaPoints(point, link) {
+    IViaPoints::IViaPoints(math::Vector3 point, Type t, physics::LinkPtr link) : IViaPoints(point, link) {
         type = t;
     };
 
     void IViaPoints::UpdateForcePoints() {
         prevForcePoint = globalCoordinates;
         nextForcePoint = globalCoordinates;
-        previousSegmentLength = (prevPoint) ? ((prevPoint->nextForcePoint - this->prevForcePoint).Length()) : (0);
+        previousSegmentLength = (prevPoint) ? ((prevPoint->nextForcePoint - this->prevForcePoint).GetLength()) : (0);
     };
 
     void IViaPoints::CalculateForce() {
@@ -41,19 +41,19 @@ namespace cardsflow_gazebo {
 //    }
 
         if (prevPoint) {
-            gazebo::math::Vector3d A = prevPoint->nextForcePoint - this->prevForcePoint;
-//        ROS_INFO_THROTTLE(1,"A length %f, fa %f", A.Length(), fa);
-            if (A.Length() > 0.0)
-                prevForce = A / A.Length() * fa;
+            math::Vector3 A = prevPoint->nextForcePoint - this->prevForcePoint;
+//        ROS_INFO_THROTTLE(1,"A length %f, fa %f", A.GetLength(), fa);
+            if (A.GetLength() > 0.0)
+                prevForce = A / A.GetLength() * fa;
             else
-                prevForce = gazebo::math::Vector3d::Zero;
+                prevForce = math::Vector3::Zero;
         } else if (nextPoint) {
-            gazebo::math::Vector3d B = nextPoint->prevForcePoint - this->nextForcePoint;
-//        ROS_INFO_THROTTLE(1,"B length %f, fb %f", B.Length(), fb);
-            if (B.Length() > 0.0)
-                nextForce = B / B.Length() * fb;
+            math::Vector3 B = nextPoint->prevForcePoint - this->nextForcePoint;
+//        ROS_INFO_THROTTLE(1,"B length %f, fb %f", B.GetLength(), fb);
+            if (B.GetLength() > 0.0)
+                nextForce = B / B.GetLength() * fb;
             else
-                nextForce = gazebo::math::Vector3d::Zero;
+                nextForce = math::Vector3::Zero;
         }
     };
 }

@@ -65,16 +65,16 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
 
     physics::WorldPtr world = physics::get_world("default");
 // Get the PresetManager object from the world
-    physics::PresetManagerPtr presetManager = world->PresetMgr();
+    physics::PresetManagerPtr presetManager = world->GetPresetManager();
 
-    physics::PhysicsEnginePtr physics_engine = parent_model->GetWorld()->Physics();
+    physics::PhysicsEnginePtr physics_engine = parent_model->GetWorld()->GetPhysicsEngine();
 
 //    // Set the solver type to quickstep in the current profile, checking for errors
 //// SetCurrentProfileParam will change the current state of the physics engine
 //    if (!presetManager->SetCurrentProfileParam("solver", "world")) {
 //        ROS_ERROR("Couldn't set parameter, did you pass a valid key/value pair?");
 //    }
-//    parent_model->GetWorld()->SetGravity(gazebo::math::Vector3d(0,0,-9.81));
+//    parent_model->GetWorld()->SetGravity(math::Vector3(0,0,-9.81));
 
 //    // Get the Gazebo solver type
 //    std::string solver_type = boost::any_cast<std::string>(physics_engine->GetParam("solver_type"));
@@ -141,7 +141,7 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
         joint_names.push_back(joint->GetName());
         torques[joint->GetName()] = 0;
         joint_state_msg.name.push_back(joint->GetName());
-        joint_state_msg.position.push_back(joint->Position(0));
+        joint_state_msg.position.push_back(joint->GetAngle(0).Radian());
         joint_state_msg.velocity.push_back(joint->GetVelocity(0));
         joint_state_msg.effort.push_back(0);
     }
@@ -154,7 +154,7 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
 void CardsflowGazebo::Update() {
 //    ROS_INFO("CardsflowGazebo::Update()");
     // Get the simulation time and period
-    common::Time gz_time_now = parent_model->GetWorld()->SimTime();
+    common::Time gz_time_now = parent_model->GetWorld()->GetSimTime();
     ros::Time sim_time_ros(gz_time_now.sec, gz_time_now.nsec);
     ros::Duration sim_period = sim_time_ros - last_update_sim_time_ros;
     last_update_sim_time_ros = sim_time_ros;
@@ -172,11 +172,11 @@ void CardsflowGazebo::readSim(ros::Time time, ros::Duration period) {
     // get link transforms
     int i = 0;
     for (auto &link:links) {
-        gazebo::math::Pose3d pose = link->WorldPose();
+        math::Pose pose = link->GetWorldPose();
         Matrix4d transform;
         transform.setIdentity();
-        transform.block(0, 3, 3, 1) << pose.Pos().X(), pose.Pos().Y(), pose.Pos().Z();
-        Quaterniond q(pose.Rot().W(), pose.Rot().X(), pose.Rot().Y(), pose.Rot().Z());
+        transform.block(0, 3, 3, 1) << pose.pos.x, pose.pos.y, pose.pos.z;
+        Quaterniond q(pose.rot.w, pose.rot.x, pose.rot.y, pose.rot.z);
         transform.block(0, 0, 3, 3) << q.matrix();
         (*world_to_link_transform.get())[link_names[i]] = transform;
         if(link_names[i]=="base"){
@@ -193,7 +193,7 @@ void CardsflowGazebo::readSim(ros::Time time, ros::Duration period) {
     int j = 0;
     for (auto joint:parent_model->GetJoints()) {
         joint_state_msg.name[j] = joint->GetName();
-        joint_state_msg.position[j] = joint->Position(0);
+        joint_state_msg.position[j] = joint->GetAngle(0).Radian();
         joint_state_msg.velocity[j] = joint->GetVelocity(0);
         joint_state_msg.effort[j] = 0;
         j++;
@@ -202,9 +202,9 @@ void CardsflowGazebo::readSim(ros::Time time, ros::Duration period) {
 
     for (uint muscle = 0; muscle < muscles.size(); muscle++) {
         for (int i = 0; i < muscles[muscle]->viaPoints.size(); i++) {
-            gazebo::math::Pose3d linkPose = muscles[muscle]->viaPoints[i]->link->WorldPose();
-            muscles[muscle]->viaPoints[i]->linkPosition = linkPose.Pos();
-            muscles[muscle]->viaPoints[i]->linkRotation = linkPose.Rot();
+            math::Pose linkPose = muscles[muscle]->viaPoints[i]->link->GetWorldPose();
+            muscles[muscle]->viaPoints[i]->linkPosition = linkPose.pos;
+            muscles[muscle]->viaPoints[i]->linkRotation = linkPose.rot;
         }
         muscles[muscle]->world_to_link_transform = world_to_link_transform;
         muscles[muscle]->cmd = setPoints[muscle];
@@ -224,14 +224,14 @@ void CardsflowGazebo::writeSim(ros::Time time, ros::Duration period) {
 //                ROS_INFO_STREAM(vp->nextForce);
             {
                 vp->link->AddForceAtWorldPosition(vp->prevForce, vp->prevForcePoint);
-                Vector3d pos(vp->prevForcePoint.X(), vp->prevForcePoint.Y(), vp->prevForcePoint.Z());
-                Vector3d dir(vp->prevForce.X(), vp->prevForce.Y(), vp->prevForce.Z());
+                Vector3d pos(vp->prevForcePoint.x, vp->prevForcePoint.y, vp->prevForcePoint.z);
+                Vector3d dir(vp->prevForce.x, vp->prevForce.y, vp->prevForce.z);
                 publishRay(pos, dir, "world", "forces", j++, COLOR(0, 1, 0, 1));
             }
             {
                 vp->link->AddForceAtWorldPosition(vp->nextForce, vp->nextForcePoint);
-                Vector3d pos(vp->nextForcePoint.X(), vp->nextForcePoint.Y(), vp->nextForcePoint.Z());
-                Vector3d dir(vp->nextForce.X(), vp->nextForce.Y(), vp->nextForce.Z());
+                Vector3d pos(vp->nextForcePoint.x, vp->nextForcePoint.y, vp->nextForcePoint.z);
+                Vector3d dir(vp->nextForce.x, vp->nextForce.y, vp->nextForce.z);
                 publishRay(pos, dir, "world", "forces", j++, COLOR(0, 1, 1, 1));
             }
         }
@@ -298,7 +298,7 @@ void CardsflowGazebo::MotorStatusPublisher() {
 
             //TODO count spring displacement?
             tendons.force.push_back(muscle->getMuscleForce());
-            tendons.l.push_back(muscle->getMuscleLength()); // or muscle length?
+            tendons.l.push_back(muscle->getMuscleGetLength()); // or muscle length?
             tendons.ld.push_back(muscle->motor.getLinearVelocity());
         }
         motorStatus_pub.publish(msg);
@@ -428,11 +428,11 @@ void CardsflowGazebo::publishOpenSimInfo(vector<boost::shared_ptr<cardsflow_gaze
 
     for (auto muscle : *muscles)
     {
-        std::vector<gazebo::gazebo::math::Vector3d> muscle_path_buf;
+        std::vector<gazebo::math::Vector3> muscle_path_buf;
         msgs::OpenSimMuscle* muscle_msg = muscles_msg.add_muscle();
 
         for (uint i = 0; i < muscle->viaPoints.size(); i++) {
-            gazebo::gazebo::math::Vector3d p;
+            gazebo::math::Vector3 p;
             p.x = muscle->viaPoints[i]->prevForcePoint.x;
             p.y = muscle->viaPoints[i]->prevForcePoint.y;
             p.z = muscle->viaPoints[i]->prevForcePoint.z;
@@ -446,14 +446,14 @@ void CardsflowGazebo::publishOpenSimInfo(vector<boost::shared_ptr<cardsflow_gaze
         GZ_ASSERT(muscle_path_buf.size() >= 2, "Muscles are supposed to have a start node and an end node");
         for (std::size_t i=0; i<muscle_path_buf.size(); ++i)
         {
-            msgs::Vector3dd* point = muscle_msg->add_pathpoint();
+            msgs::Vector3d* point = muscle_msg->add_pathpoint();
             msgs::Set(
                     point,
                     muscle_path_buf[i].Ign());
         }
 
         // For a bit better performance we could access the internal OpenSim::Muscle pointer directly.
-        muscle_msg->set_length(muscle->getMuscleLength());
+        muscle_msg->set_length(muscle->getMuscleGetLength());
         muscle_msg->set_activation(0);
         muscle_msg->set_ismuscle(1);
     }
@@ -500,7 +500,7 @@ bool CardsflowGazebo::parseSDFusion(const string &sdf, vector<cardsflow_gazebo::
                             ROS_ERROR_STREAM_NAMED("parser", "error reading [via point] (x y z)");
                             return false;
                         }
-                        vp.local_coordinates = gazebo::math::Vector3d(x, y, z);
+                        vp.local_coordinates = math::Vector3(x, y, z);
                         if (viaPoint_child_it->Attribute("type")) {
                             string type = viaPoint_child_it->Attribute("type");
                             if (type == "FIXPOINT") {

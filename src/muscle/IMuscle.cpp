@@ -13,16 +13,6 @@ namespace cardsflow_gazebo {
                       ros::init_options::NoSigintHandler | ros::init_options::AnonymousName);
         }
         nh = ros::NodeHandlePtr(new ros::NodeHandle);
-        markerMsg.set_ns("default");
-        markerMsg.set_id(0);
-        markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
-
-        ignition::msgs::Material *matMsg = markerMsg.mutable_material();
-        matMsg->mutable_script()->set_name("Gazebo/Blue");
-        ignition::msgs::Set(markerMsg.mutable_pose(),
-                            gazebo::math::Pose3d(0, 0, 0, 0, 0, 0));
-        markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
-        markerMsg.set_type(ignition::msgs::Marker::LINE_STRIP);
 
         PID.reset(new MuscPID());
 
@@ -57,7 +47,7 @@ namespace cardsflow_gazebo {
          }
 
     }
-
+#ifdef ENABLE_LOGGING
     bool IMuscle::saveDataService(std_srvs::Trigger::Request &req,
                 std_srvs::Trigger::Response &res) {
         lock_guard<mutex> lock(mux);
@@ -70,7 +60,7 @@ namespace cardsflow_gazebo {
         log.clear();
         return true;
     }
-
+#endif
 
     void IMuscle::Init(MuscInfo &muscInfo) {
 
@@ -146,14 +136,6 @@ namespace cardsflow_gazebo {
             voltage = cmd*24;
         }
 
-        markerMsg.set_id(muscleID);
-        markerMsg.clear_point();
-
-        if (see.deltaX > 0) {
-            markerMsg.mutable_material()->mutable_script()->set_name("Gazebo/Green");
-        } else {
-            markerMsg.mutable_material()->mutable_script()->set_name("Gazebo/Blue");
-        }
 
 
         for (int i = 0; i < viaPoints.size(); i++) {
@@ -162,11 +144,9 @@ namespace cardsflow_gazebo {
             viaPoints[i]->globalCoordinates = viaPoints[i]->linkPosition +
                                               viaPoints[i]->linkRotation.RotateVector(viaPoints[i]->localCoordinates);
 
-            ignition::msgs::Set(markerMsg.add_point(), viaPoints[i]->globalCoordinates);
         }
 
 
-        node.Request("/marker", markerMsg);
 
         for (int i = 0; i < viaPoints.size(); i++) {
             viaPoints[i]->UpdateForcePoints();
@@ -305,16 +285,16 @@ namespace cardsflow_gazebo {
         }
     }
 
-    double IMuscle::getMuscleLength()
+    double IMuscle::getMuscleGetLength()
     {
         return muscleLength;
     }
 
-    double IMuscle::getInitialTendonLength() {
+    double IMuscle::getInitialTendonGetLength() {
         return initialTendonLength;
     }
 
-    double IMuscle::getTendonLength() {
+    double IMuscle::getTendonGetLength() {
         return tendonLength;
     }
 

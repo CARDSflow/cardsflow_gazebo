@@ -7,8 +7,8 @@
 #include <gazebo/common/common.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/util/system.hh>
-#include <ignition/math/Vector3.hh>
-#include <ignition/math/Pose3.hh>
+#include <gazebo/math/Vector3.hh>
+#include <gazebo/math/Pose.hh>
 //#include "IActuator.hpp"
 #include "ISee.hpp"
 #include "IViaPoints.hpp"
@@ -29,14 +29,11 @@
 #include <mutex>
 #include <common_utilities/CommonDefinitions.h>
 
+#ifdef ENABLE_LOGGING
 #include <nlohmann/json.hpp>
-
-#include <ignition/transport.hh>
-#include <ignition/math.hh>
-#include <ignition/msgs.hh>
+#endif
 
 //#define ENABLE_LOGGING
-#define springEncoderTicksPerMeter(meter) (meter*10000.0)
 
 namespace cardsflow_gazebo {
 
@@ -68,9 +65,9 @@ namespace cardsflow_gazebo {
 		/// \param[in] muscInfo contains info about via points, motor, gear, spindle and see of the muscles
 		void Init(MuscInfo &muscInfo);
 		void Update(ros::Time &time, ros::Duration &period );
-        double getMuscleLength();
-        double getInitialTendonLength();
-        double getTendonLength();
+        double getMuscleGetLength();
+        double getInitialTendonGetLength();
+        double getTendonGetLength();
         double getMuscleForce();
         double getTendonVelocity(); // in m/s
         bool saveDataService(std_srvs::Trigger::Request &req,std_srvs::Trigger::Response &res);
@@ -90,14 +87,12 @@ namespace cardsflow_gazebo {
 
         vector<string> link_names;
 
-		gazebo::math::Vector3d momentArm;
+		math::Vector3 momentArm;
         physics::ModelPtr parent_model;
         physics::LinkPtr parent_link;
         boost::shared_ptr<map<string, Matrix4d>> world_to_link_transform;
 	private:
         ros::NodeHandlePtr nh;
-        ignition::transport::Node node;
-        ignition::msgs::Marker markerMsg;
     public:
         int muscleID;
         string muscleName;

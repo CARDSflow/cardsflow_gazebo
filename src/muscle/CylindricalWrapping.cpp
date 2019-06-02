@@ -2,24 +2,24 @@
 
 namespace cardsflow_gazebo {
 
-    CylindricalWrapping::CylindricalWrapping() : IViaPoints(gazebo::math::Vector3d(0, 0, 0), Type::CYLINDRICAL, nullptr),
+    CylindricalWrapping::CylindricalWrapping() : IViaPoints(math::Vector3(0, 0, 0), Type::CYLINDRICAL, nullptr),
                                                  stateMachine(StateMachine()),
-                                                 radius(0), prevCoord(gazebo::math::Vector3d(0, 0, 0)),
-                                                 nextCoord(gazebo::math::Vector3d(0, 0, 0)),
-                                                 prevCoordPlane(gazebo::math::Vector3d(0, 0, 0)),
-                                                 nextCoordPlane(gazebo::math::Vector3d(0, 0, 0)),
-                                                 prevForcePointPlane(gazebo::math::Vector3d(0, 0, 0)),
-                                                 nextForcePointPlane(gazebo::math::Vector3d(0, 0, 0)),
-                                                 normal(gazebo::math::Vector3d(0, 0, 0)), arcAngle(0) {
+                                                 radius(0), prevCoord(math::Vector3(0, 0, 0)),
+                                                 nextCoord(math::Vector3(0, 0, 0)),
+                                                 prevCoordPlane(math::Vector3(0, 0, 0)),
+                                                 nextCoordPlane(math::Vector3(0, 0, 0)),
+                                                 prevForcePointPlane(math::Vector3(0, 0, 0)),
+                                                 nextForcePointPlane(math::Vector3(0, 0, 0)),
+                                                 normal(math::Vector3(0, 0, 0)), arcAngle(0) {
 
     };
 
-    CylindricalWrapping::CylindricalWrapping(gazebo::math::Vector3d point, physics::LinkPtr link) : CylindricalWrapping() {
+    CylindricalWrapping::CylindricalWrapping(math::Vector3 point, physics::LinkPtr link) : CylindricalWrapping() {
         localCoordinates = point;
         this->link = link;
     };
 
-    CylindricalWrapping::CylindricalWrapping(gazebo::math::Vector3d point, double radius, int state, int counter,
+    CylindricalWrapping::CylindricalWrapping(math::Vector3 point, double radius, int state, int counter,
                                              physics::LinkPtr link) : CylindricalWrapping(point, link) {
         this->radius = radius;
         this->stateMachine.state = (StateMachine::State) state;
@@ -31,8 +31,8 @@ namespace cardsflow_gazebo {
         nextCoord = nextPoint->globalCoordinates;
 
         //calculate normal onto plane
-        gazebo::math::Vector3d unit_normal = linkRotation.RotateVector(gazebo::math::Vector3d(0, 0, 1));
-        unit_normal = unit_normal / unit_normal.Length();
+        math::Vector3 unit_normal = linkRotation.RotateVector(math::Vector3(0, 0, 1));
+        unit_normal = unit_normal / unit_normal.GetLength();
         //project insertion and fixation point onto xy plane of the cylinder
         double prevDist = (prevCoord - globalCoordinates).Dot(unit_normal);
         double nextDist = (nextCoord - globalCoordinates).Dot(unit_normal);
@@ -51,19 +51,19 @@ namespace cardsflow_gazebo {
 
         //compute tangent points
         //compute unit vectors and according length
-        double l_j1 = (prevCoordPlane - this->globalCoordinates).Length();
-        gazebo::math::Vector3d j1 = (prevCoordPlane - this->globalCoordinates) / l_j1;
-        double l_j2 = (nextCoordPlane - this->globalCoordinates).Length();
-        gazebo::math::Vector3d j2 = (nextCoordPlane - this->globalCoordinates) / l_j2;
+        double l_j1 = (prevCoordPlane - this->globalCoordinates).GetLength();
+        math::Vector3 j1 = (prevCoordPlane - this->globalCoordinates) / l_j1;
+        double l_j2 = (nextCoordPlane - this->globalCoordinates).GetLength();
+        math::Vector3 j2 = (nextCoordPlane - this->globalCoordinates) / l_j2;
 
         //compute normal,
         normal = j1.Cross(j2);
 
         //compute k1, k2
-        gazebo::math::Vector3d k1 = j1.Cross(normal);
-        k1 = k1 / k1.Length();
-        gazebo::math::Vector3d k2 = normal.Cross(j2);
-        k2 = k2 / k2.Length();
+        math::Vector3 k1 = j1.Cross(normal);
+        k1 = k1 / k1.GetLength();
+        math::Vector3 k2 = normal.Cross(j2);
+        k2 = k2 / k2.GetLength();
 
         //compute length of a1, a2, b1, b2
         double a1 = radius * radius / l_j1;
@@ -85,13 +85,13 @@ namespace cardsflow_gazebo {
         stateMachine.UpdateRevCounter(projection);
 
         //calculate the wrapping angle
-        double angle = acos(1 - (pow((this->prevForcePointPlane - this->nextForcePointPlane).Length(), 2) /
+        double angle = acos(1 - (pow((this->prevForcePointPlane - this->nextForcePointPlane).GetLength(), 2) /
                                  (2 * radius * radius)));
         arcAngle = 2 * (boost::math::constants::pi<double>()) * ceil(stateMachine.revCounter / 2);
         arcAngle += (stateMachine.revCounter % 2 == 0) ? (angle) : (-angle);
 
-        double l_insertion = (prevCoordPlane - prevForcePointPlane).Length();
-        double l_fixation = (nextCoordPlane - nextForcePointPlane).Length();
+        double l_insertion = (prevCoordPlane - prevForcePointPlane).GetLength();
+        double l_fixation = (nextCoordPlane - nextForcePointPlane).GetLength();
         double l_arc = arcAngle * radius;
 
         //calculate tangent point distance to the plane
@@ -109,7 +109,7 @@ namespace cardsflow_gazebo {
 
         //calculate the lines of action and the muscle's length
         previousSegmentLength =
-                (prevCoord - this->prevForcePoint).Length() + sqrt(distance * distance + l_arc * l_arc);
+                (prevCoord - this->prevForcePoint).GetLength() + sqrt(distance * distance + l_arc * l_arc);
     };
 
 
@@ -126,13 +126,13 @@ namespace cardsflow_gazebo {
         }
 
         if (prevPoint) {
-            gazebo::math::Vector3d A = prevPoint->nextForcePoint - this->prevForcePoint;
-            prevForce = A / A.Length() * fa;
+            math::Vector3 A = prevPoint->nextForcePoint - this->prevForcePoint;
+            prevForce = A / A.GetLength() * fa;
             //link->AddForceAtRelativePosition(Fa, this->prevForcePoint);
         }
         if (nextPoint) {
-            gazebo::math::Vector3d B = nextPoint->prevForcePoint - this->nextForcePoint;
-            nextForce = B / B.Length() * fb;
+            math::Vector3 B = nextPoint->prevForcePoint - this->nextForcePoint;
+            nextForce = B / B.GetLength() * fb;
             //link->AddForceAtRelativePosition(Fb, this->nextForcePoint);
         }
     };

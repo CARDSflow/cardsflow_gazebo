@@ -32,11 +32,11 @@ namespace cardsflow_gazebo
 
         IViaPoints();
 
-        IViaPoints(gazebo::math::Vector3d point);
+        IViaPoints(math::Vector3 point);
 
-        IViaPoints(gazebo::math::Vector3d point, physics::LinkPtr link);
+        IViaPoints(math::Vector3 point, physics::LinkPtr link);
 
-        IViaPoints(gazebo::math::Vector3d point, Type type, physics::LinkPtr link);
+        IViaPoints(math::Vector3 point, Type type, physics::LinkPtr link);
 
         ////////////////////
         /// \brief This function updates the position of the attachment point.
@@ -51,25 +51,25 @@ namespace cardsflow_gazebo
     public:
         physics::LinkPtr link;
         physics::JointPtr joint = nullptr;
-        gazebo::math::Vector3d linkPosition; //global
-        gazebo::math::Quaterniond linkRotation; //global
-        gazebo::math::Vector3d localCoordinates;
-        gazebo::math::Vector3d globalCoordinates;
+        math::Vector3 linkPosition; //global
+        math::Quaternion linkRotation; //global
+        math::Vector3 localCoordinates;
+        math::Vector3 globalCoordinates;
         Type type;
         IViaPointsPtr prevPoint;
         IViaPointsPtr nextPoint;
-        gazebo::math::Vector3d prevForcePoint; //global
-        gazebo::math::Vector3d nextForcePoint; //global
+        math::Vector3 prevForcePoint; //global
+        math::Vector3 nextForcePoint; //global
         double fa;
         double fb;
-        gazebo::math::Vector3d prevForce;
-        gazebo::math::Vector3d nextForce;
+        math::Vector3 prevForce;
+        math::Vector3 nextForce;
         double previousSegmentLength;
 	};
 
 	struct ViaPointInfo{
-		gazebo::math::Vector3d local_coordinates;
-		gazebo::math::Vector3d global_coordinates;
+		math::Vector3 local_coordinates;
+		math::Vector3 global_coordinates;
 		IViaPoints::Type type;
 		double radius;
 		int state;

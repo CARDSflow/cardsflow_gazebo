@@ -16,8 +16,8 @@ namespace cardsflow_gazebo
 
     public:
         CylindricalWrapping();
-        CylindricalWrapping(gazebo::math::Vector3d point, physics::LinkPtr link);
-        CylindricalWrapping(gazebo::math::Vector3d point, double radius, int state, int counter, physics::LinkPtr link);
+        CylindricalWrapping(math::Vector3 point, physics::LinkPtr link);
+        CylindricalWrapping(math::Vector3 point, double radius, int state, int counter, physics::LinkPtr link);
 
         ////////////////////
         /// \brief This function updates the position of the attachment point.
@@ -32,13 +32,13 @@ namespace cardsflow_gazebo
     public:
         StateMachine stateMachine;
         double radius;
-        gazebo::math::Vector3d prevCoord;
-        gazebo::math::Vector3d nextCoord;
-        gazebo::math::Vector3d prevCoordPlane;
-        gazebo::math::Vector3d nextCoordPlane;
-        gazebo::math::Vector3d prevForcePointPlane;
-        gazebo::math::Vector3d nextForcePointPlane;
-        gazebo::math::Vector3d normal;
+        math::Vector3 prevCoord;
+        math::Vector3 nextCoord;
+        math::Vector3 prevCoordPlane;
+        math::Vector3 nextCoordPlane;
+        math::Vector3 prevForcePointPlane;
+        math::Vector3 nextForcePointPlane;
+        math::Vector3 normal;
         double arcAngle;
 
 	};
