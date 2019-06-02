@@ -21,7 +21,7 @@
 #include <map>
 #include <vector>
 #include "cardsflow_gazebo/muscle/MuscPID.hpp"
-#include "cardsflow_gazebo/eccerobotMuscle/physics/Actuator.h"
+#include "Actuator.h"
 #include "std_srvs/Trigger.h"
 
 #include <Eigen/Core>

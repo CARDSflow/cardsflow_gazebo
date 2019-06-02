@@ -1,4 +1,3 @@
-#include <rl-0.7.0/rl/math/Unit.h>
 #include <include/cardsflow_gazebo/muscle/IMuscle.hpp>
 #include "cardsflow_gazebo/muscle/IMuscle.hpp"
 
@@ -123,6 +122,9 @@ namespace cardsflow_gazebo {
 
     void IMuscle::Update(ros::Time &time, ros::Duration &period) {
 
+        if (firstUpdate) {
+            period = ros::Duration(0.001);
+        }
 //
 //      double Ki_new, Kp_new, Kd_new;
 //      if (nh->hasParam("musclemodel_Kp")) {
@@ -285,8 +287,7 @@ namespace cardsflow_gazebo {
 
             lock_guard<mutex> lock(mux);
 
-            tendonLength = initialTendonLength - (motor.getInitialPosition() - motor.getPosition()) *
-                    rl::math::DEG2RAD * motor.getSpindleRadius();
+            tendonLength = initialTendonLength - degreesToRadians((motor.getInitialPosition() - motor.getPosition()) * motor.getSpindleRadius());
 
             feedback.position = myoMuscleEncoderTicksPerMeter(motor.getPosition()*motor.getSpindleRadius()* 2.0 * M_PI/360.0);// winch_radius*2pi*radians = m
             feedback.velocity = myoMuscleEncoderTicksPerMeter(motor.getLinearVelocity()); // m/s
@@ -404,6 +405,6 @@ namespace cardsflow_gazebo {
     }
 
     double IMuscle::getTendonVelocity() {
-        return motor.getAngularVelocity()*motor.getSpindleRadius()*rl::math::RAD2DEG;
+        return radiansToDegrees(motor.getAngularVelocity()*motor.getSpindleRadius());
     }
 }

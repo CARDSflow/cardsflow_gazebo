@@ -16,9 +16,8 @@
  *
  */
 
-#include <rl/math/Matrix.h>
-#include <rl/math/Vector.h>
 //#include <QDomElement>
+#include "../../../../../../../../../../usr/include/eigen3/Eigen/Core"
 
 /**
  * \brief Actuator interface.
@@ -96,77 +95,77 @@ public:
 	 *
 	 * \return Anchor resistance in [ohm].
 	 */
-	virtual rl::math::Real getAnchorResistance() const = 0;
+	virtual double getAnchorResistance() const = 0;
 
 	/**
 	 * \brief Sets the anchor resistance \f$ R \f$.
 	 *
 	 * \param anchorResistance Anchor resistance in [ohm].
 	 */
-	virtual void setAnchorResistance(rl::math::Real anchorResistance) = 0;
+	virtual void setAnchorResistance(double anchorResistance) = 0;
 
 	/**
 	 * \brief Returns the H-Bridge resistance.
 	 *
 	 * \return H-Bridge resistance in [ohm].
 	 */
-	virtual rl::math::Real getHbridgeResistance() const = 0;
+	virtual double getHbridgeResistance() const = 0;
 
 	/**
 	 * \brief Sets the H-Bridge resistance.
 	 *
 	 * \param hbridgeResistance H-Bridge resistance in [ohm].
 	 */
-	virtual void setHbridgeResistance(rl::math::Real hbridgeResistance) = 0;
+	virtual void setHbridgeResistance(double hbridgeResistance) = 0;
 
 	/**
 	 * \brief Returns the anchor inductance \f$ L \f$.
 	 *
 	 * \return Anchor inductance in [H].
 	 */
-	virtual rl::math::Real getAnchorInductance() const = 0;
+	virtual double getAnchorInductance() const = 0;
 
 	/**
 	 * \brief Sets the anchor inductance \f$ L \f$.
 	 *
 	 * \param anchorInductance Anchor inductance in [H].
 	 */
-	virtual void setAnchorInductance(rl::math::Real anchorInductance) = 0;
+	virtual void setAnchorInductance(double anchorInductance) = 0;
 
 	/**
 	 * \brief Returns the back-EMF constant \f$ K_e \phi_f \f$.
 	 *
 	 * \return Back-EMF constant in [Vs/rad].
 	 */
-	virtual rl::math::Real getBackEmfConstant() const = 0;
+	virtual double getBackEmfConstant() const = 0;
 
 	/**
 	 * \brief Sets the back-EMF constant \f$ K_e \phi_f \f$.
 	 *
 	 * \param backEmfConstant Back-EMF constant in [Vs/rad].
 	 */
-	virtual void setBackEmfConstant(rl::math::Real backEmfConstant) = 0;
+	virtual void setBackEmfConstant(double backEmfConstant) = 0;
 
 	/**
 	 * \brief Returns the torque constant \f$ K_t \phi_f \f$.
 	 *
 	 * \return Torque constant in [Nm/A].
 	 */
-	virtual rl::math::Real getTorqueConstant() const = 0;
+	virtual double getTorqueConstant() const = 0;
 
 	/**
 	 * \brief Sets the torque constant \f$ K_t \phi_f \f$.
 	 *
 	 * \param torqueConstant Torque constant in [Nm/A].
 	 */
-	virtual void setTorqueConstant(rl::math::Real torqueConstant) = 0;
+	virtual void setTorqueConstant(double torqueConstant) = 0;
 
 	/**
 	 * \brief Returns the moment of inertia of the DC motor \f$ J_M \f$.
 	 *
 	 * \return Moment of inertia in [kgm^2].
 	 */
-	virtual rl::math::Real getMomentOfInertiaMotor() const = 0;
+	virtual double getMomentOfInertiaMotor() const = 0;
 
 	/**
 	 * \brief Sets moment of inertia of the DC motor \f$ J_M \f$.
@@ -174,14 +173,14 @@ public:
 	 * \param momentOfInertiaMotor Moment of inertia in [kgm^2].
 	 */
 	virtual void setMomentOfInertiaMotor(
-			rl::math::Real momentOfInertiaMotor) =0;
+			double momentOfInertiaMotor) =0;
 
 	/**
 	 * \brief Returns moment of inertia of the gear \f$ J_G \f$.
 	 *
 	 * \return Moment of inertia in [kgm^2].
 	 */
-	virtual rl::math::Real getMomentOfInertiaGearbox() const = 0;
+	virtual double getMomentOfInertiaGearbox() const = 0;
 
 	/**
 	 * \brief Sets moment of inertia of the gear \f$ J_G \f$.
@@ -189,126 +188,126 @@ public:
 	 * \param momentOfInertiaGearbox Moment of inertia in [kgm^2].
 	 */
 	virtual void setMomentOfInertiaGearbox(
-			rl::math::Real momentOfInertiaGearbox) = 0;
+			double momentOfInertiaGearbox) = 0;
 
 	/**
 	 * \brief Returns the gear efficiency \f$ \eta \f$.
 	 *
 	 * \return Gear efficiency.
 	 */
-	virtual rl::math::Real getGearboxEfficiency() const = 0;
+	virtual double getGearboxEfficiency() const = 0;
 
 	/**
 	 * \brief Sets the gear efficiency \f$ \eta \f$.
 	 *
 	 * \param gearboxEfficiency Gearbox efficiency.
 	 */
-	virtual void setGearboxEfficiency(rl::math::Real gearboxEfficiency) = 0;
+	virtual void setGearboxEfficiency(double gearboxEfficiency) = 0;
 
 	/**
 	 * \brief Returns the gear ratio \f$ N \f$.
 	 *
 	 * \return Gear ratio.
 	 */
-	virtual rl::math::Real getGearboxRatio() const = 0;
+	virtual double getGearboxRatio() const = 0;
 
 	/**
 	 * \brief Sets the gear ratio \f$ N \f$.
 	 *
 	 * \param gearboxRatio Gear ratio.
 	 */
-	virtual void setGearboxRatio(rl::math::Real gearboxRatio) = 0;
+	virtual void setGearboxRatio(double gearboxRatio) = 0;
 
 	/**
 	 * \brief Returns the spindle radius \f$ r_S \f$.
 	 *
 	 * \return Spindle radius in [m].
 	 */
-	virtual rl::math::Real getSpindleRadius() const = 0;
+	virtual double getSpindleRadius() const = 0;
 
 	/**
 	 * \brief Sets the spindle radius \f$ r_S \f$.
 	 *
 	 * \param spindleRadius Spindle radius in [m].
 	 */
-	virtual void setSpindleRadius(rl::math::Real spindleRadius) = 0;
+	virtual void setSpindleRadius(double spindleRadius) = 0;
 
 	/**
 	 * \brief Sets the input voltage \f$ u \f$.
 	 *
 	 * \param voltage Input voltage.
 	 */
-	virtual void setVoltage(rl::math::Real voltage) = 0;
+	virtual void setVoltage(double voltage) = 0;
 
 	/**
 	 * \brief Returns the set input voltage \f$ u \f$.
 	 *
 	 * \return Input voltage.
 	 */
-	virtual rl::math::Real getVoltage() const = 0;
+	virtual double getVoltage() const = 0;
 
 	/**
 	 * \brief Sets the load torque \f$ \tau_{LG}\f$.
 	 *
 	 * \param torque Load torque in [Nm].
 	 */
-	virtual void setLoadTorque(rl::math::Real torque) = 0;
+	virtual void setLoadTorque(double torque) = 0;
 
 	/**
 	 * \brief Returns the angular velocity \f$ \omega_G \f$.
 	 *
 	 * \return Angular velocity of the gear output shaft in [rad/s].
 	 */
-	virtual rl::math::Real getAngularVelocity() const = 0;
+	virtual double getAngularVelocity() const = 0;
 
 	/**
 	 * \brief Returns the linear velocity \f$ v_T \f$.
 	 *
 	 * \return Linear velocity of the tendon in [m/s].
 	 */
-	virtual rl::math::Real getLinearVelocity() const = 0;
+	virtual double getLinearVelocity() const = 0;
 
 	/**
 	 * \brief Returns the electric current \f$ i \f$.
 	 *
 	 * \return Electric current in [A].
 	 */
-	virtual rl::math::Real getCurrent() const = 0;
+	virtual double getCurrent() const = 0;
 
 	/**
 	 * \brief Returns the angular position \f$ \theta_G \f$.
 	 *
 	 * \return Angular position in [deg].
 	 */
-	virtual rl::math::Real getPosition() const = 0;
+	virtual double getPosition() const = 0;
 
 	/**
 	 * \brief Returns the initial angular position.
 	 *
 	 * \return Initial angular position in [deg].
 	 */
-	virtual rl::math::Real getInitialPosition() const = 0;
+	virtual double getInitialPosition() const = 0;
 
 	/**
 	 * \brief Steps the actuator model by \f$ \triangle{}t\f$.
 	 *
 	 * \param time Time in [s].
 	 */
-	virtual void step(rl::math::Real time) = 0;
+	virtual void step(double time) = 0;
 
 	/**
 	 * \brief Sets the time step of numerical integrator.
 	 *
 	 * \param timeStep Integrator step size in [s].
 	 */
-	virtual void setTimeStep(rl::math::Real timeStep) = 0;
+	virtual void setTimeStep(double timeStep) = 0;
 
 	/**
 	 * \brief Returns the time step of the integrator.
 	 *
 	 * \return Time step in [s].
 	 */
-	virtual rl::math::Real getTimeStep() = 0;
+	virtual double getTimeStep() = 0;
 
 	/**
 	 * \brief Sets the integrator type.
