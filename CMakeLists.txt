@@ -7,6 +7,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -g ")
 SET(CMAKE_BUILD_TYPE Debug)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
+set(LOGGING 0)
 
 #==============================================================================
 # Dependencies
@@ -30,7 +31,9 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
 #find_package(Qt5 REQUIRED COMPONENTS Widgets Core Gui)
+if(LOGGING)
 find_package(nlohmann_json REQUIRED)
+endif(LOGGING)
 
 find_package(gazebo REQUIRED)
 include_directories(${GAZEBO_INCLUDE_DIRS})
@@ -77,7 +80,11 @@ add_library(cardsflow_gazebo_plugin SHARED
 		)
 
 add_dependencies( cardsflow_gazebo_plugin roboy_middleware_msgs_gencpp roboy_simulation_msgs_gencpp )
-target_link_libraries(cardsflow_gazebo_plugin ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES} nlohmann_json)
+target_link_libraries(cardsflow_gazebo_plugin ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
+
+if(LOGGING)
+	target_link_libraries(cardsflow_gazebo_plugin nlohmann_json)
+endif(LOGGING)
 
 add_executable(testMuscle src/testMuscle.cpp
 		src/muscle/Actuator.cpp

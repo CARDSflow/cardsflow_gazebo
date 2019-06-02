@@ -58,6 +58,7 @@ namespace cardsflow_gazebo {
 
     }
 
+#ifdef ENABLE_LOGGING
     bool IMuscle::saveDataService(std_srvs::Trigger::Request &req,
                 std_srvs::Trigger::Response &res) {
         lock_guard<mutex> lock(mux);
@@ -70,7 +71,7 @@ namespace cardsflow_gazebo {
         log.clear();
         return true;
     }
-
+#endif
 
     void IMuscle::Init(MuscInfo &muscInfo) {
 
