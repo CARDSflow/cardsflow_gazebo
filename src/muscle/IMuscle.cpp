@@ -103,8 +103,11 @@ namespace cardsflow_gazebo {
         motor.setIntegrator(
                 Actuator::RungeKutta4);
         motor.setTimeStep(0.0001);
-
+        
+        #ifdef ENABLE_LOGGING
         save_srv = nh->advertiseService("/roboy/simulation/SaveData/"+name, &IMuscle::saveDataService, this);
+        #endif
+
         ROS_INFO_STREAM("Initialized muscle with id: " << muscleID);
     }
 
