@@ -115,7 +115,7 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
         muscles.push_back(
                 boost::shared_ptr<cardsflow_gazebo::IMuscle>(new cardsflow_gazebo::IMuscle(parent_model)));
         muscles.back()->Init(musc_info[muscle]);
-        muscles.back()->dummy = true;
+        muscles.back()->dummy = false;
         muscles.back()->pid_control = true;
 
     }
@@ -144,6 +144,8 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
         joint_state_msg.position.push_back(joint->Position(0));
         joint_state_msg.velocity.push_back(joint->GetVelocity(0));
         joint_state_msg.effort.push_back(0);
+
+        joint->SetParam("friction", 0, 0.01);
     }
 
     world_to_link_transform.reset(new map<string, Matrix4d>);
