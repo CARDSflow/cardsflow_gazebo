@@ -17,7 +17,7 @@ class MuscPID {
         double calculate( double dt, double setpoint, double pv );
 
         control_Parameters_t params[NUMBER_OF_CONTROL_MODES];
-        int control_mode = FORCE;
+        int control_mode = DISPLACEMENT;
     private:
         void getDefaultControlParams(control_Parameters_t *params, int control_mode);
 
