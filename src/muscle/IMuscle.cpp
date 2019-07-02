@@ -198,12 +198,12 @@ namespace cardsflow_gazebo {
                         voltage = (-1)*PID->calculate(period.toSec(), 0, feedback.displacement);
                     break;
                 case FORCE:
-//                    if(cmd>0)
+                    if(cmd>0) {
                         muscleForce = actuatorForce = cmd;
-                        ROS_INFO_THROTTLE(1,"Applying cmd: %f", cmd);
-//                    else
-//                        muscleForce = 0;
-                    break;
+                        ROS_INFO_THROTTLE(1, "Applying cmd: %f", cmd);
+                    } else {
+                        muscleForce = 0;
+                    }break;
                 default:
 //                    actuator.motor.voltage = 0;
                     voltage = 0;
@@ -217,6 +217,12 @@ namespace cardsflow_gazebo {
 
         markerMsg.set_id(muscleID);
         markerMsg.clear_point();
+
+        if (see.deltaX > 0 || muscleForce > 0) {
+            markerMsg.mutable_material()->mutable_script()->set_name("Gazebo/Green");
+        } else {
+            markerMsg.mutable_material()->mutable_script()->set_name("Gazebo/Blue");
+        }
 
         ROS_INFO_STREAM_THROTTLE(1, "voltage: " << voltage);
 

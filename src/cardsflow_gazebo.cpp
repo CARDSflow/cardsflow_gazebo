@@ -241,9 +241,9 @@ void CardsflowGazebo::readSim(ros::Time time, ros::Duration period) {
     }
     joint_state_pub.publish(joint_state_msg);
 
-//    auto ball_msg = std_msgs::Float64();
-//    ball_msg.data = abs(parent_model->GetLink("ball")->WorldCoGLinearVel().Y());// + abs(parent_model->GetLink("ball")->WorldCoGLinearVel().Y());
-//    ball_pub.publish(ball_msg);
+    auto ball_msg = std_msgs::Float64();
+    ball_msg.data = abs(parent_model->GetLink("ball")->WorldCoGLinearVel().Y());// + abs(parent_model->GetLink("ball")->WorldCoGLinearVel().Y());
+    ball_pub.publish(ball_msg);
 
     for (uint muscle = 0; muscle < muscles.size(); muscle++) {
         for (int i = 0; i < muscles[muscle]->viaPoints.size(); i++) {
@@ -298,7 +298,7 @@ void CardsflowGazebo::Reset() {
         muscles.push_back(
                 boost::shared_ptr<cardsflow_gazebo::IMuscle>(new cardsflow_gazebo::IMuscle(parent_model)));
         muscles.back()->Init(musc_info[muscle]);
-        muscles.back()->dummy = false;
+        muscles.back()->dummy = true;
         muscles.back()->pid_control = true;
 
     }
