@@ -22,7 +22,7 @@
 #include "cardsflow_gazebo/muscle/IMuscle.hpp"
 #include <mutex>
 #include <eigen_conversions/eigen_msg.h>
-
+#include <common_utilities/rviz_visualization.hpp>
 #include "gazebo/transport/Node.hh"
 #include "gazebo/transport/Publisher.hh"
 #include "gazebo/msgs/msgs.hh"
@@ -41,7 +41,7 @@ struct EndEffectorInfo{
     vector<pair<physics::LinkPtr,Vector3d>> marker;
 };
 
-class CardsflowGazebo : public gazebo::ModelPlugin {
+class CardsflowGazebo : public gazebo::ModelPlugin, rviz_visualization {
 public:
     /** Constructor */
     CardsflowGazebo();

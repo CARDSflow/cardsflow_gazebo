@@ -1,4 +1,3 @@
-#include <rl-0.7.0/rl/math/Unit.h>
 #include <include/cardsflow_gazebo/muscle/IMuscle.hpp>
 #include "cardsflow_gazebo/muscle/IMuscle.hpp"
 
@@ -19,16 +18,13 @@ namespace cardsflow_gazebo {
         markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
 
         ignition::msgs::Material *matMsg = markerMsg.mutable_material();
-        matMsg->mutable_script()->set_name("Gazebo/BlueLaser");
+        matMsg->mutable_script()->set_name("Gazebo/Blue");
         ignition::msgs::Set(markerMsg.mutable_pose(),
                             ignition::math::Pose3d(0, 0, 0, 0, 0, 0));
         markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
         markerMsg.set_type(ignition::msgs::Marker::LINE_STRIP);
 
-//       PID = boost::shared_ptr<MuscPID>(new MuscPID());
         PID.reset(new MuscPID());
-
-        // velocity gains Kp = 200 , Ki = 5, Kd = 1
 
          double Kp, Ki, Kd;
          if (nh->hasParam("musclemodel_Kp")) {
@@ -62,6 +58,7 @@ namespace cardsflow_gazebo {
 
     }
 
+#ifdef ENABLE_LOGGING
     bool IMuscle::saveDataService(std_srvs::Trigger::Request &req,
                 std_srvs::Trigger::Response &res) {
         lock_guard<mutex> lock(mux);
@@ -74,22 +71,13 @@ namespace cardsflow_gazebo {
         log.clear();
         return true;
     }
-
+#endif
 
     void IMuscle::Init(MuscInfo &muscInfo) {
-
-        //state initialization
-//        x[0] = 0.0;
-//        x[1] = 0.0;
-//        actuator.motor.voltage = 0.0;
-//        actuator.spindle.angVel = 0;
 
         /// Build Linked Viapoint list with corresponding wraping
         initViaPoints(muscInfo);
 
-//        actuator.motor = muscInfo.motor;
-//        actuator.gear = muscInfo.gear;
-//        actuator.spindle = muscInfo.spindle;
         see.see = muscInfo.see;
         name = muscInfo.name;
         string num = name.substr(5, name.back());
@@ -113,97 +101,46 @@ namespace cardsflow_gazebo {
         motor.setVoltage(0.0);
         motor.setLoadTorque(0.0);
 
-        //motor.setIntegrator((de::caliper::sim::ext::actuators::er::physics::Actuator::Integrator) atoi(argv[1]));
         motor.setIntegrator(
                 Actuator::RungeKutta4);
         motor.setTimeStep(0.0001);
 
-        if (save_srv.getService() == "")
-            save_srv = nh->advertiseService("/roboy/simulation/SaveData/"+name, &IMuscle::saveDataService, this);
+        #ifdef ENABLE_LOGGING
+        save_srv = nh->advertiseService("/roboy/simulation/SaveData/"+name, &IMuscle::saveDataService, this);
+        #endif
+
         ROS_INFO_STREAM("Initialized muscle with id: " << muscleID);
     }
 
     void IMuscle::Update(ros::Time &time, ros::Duration &period) {
 
-//
-//      double Ki_new, Kp_new, Kd_new;
-//      if (nh->hasParam("musclemodel_Kp")) {
-//        nh->getParam("musclemodel_Kp", Kp_new);
-//        if (Kp_new != PID->params[POSITION].Kp)
-//        {
-//          PID->params[POSITION].Kp = Kp_new;
-//          PID->params[VELOCITY].Kp = Kp_new;
-//          PID->params[DISPLACEMENT].Kp = Kp_new;
-//          PID->params[FORCE].Kp = Kp_new;
-////          ROS_INFO_NAMED("IMuscle", "using Kp %lf", Kp_new);
-//        }
-//      }
-//
-////      ROS_INFO_ONCE_NAMED("IMuscle", "using Kp %lf", Kp_new);
-//
-//      if (nh->hasParam("musclemodel_Ki")) {
-//
-//          nh->getParam("musclemodel_Ki", Ki_new);
-//          if (Ki_new != PID->params[POSITION].Ki)
-//          {
-//            PID->params[POSITION].Ki = Ki_new;
-//            PID->params[VELOCITY].Ki = Ki_new;
-//            PID->params[DISPLACEMENT].Ki = Ki_new;
-//            PID->params[FORCE].Ki = Ki_new;
-////            ROS_INFO_ONCE("IMuscle", "using Ki %lf", Ki_new);
-//          }
-//      }
-//
-////      ROS_INFO_ONCE_NAMED("IMuscle", "using Ki %lf", Ki_new);
-//
-//      if (nh->hasParam("musclemodel_Kd")) {
-//        nh->getParam("musclemodel_Kd", Kd_new);
-//        if (Kd_new != PID->params[POSITION].Kd)
-//        {
-//          PID->params[POSITION].Kd = Kd_new;
-//          PID->params[VELOCITY].Kd = Kd_new;
-//          PID->params[DISPLACEMENT].Kd = Kd_new;
-//          PID->params[FORCE].Kd = Kd_new;
-////          ROS_INFO("IMuscle", "using Kd %lf", Kd_new);
-//        }
-//      }
-//
-//      ROS_INFO_ONCE_NAMED("IMuscle", "using Kd %lf", Kd_new);
+        if (firstUpdate) {
+            period = ros::Duration(0.001);
+        }
 
       double voltage = 0;
         if (pid_control) {
-//            muscleForce = cmd;
-//            ROS_INFO_THROTTLE(1,"%s Applying cmd: %f", name.c_str(), cmd);
             switch (PID->control_mode) {
                 case POSITION:
 //                    ROS_INFO_STREAM_THROTTLE(1, "PID cmd: " << cmd << " feedback: " << feedback.position);
-//                    actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.position);
                     voltage = PID->calculate(period.toSec(), cmd, feedback.position);
                     break;
                 case VELOCITY:
                     // ROS_INFO_STREAM_THROTTLE(1, "PID cmd: " << cmd << " feedback: " << feedback.velocity);
-//                    actuator.motor.voltage = PID->calculate(period.toSec(), cmd, feedback.velocity);
                     voltage = PID->calculate(period.toSec(), cmd, feedback.velocity);
                     break;
                 case DISPLACEMENT:
-//                    actuatorForce = muscleForce = springConsts[0] + springConsts[1]*cmd;//(cmd / (0.1 * 0.001));
-//                    ROS_INFO_THROTTLE(1,"Applying cmd: %f", cmd);
-//                    ROS_INFO_THROTTLE(1,"applying force: %f N", actuatorForce);
-                    if(cmd>=0) // negative displacement doesnt make sense
-                    {
-                        ROS_INFO_STREAM_THROTTLE(1, "cmd " << cmd << " feedback " << feedback.displacement);
-                        voltage = (-1)*PID->calculate(period.toSec(), cmd, feedback.displacement);
-                    }
-                    else
-                        voltage = (-1)*PID->calculate(period.toSec(), 0, feedback.displacement);
+                    actuatorForce = muscleForce = springConsts[0] + springConsts[1]*cmd;//(cmd / (0.1 * 0.001));
+                    see.deltaX = springMeterPerEncoderTicks(cmd);
+
                     break;
                 case FORCE:
-                    if(cmd>0) {
-                        muscleForce = actuatorForce = cmd;
-                        ROS_INFO_THROTTLE(1, "Applying cmd: %f", cmd);
-                    } else {
+                    if(cmd>=0) {
+                        muscleForce = cmd;
+                        ROS_INFO_THROTTLE(1, "Applying force: %f", cmd);
+                    }else
                         muscleForce = 0;
-                    }break;
+                    break;
                 default:
 //                    actuator.motor.voltage = 0;
                     voltage = 0;
@@ -211,20 +148,18 @@ namespace cardsflow_gazebo {
             }
 
         } else {
-//            actuator.motor.voltage = cmd * 24;//simulated PWM
             voltage = cmd*24;
         }
 
         markerMsg.set_id(muscleID);
         markerMsg.clear_point();
 
-        if (see.deltaX > 0 || muscleForce > 0) {
+        if (see.deltaX > 0) {
             markerMsg.mutable_material()->mutable_script()->set_name("Gazebo/Green");
         } else {
             markerMsg.mutable_material()->mutable_script()->set_name("Gazebo/Blue");
         }
 
-        ROS_INFO_STREAM_THROTTLE(1, "voltage: " << voltage);
 
         for (int i = 0; i < viaPoints.size(); i++) {
             // update viaPoint coordinates
@@ -233,24 +168,6 @@ namespace cardsflow_gazebo {
                                               viaPoints[i]->linkRotation.RotateVector(viaPoints[i]->localCoordinates);
 
             ignition::msgs::Set(markerMsg.add_point(), viaPoints[i]->globalCoordinates);
-//            switch (viaPoints[i]->type){
-//                case IViaPoints::FIXPOINT:
-//                    viaPoints[i]->globalCoordinates = viaPoints[i]->linkPosition +
-//                                                      viaPoints[i]->linkRotation.RotateVector(viaPoints[i]->localCoordinates);
-//                    break;
-//                case IViaPoints::CYLINDRICAL:
-//                    if(this->spanningJoint!=nullptr)
-//                        viaPoints[i]->globalCoordinates = this->spanningJoint->GetWorldPose().pos;
-//                    break;
-//                case IViaPoints::SPHERICAL:
-//                    if(this->spanningJoint!=nullptr)
-//                        viaPoints[i]->globalCoordinates = this->spanningJoint->GetWorldPose().pos;
-//                    break;
-//                case IViaPoints::MESH:
-//                    viaPoints[i]->globalCoordinates = viaPoints[i]->linkPosition +
-//                                                      viaPoints[i]->linkRotation.RotateVector(viaPoints[i]->localCoordinates);
-//                    break;
-//            }
         }
 
 
@@ -298,10 +215,8 @@ namespace cardsflow_gazebo {
             motor.setVoltage(voltage);
             motor.step(period.toSec());
 
-            lock_guard<mutex> lock(mux);
 
-            tendonLength = initialTendonLength - (motor.getInitialPosition() - motor.getPosition()) *
-                    rl::math::DEG2RAD * motor.getSpindleRadius();
+            tendonLength = initialTendonLength - degreesToRadians((motor.getInitialPosition() - motor.getPosition()) * motor.getSpindleRadius());
 
             feedback.position = myoMuscleEncoderTicksPerMeter(motor.getPosition()*motor.getSpindleRadius()* 2.0 * M_PI/360.0);// winch_radius*2pi*radians = m
             feedback.velocity = myoMuscleEncoderTicksPerMeter(motor.getLinearVelocity()); // m/s
@@ -309,7 +224,7 @@ namespace cardsflow_gazebo {
 
         }
         else {
-            see.deltaX = cmd;
+//            see.deltaX = cmd;
             calculateTendonForceProgression();
         }
 
@@ -387,6 +302,7 @@ namespace cardsflow_gazebo {
     // Calculates how the force goes along the tendon by going throught the Viapoint
     void IMuscle::calculateTendonForceProgression() {
         for (int i = 0; i < viaPoints.size(); i++) {
+
             if (viaPoints[i]->prevPoint && viaPoints[i]->nextPoint) {
                 viaPoints[i]->fa = viaPoints[i]->prevPoint->fb;
                 viaPoints[i]->fb = viaPoints[i]->prevPoint->fb;
@@ -420,6 +336,6 @@ namespace cardsflow_gazebo {
     }
 
     double IMuscle::getTendonVelocity() {
-        return motor.getAngularVelocity()*motor.getSpindleRadius()*rl::math::RAD2DEG;
+        return radiansToDegrees(motor.getAngularVelocity()*motor.getSpindleRadius());
     }
 }

@@ -21,7 +21,7 @@
 #include <map>
 #include <vector>
 #include "cardsflow_gazebo/muscle/MuscPID.hpp"
-#include "cardsflow_gazebo/eccerobotMuscle/physics/Actuator.h"
+#include "Actuator.h"
 #include "std_srvs/Trigger.h"
 
 #include <Eigen/Core>
@@ -35,7 +35,8 @@
 #include <ignition/math.hh>
 #include <ignition/msgs.hh>
 
-#define ENABLE_LOGGING
+//#define ENABLE_LOGGING
+#define springEncoderTicksPerMeter(meter) (meter*10000.0)
 
 namespace cardsflow_gazebo {
 
@@ -77,7 +78,7 @@ namespace cardsflow_gazebo {
 		vector<IViaPointsPtr> viaPoints;
 		double cmd = 0;
 		bool pid_control = true;
-        bool dummy = false;
+        bool dummy = true;
         boost::shared_ptr<MuscPID> PID;
         ros::ServiceServer save_srv;
 
@@ -125,7 +126,7 @@ namespace cardsflow_gazebo {
 		double sim_angVel;
         bool firstUpdate;
 		double sinParm = 0;
-		std::vector<double> springConsts = {15.6451, 0.2468019} ;
+		std::vector<double> springConsts = {0.0, 0.03247} ;
 
 		void initViaPoints( MuscInfo &myoMuscle );
 		void calculateTendonForceProgression();

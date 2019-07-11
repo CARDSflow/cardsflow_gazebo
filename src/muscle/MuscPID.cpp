@@ -8,10 +8,6 @@ MuscPID::MuscPID(){
 }
 
 double MuscPID::calculate( double dt, double setpoint, double pv ) {
-    if(dt == 0.0){
-        ROS_WARN_THROTTLE(1,"timestep 0, returning");
-        return 0;
-    }
 
     double result = 0;
 
@@ -25,7 +21,7 @@ double MuscPID::calculate( double dt, double setpoint, double pv ) {
             else if (iterm < params[control_mode].IntegralNegMax)
                 iterm = params[control_mode].IntegralNegMax;
         }
-        dterm = ((err - last_error)/dt * params[control_mode].Kd);
+        dterm = ((err - last_error) * params[control_mode].Kd);
         ffterm = (params[control_mode].forwardGain * setpoint);
         result = ffterm + pterm + iterm + dterm;
         ROS_INFO_THROTTLE(1,"Kp %f Ki %f Kd %f , pterm: %lf iterm: %lf dterm: %lf result: %lf setpoint: %lf pv: %lf",params[control_mode].Kp ,params[control_mode].Ki ,params[control_mode].Kd,
@@ -54,9 +50,9 @@ void MuscPID::getDefaultControlParams(control_Parameters_t *params, int control_
         case POSITION:
             params->spPosMax = 10000000;
             params->spNegMax = -10000000;
-            params->Kp = 0.0001;
-            params->Ki = 0;
-            params->Kd = 0;
+            params->Kp = 0.001;
+            params->Ki = 0.0001;
+            params->Kd = 0.001;
             params->forwardGain = 0;
             params->deadBand = 0;
             params->IntegralPosMax = 100;

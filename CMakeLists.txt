@@ -7,6 +7,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -g ")
 SET(CMAKE_BUILD_TYPE Debug)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
+set(LOGGING 0)
 
 #==============================================================================
 # Dependencies
@@ -30,7 +31,9 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
 #find_package(Qt5 REQUIRED COMPONENTS Widgets Core Gui)
+if(LOGGING)
 find_package(nlohmann_json REQUIRED)
+endif(LOGGING)
 
 find_package(gazebo REQUIRED)
 include_directories(${GAZEBO_INCLUDE_DIRS})
@@ -48,9 +51,6 @@ include_directories(
 #		${Qt5Gui_INCLUDE_DIRS}
 )
 
-#roboticslibrary
-find_package(rl REQUIRED)
-include_directories(${RL_INCLUDE_DIRS})
 
 #==============================================================================
 # Application
@@ -58,10 +58,9 @@ include_directories(${RL_INCLUDE_DIRS})
 
 add_library(cardsflow_gazebo_plugin SHARED
 		src/cardsflow_gazebo.cpp
-		src/eccerobotMuscle/physics/Actuator.cpp
+		src/muscle/Actuator.cpp
 		src/muscle/IMuscle.cpp
 		src/muscle/ISee.cpp
-		src/muscle/IActuator.cpp
 		src/muscle/IViaPoints.cpp
 		src/muscle/CylindricalWrapping.cpp
 		src/muscle/SphericalWrapping.cpp
@@ -71,38 +70,27 @@ add_library(cardsflow_gazebo_plugin SHARED
         include/cardsflow_gazebo/muscle/MuscPID.hpp
 		include/cardsflow_gazebo/muscle/IMuscle.hpp
 		include/cardsflow_gazebo/muscle/CylindricalWrapping.hpp
-		include/cardsflow_gazebo/muscle/IActuator.hpp
 		include/cardsflow_gazebo/muscle/ISee.hpp
 		include/cardsflow_gazebo/muscle/IViaPoints.hpp
 		#	include/cardsflow_gazebo/muscle/MeshWrapping.hpp
 		include/cardsflow_gazebo/muscle/SphericalWrapping.hpp
 		include/cardsflow_gazebo/muscle/StateMachine.hpp
-		include/cardsflow_gazebo/eccerobotMuscle/physics/Actuator.h
-		include/cardsflow_gazebo/eccerobotMuscle/physics/IActuator.h
+		include/cardsflow_gazebo/muscle/Actuator.h
+		include/cardsflow_gazebo/muscle/IActuator.h
 		)
 
 add_dependencies( cardsflow_gazebo_plugin roboy_middleware_msgs_gencpp roboy_simulation_msgs_gencpp )
-target_link_libraries(cardsflow_gazebo_plugin ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES} ${RL_LIBRARIES} nlohmann_json)
+target_link_libraries(cardsflow_gazebo_plugin ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
+
+if(LOGGING)
+	target_link_libraries(cardsflow_gazebo_plugin nlohmann_json)
+endif(LOGGING)
 
 add_executable(testMuscle src/testMuscle.cpp
-		src/eccerobotMuscle/physics/Actuator.cpp
-		include/cardsflow_gazebo/eccerobotMuscle/physics/Actuator.h
-		include/cardsflow_gazebo/eccerobotMuscle/physics/IActuator.h)
+		src/muscle/Actuator.cpp
+		include/cardsflow_gazebo/muscle/Actuator.h
+		include/cardsflow_gazebo/muscle/IActuator.h)
 
-add_dependencies(testMuscle ${RL_LIBRARIES})
-target_link_libraries(testMuscle ${RL_LIBRARIES})
-
-
-add_executable(testZenerModel
-		src/eccerobotMuscle/physics/Actuator.cpp
-		src/eccerobotMuscle/physics/ZenerModel.cpp
-		src/testZenerModel.cpp
-		include/cardsflow_gazebo/eccerobotMuscle/physics/ISeriesElasticElement.h
-		include/cardsflow_gazebo/eccerobotMuscle/physics/IZenerModel.h
-		include/cardsflow_gazebo/eccerobotMuscle/physics/ZenerModel.h)
-
-add_dependencies(testZenerModel ${RL_LIBRARIES})
-target_link_libraries(testZenerModel ${RL_LIBRARIES})
 
 #==============================================================================
 # Installation

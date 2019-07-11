@@ -18,9 +18,9 @@
 
 #include <math.h>
 #include <iostream>
-#include <rl/math/Unit.h>
+#include <common_utilities/CommonDefinitions.h>
 
-#include "cardsflow_gazebo/eccerobotMuscle/physics/Actuator.h"
+#include "include/cardsflow_gazebo/muscle/Actuator.h"
 
 Actuator::Actuator() :
 		anchorResistance(0.0), anchorInductance(0.0), backEmfConstant(0.0), torqueConstant(
@@ -178,34 +178,34 @@ Actuator::~Actuator()
 //	}
 //}
 
-rl::math::Real Actuator::getAnchorResistance() const
+double Actuator::getAnchorResistance() const
 {
 	return anchorResistance;
 }
 
-void Actuator::setAnchorResistance(rl::math::Real anchorResistance)
+void Actuator::setAnchorResistance(double anchorResistance)
 {
 	this->anchorResistance = anchorResistance;
 	setA(0, 0);
 }
 
-rl::math::Real Actuator::getHbridgeResistance() const
+double Actuator::getHbridgeResistance() const
 {
 	return hbridgeResistance;
 }
 
-void Actuator::setHbridgeResistance(rl::math::Real hbridgeResistance)
+void Actuator::setHbridgeResistance(double hbridgeResistance)
 {
 	this->hbridgeResistance = hbridgeResistance;
 	setA(0, 0);
 }
 
-rl::math::Real Actuator::getAnchorInductance() const
+double Actuator::getAnchorInductance() const
 {
 	return anchorInductance;
 }
 
-void Actuator::setAnchorInductance(rl::math::Real anchorInductance)
+void Actuator::setAnchorInductance(double anchorInductance)
 {
 	this->anchorInductance = anchorInductance;
 	setA(0, 0);
@@ -213,58 +213,58 @@ void Actuator::setAnchorInductance(rl::math::Real anchorInductance)
 	setB(0, 0);
 }
 
-rl::math::Real Actuator::getBackEmfConstant() const
+double Actuator::getBackEmfConstant() const
 {
 	return backEmfConstant;
 }
 
-void Actuator::setBackEmfConstant(rl::math::Real backEmfConstant)
+void Actuator::setBackEmfConstant(double backEmfConstant)
 {
 	this->backEmfConstant = backEmfConstant;
 	setA(0, 1);
 }
 
-rl::math::Real Actuator::getTorqueConstant() const
+double Actuator::getTorqueConstant() const
 {
 	return torqueConstant;
 }
 
-void Actuator::setTorqueConstant(rl::math::Real torqueConstant)
+void Actuator::setTorqueConstant(double torqueConstant)
 {
 	this->torqueConstant = torqueConstant;
 	setA(1, 0);
 }
 
-rl::math::Real Actuator::getMomentOfInertiaMotor() const
+double Actuator::getMomentOfInertiaMotor() const
 {
 	return momentOfInertiaMotor;
 }
 
-void Actuator::setMomentOfInertiaMotor(rl::math::Real momentOfInertiaMotor)
+void Actuator::setMomentOfInertiaMotor(double momentOfInertiaMotor)
 {
 	this->momentOfInertiaMotor = momentOfInertiaMotor;
 	setA(1, 0);
 	setB(1, 1);
 }
 
-rl::math::Real Actuator::getMomentOfInertiaGearbox() const
+double Actuator::getMomentOfInertiaGearbox() const
 {
 	return momentOfInertiaGearbox;
 }
 
-void Actuator::setMomentOfInertiaGearbox(rl::math::Real momentOfInertiaGearbox)
+void Actuator::setMomentOfInertiaGearbox(double momentOfInertiaGearbox)
 {
 	this->momentOfInertiaGearbox = momentOfInertiaGearbox;
 	setA(1, 0);
 	setB(1, 1);
 }
 
-rl::math::Real Actuator::getGearboxEfficiency() const
+double Actuator::getGearboxEfficiency() const
 {
 	return gearboxEfficiency;
 }
 
-void Actuator::setGearboxEfficiency(rl::math::Real gearboxEfficiency)
+void Actuator::setGearboxEfficiency(double gearboxEfficiency)
 {
 	this->gearboxEfficiency = gearboxEfficiency;
 	rho = gearboxEfficiency;
@@ -272,12 +272,12 @@ void Actuator::setGearboxEfficiency(rl::math::Real gearboxEfficiency)
 	setB(1, 1);
 }
 
-rl::math::Real Actuator::getGearboxRatio() const
+double Actuator::getGearboxRatio() const
 {
 	return gearboxRatio;
 }
 
-void Actuator::setGearboxRatio(rl::math::Real gearboxRatio)
+void Actuator::setGearboxRatio(double gearboxRatio)
 {
 	this->gearboxRatio = gearboxRatio;
 	setA(0, 1);
@@ -285,62 +285,62 @@ void Actuator::setGearboxRatio(rl::math::Real gearboxRatio)
 	setB(1, 1);
 }
 
-rl::math::Real Actuator::getSpindleRadius() const
+double Actuator::getSpindleRadius() const
 {
 	return spindleRadius;
 }
 
-void Actuator::setSpindleRadius(rl::math::Real spindleRadius)
+void Actuator::setSpindleRadius(double spindleRadius)
 {
 	this->spindleRadius = spindleRadius;
 }
 
-void Actuator::setVoltage(rl::math::Real voltage)
+void Actuator::setVoltage(double voltage)
 {
 	u(0) = voltage;
 }
 
-rl::math::Real Actuator::getVoltage() const
+double Actuator::getVoltage() const
 {
 	return u(0);
 }
 
-void Actuator::setLoadTorque(rl::math::Real torque)
+void Actuator::setLoadTorque(double torque)
 {
 	u(1) = torque;
 }
 
-rl::math::Real Actuator::getAngularVelocity() const
+double Actuator::getAngularVelocity() const
 {
 	return x(1);
 }
 
-rl::math::Real Actuator::getLinearVelocity() const
+double Actuator::getLinearVelocity() const
 {
 	return getAngularVelocity() * spindleRadius;
 }
 
-rl::math::Real Actuator::getCurrent() const
+double Actuator::getCurrent() const
 {
 	return x(0);
 }
 
-rl::math::Real Actuator::getPosition() const
+double Actuator::getPosition() const
 {
 	return position;
 }
 
-rl::math::Real Actuator::getInitialPosition() const
+double Actuator::getInitialPosition() const
 {
 	return initialPosition;
 }
 
-rl::math::Real Actuator::getRho() const
+double Actuator::getRho() const
 {
 	return rho;
 }
 
-void Actuator::step(rl::math::Real time)
+void Actuator::step(double time)
 {
 	steps = time / timeStep;
 
@@ -373,17 +373,17 @@ void Actuator::step(rl::math::Real time)
 			x = x + (correctedTimeStep / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4);
 		}
 
-		position += getAngularVelocity() * correctedTimeStep
-				* rl::math::RAD2DEG;
+		position += radiansToDegrees(getAngularVelocity() * correctedTimeStep);
+
 	}
 }
 
-void Actuator::setTimeStep(rl::math::Real timeStep)
+void Actuator::setTimeStep(double timeStep)
 {
 	this->timeStep = timeStep;
 }
 
-rl::math::Real Actuator::getTimeStep()
+double Actuator::getTimeStep()
 {
 	return timeStep;
 }

@@ -91,18 +91,18 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
 //    if (!presetManager->SetCurrentProfileParam("solver", "world")) {
 //        ROS_ERROR("Couldn't set parameter, did you pass a valid key/value pair?");
 //    }
-    parent_model->GetWorld()->SetGravity(ignition::math::Vector3d(0,0,-9.81));
+//    parent_model->GetWorld()->SetGravity(ignition::math::Vector3d(0,0,-9.81));
 
 //    // Get the Gazebo solver type
 //    std::string solver_type = boost::any_cast<std::string>(physics_engine->GetParam("solver_type"));
 //    ROS_INFO_STREAM("gazebo solver type " << solver_type);
-//
-//
-//
+
+
+
 //    // Set the number of iterations in the current profile to 2000, otherwise the joints might wobble
 //    presetManager->SetCurrentProfileParam("iters", 2000);
-//
-//
+////
+////
 //    // Give the global CFM (Constraint Force Mixing) a positive value (default 0) making the model a bit less stiff to avoid 			jittering
 //    // Positive CFM allows links to overlap each other so the collisions aren't that hard
 //    physics_engine->SetParam("cfm", 0.001);
@@ -263,19 +263,42 @@ void CardsflowGazebo::readSim(ros::Time time, ros::Duration period) {
 }
 
 void CardsflowGazebo::writeSim(ros::Time time, ros::Duration period) {
-    auto msg = new roboy_simulation_msgs::Tendon();
+    int j=69696969;
     for (uint muscle = 0; muscle < muscles.size(); muscle++) {
         for (int i = 0; i < muscles[muscle]->viaPoints.size(); i++) {
             cardsflow_gazebo::IViaPointsPtr vp = muscles[muscle]->viaPoints[i];
-            if (vp->prevForcePoint.IsFinite() && vp->nextForcePoint.IsFinite()) {
 //                if (i==0) {
 //                    ROS_INFO_STREAM_THROTTLE(1,"tendon 0 force: " << vp->prevForce);
 //                }
+//                ROS_INFO_STREAM(vp->prevForce);
+//                ROS_INFO_STREAM(vp->nextForce);
+            {
                 vp->link->AddForceAtWorldPosition(vp->prevForce, vp->prevForcePoint);
+                Vector3d pos(vp->prevForcePoint.X(), vp->prevForcePoint.Y(), vp->prevForcePoint.Z());
+                Vector3d dir(vp->prevForce.X(), vp->prevForce.Y(), vp->prevForce.Z());
+                publishRay(pos, dir, "world", "forces", j++, COLOR(0, 1, 0, 1));
+            }
+            {
                 vp->link->AddForceAtWorldPosition(vp->nextForce, vp->nextForcePoint);
+                Vector3d pos(vp->nextForcePoint.X(), vp->nextForcePoint.Y(), vp->nextForcePoint.Z());
+                Vector3d dir(vp->nextForce.X(), vp->nextForce.Y(), vp->nextForce.Z());
+                publishRay(pos, dir, "world", "forces", j++, COLOR(0, 1, 1, 1));
             }
         }
     }
+    static ros::Time t0 = ros::Time::now();
+    if((ros::Time::now()-t0).toSec()>=5){
+        stringstream str;
+        for (uint muscle = 0; muscle < muscles.size(); muscle++) {
+            for (int i = 0; i < muscles[muscle]->viaPoints.size(); i++) {
+                cardsflow_gazebo::IViaPointsPtr vp = muscles[muscle]->viaPoints[i];
+                str << "muscle " << muscle << "\t" << vp->link->GetName() << "\t" << vp->prevForce << "\t" << vp->nextForce << endl;
+            }
+        }
+//        ROS_INFO_STREAM(str.str());
+        t0 = ros::Time::now();
+    }
+
     if(updateTorques) {
         for (auto joint:joints) {
             joint->SetForce(0, torques[joint->GetName()]);
@@ -319,28 +342,8 @@ void CardsflowGazebo::MotorCommand(const roboy_middleware_msgs::MotorCommand::Co
     lock_guard<mutex> lock(mux);
     for (uint i = 0; i < msg->motors.size(); i++) {
         if (msg->motors[i] < muscles.size()) {
-//            switch (muscles[msg->motors[i]]->PID->control_mode) {
-//                case POSITION:
                     muscles[msg->motors[i]]->cmd = msg->set_points[i];
                     setPoints[msg->motors[i]] =msg->set_points[i];
-//                    break;
-//                case VELOCITY:
-//                    muscles[msg->motors[i]]->cmd = myoMuscleMeterPerEncoderTick(msg->set_points[i]);
-//                    setPoints[msg->motors[i]] = myoMuscleMeterPerEncoderTick(msg->set_points[i]);// * RADIANS_PER_ENCODER_COUNT;// * 2.0 * M_PI / (2000.0f * 53.0f);
-//                    break;
-//                case DISPLACEMENT:
-//                    if (msg->set_points[i] >= 0) // negative displacement doesnt make sense
-//                        setPoints[msg->motors[i]] = msg->set_points[i];
-//                    else
-//                        setPoints[msg->motors[i]] = 0;
-//                    break;
-//                case FORCE:
-//                    if (msg->set_points[i] >= 0) // negative displacement doesnt make sense
-//                        setPoints[msg->motors[i]] = msg->set_points[i];
-//                    else
-//                        setPoints[msg->motors[i]] = 0;
-//                    break;
-//            }
         }
     }
 }
