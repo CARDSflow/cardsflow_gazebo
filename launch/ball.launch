@@ -13,7 +13,7 @@
     <arg name="debug" default="false"/>
     <arg name="physics" default="ode"/>
     <arg name="verbose" default="false"/>
-    <arg name="world_name" default="/home/missxa/workspace/cardsflow_ws/src/CARDSflow/robots/musc-le-ball/ball"/> <!-- Note: the world_name is with respect to GAZEBO_RESOURCE_PATH environmental variable -->
+    <arg name="world_name" default="/home/missxa/workspace/cardsflow_ws/src/CARDSflow/robots/musc-le-ball/ball.sdf"/> <!-- Note: the world_name is with respect to GAZEBO_RESOURCE_PATH environmental variable -->
     <arg name="respawn_gazebo" default="false"/>
     <arg name="use_clock_frequency" default="false"/>
     <arg name="pub_clock_frequency" default="100"/>
@@ -33,19 +33,25 @@
     <arg unless="$(arg debug)" name="script_type" value="gzserver"/>
     <arg     if="$(arg debug)" name="script_type" value="debug"/>
 
+    <node name="robot_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+          args="-sdf -file $(find robots)/musc-le-ball/model.sdf -model musc-le-ball
+              -J upper_joint 1.39626
+              -J lower_joint -0.3536"
+    />
+
     <!-- start gazebo server-->
-    <group if="$(arg use_clock_frequency)">
-        <param name="gazebo/pub_clock_frequency" value="$(arg pub_clock_frequency)" />
-    </group>
-    <group>
-        <param name="gazebo/enable_ros_network" value="$(arg enable_ros_network)" />
-    </group>
-    <node name="gazebo" pkg="gazebo_ros" type="$(arg script_type)" respawn="$(arg respawn_gazebo)" output="screen"
-          args="$(arg command_arg1) $(arg command_arg2) $(arg command_arg3) -e $(arg physics) $(arg extra_gazebo_args) $(arg world_name)" />
+    <!--<group if="$(arg use_clock_frequency)">-->
+        <!--<param name="gazebo/pub_clock_frequency" value="$(arg pub_clock_frequency)" />-->
+    <!--</group>-->
+    <!--<group>-->
+        <!--<param name="gazebo/enable_ros_network" value="$(arg enable_ros_network)" />-->
+    <!--</group>-->
+    <!--<node name="gazebo" pkg="gazebo_ros" type="$(arg script_type)" respawn="$(arg respawn_gazebo)" output="screen"-->
+          <!--args="$(arg command_arg1) $(arg command_arg2) $(arg command_arg3) -e $(arg physics) $(arg extra_gazebo_args) $(arg world_name)" />-->
 
     <!-- start gazebo client -->
-    <group if="$(arg gui)">
-        <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen" args="$(arg command_arg3)"/>
-    </group>
+    <!--<group if="$(arg gui)">-->
+        <!--<node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen" args="$(arg command_arg3)"/>-->
+    <!--</group>-->
 
 </launch>

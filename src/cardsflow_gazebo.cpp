@@ -234,15 +234,20 @@ void CardsflowGazebo::readSim(ros::Time time, ros::Duration period) {
     int j = 0;
     for (auto joint:parent_model->GetJoints()) {
         joint_state_msg.name[j] = joint->GetName();
-        joint_state_msg.position[j] = joint->Position(0);
-        joint_state_msg.velocity[j] = joint->GetVelocity(0);
+        if (joint->HasType(gazebo::physics::Entity::FIXED_JOINT)) {
+            joint_state_msg.position[j] = 0;
+            joint_state_msg.velocity[j] = 0;
+        } else {
+            joint_state_msg.position[j] = joint->Position(0);
+            joint_state_msg.velocity[j] = joint->GetVelocity(0);
+        }
         joint_state_msg.effort[j] = 0;
         j++;
     }
     joint_state_pub.publish(joint_state_msg);
 
     auto ball_msg = std_msgs::Float64();
-    ball_msg.data = abs(parent_model->GetLink("ball")->WorldCoGLinearVel().Y());// + abs(parent_model->GetLink("ball")->WorldCoGLinearVel().Y());
+    ball_msg.data = parent_model->GetLink("ball")->WorldCoGLinearVel().Y();// + abs(parent_model->GetLink("ball")->WorldCoGLinearVel().Y());
     ball_pub.publish(ball_msg);
 
     for (uint muscle = 0; muscle < muscles.size(); muscle++) {
@@ -383,14 +388,17 @@ void CardsflowGazebo::MotorStatusPublisher() {
 bool CardsflowGazebo::AtachJointService(std_srvs::Trigger::Request &req,
         std_srvs::Trigger::Response &res) {
     auto links = {"ball", "upper_arm", "lower_arm"};
+    ROS_INFO_STREAM("Resetting..");
     for (auto l: links){
         parent_model->GetLink(l)->ResetPhysicsStates();
         parent_model->GetLink(l)->Reset();
         parent_model->GetLink(l)->Update();
     }
+    ROS_INFO_STREAM("Attaching the joint.. ");
 
     parent_model->GetJoint("ball_joint")->Attach(parent_model->GetLink("upper_arm") , parent_model->GetLink("ball"));
-    parent_model->GetWorld()->SetPaused(true);
+    ROS_INFO_STREAM("Done attaching.");
+//    parent_model->GetWorld()->SetPaused(true);
     return true;
 
 //    ROS_INFO("creating joint");
