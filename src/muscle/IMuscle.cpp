@@ -125,7 +125,7 @@ namespace cardsflow_gazebo {
                 case FORCE:
                     if(cmd>=0) {
                         muscleForce = cmd;
-                        ROS_INFO_THROTTLE(1, "Applying force: %f", cmd);
+                        //ROS_INFO_THROTTLE(1, "Applying force: %f", cmd);
                     }else
                         muscleForce = 0;
                     break;

@@ -115,7 +115,7 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
         muscles.push_back(
                 boost::shared_ptr<cardsflow_gazebo::IMuscle>(new cardsflow_gazebo::IMuscle(parent_model)));
         muscles.back()->Init(musc_info[muscle]);
-        muscles.back()->dummy = false;
+        muscles.back()->dummy = true;
         muscles.back()->pid_control = true;
 
     }
@@ -272,6 +272,7 @@ void CardsflowGazebo::MotorCommand(const roboy_middleware_msgs::MotorCommand::Co
         if (msg->motors[i] < muscles.size()) {
                     muscles[msg->motors[i]]->cmd = msg->set_points[i];
                     setPoints[msg->motors[i]] =msg->set_points[i];
+		    ROS_INFO_STREAM("Received cmd: motor " << msg->motors[i] << "\tsetpoint: " << msg->set_points[i]); 
         }
     }
 }
