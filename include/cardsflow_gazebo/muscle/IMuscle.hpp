@@ -29,7 +29,9 @@
 #include <mutex>
 #include <common_utilities/CommonDefinitions.h>
 
+#ifdef ENABLE_LOGGING
 #include <nlohmann/json.hpp>
+#endif
 
 #include <ignition/transport.hh>
 #include <ignition/math.hh>
