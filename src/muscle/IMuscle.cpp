@@ -103,7 +103,7 @@ namespace cardsflow_gazebo {
         motor.setIntegrator(
                 Actuator::RungeKutta4);
         motor.setTimeStep(0.0001);
-        
+
         #ifdef ENABLE_LOGGING
         save_srv = nh->advertiseService("/roboy/simulation/SaveData/"+name, &IMuscle::saveDataService, this);
         #endif
@@ -153,12 +153,17 @@ namespace cardsflow_gazebo {
         markerMsg.set_id(muscleID);
         markerMsg.clear_point();
 
-        if (see.deltaX > 0) {
+        // if (see.deltaX > 0 || (!firstUpdate && prevMuscleLength > muscleLength)) {
+        //     markerMsg.mutable_material()->mutable_script()->set_name("Gazebo/Green");
+        // } else {
+        //     markerMsg.mutable_material()->mutable_script()->set_name("Gazebo/Blue");
+        // }
+
+        if (muscleForce > 0) {
             markerMsg.mutable_material()->mutable_script()->set_name("Gazebo/Green");
         } else {
             markerMsg.mutable_material()->mutable_script()->set_name("Gazebo/Blue");
         }
-
 
         for (int i = 0; i < viaPoints.size(); i++) {
             // update viaPoint coordinates
@@ -194,13 +199,19 @@ namespace cardsflow_gazebo {
 
         if (!dummy) {
             springDisplacement = muscleLength - tendonLength ;
-            see.deltaX = springDisplacement;
-//            if (springDisplacement > 0) {
+//            if (springDisplacement > 0.08)
+//                springDisplacement = 0.08;
+            if (springDisplacement < 0)
+                springDisplacement = 0;
+            ROS_INFO_STREAM_THROTTLE(1, "Spring displacement (m) for " << name << ": "  << springDisplacement);
+
+//            see.deltaX = springEncoderTicksPerMeter(springDisplacement);
+            if (springDisplacement > 0) {
             //TODO muscleForce != actuatorForce
             muscleForce = actuatorForce = springConsts[0] + springConsts[1]*(springEncoderTicksPerMeter(springDisplacement)); //TODO move this to SEE class
-//            } else {
-//                muscleForce = actuatorForce = 0;
-//            }
+            } else {
+                muscleForce = actuatorForce = 0;
+            }
 
             calculateTendonForceProgression();
             motor.setLoadTorque(motor.getSpindleRadius()*viaPoints[0]->fb);

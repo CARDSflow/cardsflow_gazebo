@@ -24,8 +24,8 @@ double MuscPID::calculate( double dt, double setpoint, double pv ) {
         dterm = ((err - last_error) * params[control_mode].Kd);
         ffterm = (params[control_mode].forwardGain * setpoint);
         result = ffterm + pterm + iterm + dterm;
-        ROS_INFO_THROTTLE(1,"Kp %f Ki %f Kd %f , pterm: %lf iterm: %lf dterm: %lf result: %lf setpoint: %lf pv: %lf",params[control_mode].Kp ,params[control_mode].Ki ,params[control_mode].Kd,
-                pterm, iterm, dterm, result, setpoint, pv);
+//        ROS_INFO_THROTTLE(1,"Kp %f Ki %f Kd %f , pterm: %lf iterm: %lf dterm: %lf result: %lf setpoint: %lf pv: %lf",params[control_mode].Kp ,params[control_mode].Ki ,params[control_mode].Kd,
+//                pterm, iterm, dterm, result, setpoint, pv);
     }else{
         result = iterm;
     }

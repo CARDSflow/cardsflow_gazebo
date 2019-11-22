@@ -207,6 +207,10 @@ void CardsflowGazebo::readSim(ros::Time time, ros::Duration period) {
             muscles[muscle]->viaPoints[i]->linkRotation = linkPose.Rot();
         }
         muscles[muscle]->world_to_link_transform = world_to_link_transform;
+//        ROS_INFO_STREAM("setPoints in readSim: ");
+//        for (double s: setPoints) {
+//            ROS_INFO_STREAM(s);
+//        }
         muscles[muscle]->cmd = setPoints[muscle];
         muscles[muscle]->Update(time, period);
     }
@@ -353,24 +357,32 @@ bool CardsflowGazebo::ControlModeService(roboy_middleware_msgs::ControlMode::Req
             case POSITION:
                 ROS_INFO("switch to POSITION control");
                 for (auto &muscle:muscles) {
-                    // cmd the current position
-                    muscle->cmd = muscle->feedback.position;
+
                     muscle->PID->control_mode = POSITION;
+                    muscle->dummy = false;
+                    muscle->cmd = req.set_point;
+
                 }
+                setPoints.assign(muscles.size(), req.set_point);
+
                 break;
             case VELOCITY:
                 ROS_INFO("switch to VELOCITY control");
                 for (auto &muscle:muscles) {
-                    // cmd the current velocity
-                    muscle->cmd = muscle->feedback.velocity;
+
                     muscle->PID->control_mode = VELOCITY;
+                    muscle->dummy = false;
+                    muscle->cmd = req.set_point;
+
                 }
+                setPoints.assign(muscles.size(), req.set_point);
                 break;
             case DISPLACEMENT:
                 ROS_INFO("switch to DISPLACEMENT control");
                 for (auto &muscle:muscles) {
                     // cmd the current displacement
-                    muscle->cmd = muscle->feedback.displacement;
+                    muscle->cmd = req.set_point;
+                    setPoints.assign(muscles.size(), req.set_point);
                     muscle->PID->control_mode = DISPLACEMENT;
                 }
                 break;
@@ -378,7 +390,8 @@ bool CardsflowGazebo::ControlModeService(roboy_middleware_msgs::ControlMode::Req
                 ROS_INFO("switch to FORCE control");
                 for (auto &muscle:muscles) {
                     // cmd the current displacement
-                    muscle->cmd = muscle->feedback.displacement;
+                    muscle->cmd = req.set_point;
+                    setPoints.assign(muscles.size(), req.set_point);
                     muscle->PID->control_mode = FORCE;
                 }
                 break;
