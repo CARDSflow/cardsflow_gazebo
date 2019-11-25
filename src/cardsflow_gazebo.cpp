@@ -161,12 +161,14 @@ void CardsflowGazebo::Update() {
     readSim(sim_time_ros, sim_period);
     writeSim(sim_time_ros, sim_time_ros - last_write_sim_time_ros);
 
-}
+
 
 #ifdef PROTOBUF_opensim_5fmuscles_2eproto__INCLUDED
         // TODO move it; rename it
-        publishOpenSimInfo(&muscles, parent_model->GetWorld()->GetSimTime());
+        publishOpenSimInfo(&muscles, parent_model->GetWorld()->SimTime());
 #endif
+
+}
 
 void CardsflowGazebo::readSim(ros::Time time, ros::Duration period) {
     // get link transforms
@@ -441,7 +443,7 @@ void CardsflowGazebo::publishOpenSimInfo(vector<boost::shared_ptr<cardsflow_gaze
 
     for (auto muscle : *muscles)
     {
-        std::vector<gazebo::ignition::math::Vector3d> muscle_path_buf;
+        std::vector<ignition::math::Vector3d> muscle_path_buf;
         msgs::OpenSimMuscle* muscle_msg = muscles_msg.add_muscle();
 
         for (uint i = 0; i < muscle->viaPoints.size(); i++) {
@@ -461,15 +463,20 @@ void CardsflowGazebo::publishOpenSimInfo(vector<boost::shared_ptr<cardsflow_gaze
         GZ_ASSERT(muscle_path_buf.size() >= 2, "Muscles are supposed to have a start node and an end node");
         for (std::size_t i=0; i<muscle_path_buf.size(); ++i)
         {
-            msgs::Vector3dd* point = muscle_msg->add_pathpoint();
+            msgs::Vector3d* point = muscle_msg->add_pathpoint();
             msgs::Set(
                     point,
-                    muscle_path_buf[i].Ign());
+                    muscle_path_buf[i]);
         }
 
         // For a bit better performance we could access the internal OpenSim::Muscle pointer directly.
         muscle_msg->set_length(muscle->getMuscleLength());
-        muscle_msg->set_activation(0);
+        if (muscle->muscleForce == 0) {
+		muscle_msg->set_activation(0); 
+	} else {
+		muscle_msg->set_activation(1);
+	}
+
         muscle_msg->set_ismuscle(1);
     }
 
