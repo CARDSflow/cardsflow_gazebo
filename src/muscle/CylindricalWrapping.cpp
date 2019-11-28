@@ -1,4 +1,5 @@
 #include "cardsflow_gazebo/muscle/CylindricalWrapping.hpp"
+#include "cardsflow_gazebo/muscle/StateMachine.hpp"
 
 namespace cardsflow_gazebo {
 
@@ -108,8 +109,11 @@ namespace cardsflow_gazebo {
         double distance = iTDistance - fTDistance;
 
         //calculate the lines of action and the muscle's length
+
         previousSegmentLength =
                 (prevCoord - this->prevForcePoint).Length() + sqrt(distance * distance + l_arc * l_arc);
+        // ROS_INFO_STREAM("previousSegmentLength " << previousSegmentLength);
+
     };
 
 
@@ -127,12 +131,26 @@ namespace cardsflow_gazebo {
 
         if (prevPoint) {
             ignition::math::Vector3d A = prevPoint->nextForcePoint - this->prevForcePoint;
-            prevForce = A / A.Length() * fa;
+            if (A.Length() > 0.0) {
+              prevForce = A / A.Length() * fa;
+              // ROS_WARN_STREAM("fa: " << fa << " prevForce: " << prevForce);
+            }
+
+            else
+                prevForce = ignition::math::Vector3d::Zero;
+
             //link->AddForceAtRelativePosition(Fa, this->prevForcePoint);
         }
         if (nextPoint) {
             ignition::math::Vector3d B = nextPoint->prevForcePoint - this->nextForcePoint;
-            nextForce = B / B.Length() * fb;
+            if (B.Length() > 0.0) {
+                nextForce = B / B.Length() * fb;
+                // ROS_WARN_STREAM("nextForce: " << nextForce);
+            }
+
+            else
+                nextForce = ignition::math::Vector3d::Zero;
+
             //link->AddForceAtRelativePosition(Fb, this->nextForcePoint);
         }
     };

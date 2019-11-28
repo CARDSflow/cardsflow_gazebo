@@ -65,6 +65,7 @@ add_library(cardsflow_gazebo_plugin SHARED
 		src/muscle/CylindricalWrapping.cpp
 		src/muscle/SphericalWrapping.cpp
 		src/muscle/MuscPID.cpp
+		src/muscle/StateMachine.cpp
         #	src/muscle/MeshWrapping.cpp
         include/cardsflow_gazebo/cardsflow_gazebo.hpp
         include/cardsflow_gazebo/muscle/MuscPID.hpp

@@ -10,9 +10,9 @@ namespace cardsflow_gazebo {
     void StateMachine::UpdateState(ignition::math::Vector3d &prevPoint, ignition::math::Vector3d &nextPoint, ignition::math::Vector3d &center,
                                    double radius) {
         //compute unit vectors and according length
-        double l_j1 = (prevPoint - center).GetLength();
+        double l_j1 = (prevPoint - center).Length();
         ignition::math::Vector3d j1 = (prevPoint - center) / l_j1;
-        double l_j2 = (nextPoint - center).GetLength();
+        double l_j2 = (nextPoint - center).Length();
         ignition::math::Vector3d j2 = (nextPoint - center) / l_j2;
 
         //compute normal
@@ -20,7 +20,7 @@ namespace cardsflow_gazebo {
 
         //calculate height = distance between straight line from previous point to next point and sphere center
         ignition::math::Vector3d diff = prevPoint - nextPoint;
-        double height = l_j1 * sin(acos((j1).Dot(diff / diff.GetLength())));
+        double height = l_j1 * sin(acos((j1).Dot(diff / diff.Length())));
 
         //if(counter%update == 0)
         //{

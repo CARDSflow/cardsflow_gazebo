@@ -226,9 +226,10 @@ void CardsflowGazebo::writeSim(ros::Time time, ros::Duration period) {
 //                if (i==0) {
 //                    ROS_INFO_STREAM_THROTTLE(1,"tendon 0 force: " << vp->prevForce);
 //                }
-//                ROS_INFO_STREAM(vp->prevForce);
-//                ROS_INFO_STREAM(vp->nextForce);
+               // ROS_INFO_STREAM(vp->prevForce);
+               // ROS_INFO_STREAM(vp->nextForce);
             {
+
                 vp->link->AddForceAtWorldPosition(vp->prevForce, vp->prevForcePoint);
                 Vector3d pos(vp->prevForcePoint.X(), vp->prevForcePoint.Y(), vp->prevForcePoint.Z());
                 Vector3d dir(vp->prevForce.X(), vp->prevForce.Y(), vp->prevForce.Z());
@@ -472,7 +473,7 @@ void CardsflowGazebo::publishOpenSimInfo(vector<boost::shared_ptr<cardsflow_gaze
         // For a bit better performance we could access the internal OpenSim::Muscle pointer directly.
         muscle_msg->set_length(muscle->getMuscleLength());
         if (muscle->muscleForce == 0) {
-		muscle_msg->set_activation(0); 
+		muscle_msg->set_activation(0);
 	} else {
 		muscle_msg->set_activation(1);
 	}

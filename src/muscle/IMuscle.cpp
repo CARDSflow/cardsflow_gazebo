@@ -136,7 +136,7 @@ namespace cardsflow_gazebo {
                 case FORCE:
                     if(cmd>=0) {
                         muscleForce = cmd;
-                        ROS_INFO_THROTTLE(1, "Applying force: %f", cmd);
+                        // ROS_INFO_STREAM_THROTTLE(5, name << " force(N): " << cmd);
                     }else
                         muscleForce = 0;
                     break;
@@ -184,7 +184,7 @@ namespace cardsflow_gazebo {
         muscleLength = 0.0;
 
         for (int i = 0; i < viaPoints.size(); i++) {
-            muscleLength += viaPoints[i]->previousSegmentLength;
+          muscleLength += viaPoints[i]->previousSegmentLength;
         }
 
         if(firstUpdate)
