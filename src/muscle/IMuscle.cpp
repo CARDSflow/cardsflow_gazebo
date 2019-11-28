@@ -14,7 +14,7 @@ namespace cardsflow_gazebo {
         }
         nh = ros::NodeHandlePtr(new ros::NodeHandle);
         markerMsg.set_ns("default");
-        markerMsg.set_id(0);
+        markerMsg.set_id(120);
         markerMsg.set_action(ignition::msgs::Marker::ADD_MODIFY);
 
         ignition::msgs::Material *matMsg = markerMsg.mutable_material();
