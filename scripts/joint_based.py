@@ -1,7 +1,6 @@
 import rospy
 from sensor_msgs.msg import JointState
-from roboy_middleware_msgs.msg import JointStatus
-from roboy_middleware_msgs.msg import MotorCommand
+from roboy_middleware_msgs.msg import MotorCommand, JointStatus
 from roboy_middleware_msgs.srv import ControlMode, ControlModeRequest
 
 from math import tanh, sqrt, sin
@@ -13,12 +12,13 @@ def softmax(x):
 rospy.init_node("musctest")
 
 p = rospy.Publisher('/roboy/middleware/MotorCommand', MotorCommand, queue_size=1)
+rospy.loginfo("Changing control mode to DISPLACEMENT")
 change_control_mode = rospy.ServiceProxy('/roboy/shoulder_left/middleware/ControlMode', ControlMode)
 req = ControlModeRequest()
 req.motor_id = [0,1,2,3]
 req.control_mode = 2 # DISPLACEMENT
 change_control_mode(req)
-
+rospy.info("Changed to DISPLACEMENT control mode")
 max_cmd = [100,20]
 
 msg = MotorCommand()
@@ -39,19 +39,15 @@ def cb2(data):
         motors = motors_map[i]
         msg.motors.extend(motors)
         if angle<0:
-            msg.set_points.append(abs(sin(angle)*max_cmd[i]))
-            msg.set_points.append(0)
+            msg.set_points.extend([abs(sin(angle)*max_cmd[i]),0])
         else:
             msg.set_points.extend([0, abs(sin(angle)*max_cmd[i])])
 
     p.publish(msg)
-    print angles
-    print msg
+    rospy.loginfo("Current joint angle values: " + str(angles))
+    rospy.loginfo("Published MotorCommand: " + str(msg))
     msg.set_points = []
     msg.motors = []
-
-
-
 
 
 def cb(data):
