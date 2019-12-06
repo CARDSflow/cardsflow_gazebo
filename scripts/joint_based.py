@@ -18,8 +18,8 @@ req = ControlModeRequest()
 req.motor_id = [0,1,2,3]
 req.control_mode = 2 # DISPLACEMENT
 change_control_mode(req)
-rospy.info("Changed to DISPLACEMENT control mode")
-max_cmd = [100,20]
+rospy.loginfo("Changed to DISPLACEMENT control mode")
+max_cmd = [40,10]
 
 msg = MotorCommand()
 msg.id = 3
@@ -44,8 +44,8 @@ def cb2(data):
             msg.set_points.extend([0, abs(sin(angle)*max_cmd[i])])
 
     p.publish(msg)
-    rospy.loginfo("Current joint angle values: " + str(angles))
-    rospy.loginfo("Published MotorCommand: " + str(msg))
+    #rospy.loginfo("Current joint angle values: " + str(angles))
+    #rospy.loginfo("Published MotorCommand: " + str(msg))
     msg.set_points = []
     msg.motors = []
 
@@ -64,6 +64,6 @@ def cb(data):
         msg.set_points[3] = sin(abs(data.position[0]))*5
     p.publish(msg)    
 
-s_hw = rospy.Subscriber('/roboy/middleware/JointStatus', JointStatus, cb2) 
+s_hw = rospy.Subscriber('/roboy/middleware/JointStatus', JointStatus, cb2, buff_size=1) 
 s = rospy.Subscriber('/joint_states', JointState, cb)
 rospy.spin()
