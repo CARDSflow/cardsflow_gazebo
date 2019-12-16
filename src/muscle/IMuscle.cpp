@@ -1,6 +1,7 @@
 #include <include/cardsflow_gazebo/muscle/IMuscle.hpp>
 #include "cardsflow_gazebo/muscle/IMuscle.hpp"
 
+#define springMeterPerEncoderTicks(encoderTicks) (encoderTicks/(10*1000))
 
 namespace cardsflow_gazebo {
 
