@@ -136,6 +136,7 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
     joint_state_msg.header.frame_id = "world";
 
     for (auto joint:parent_model->GetJoints()) {
+	joint->SetParam("friction", 0, 0.01);    
         joints.push_back(joint);
         joint_names.push_back(joint->GetName());
         torques[joint->GetName()] = 0;
