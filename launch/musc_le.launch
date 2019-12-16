@@ -1,0 +1,28 @@
+<launch>
+
+    <!-- these are the arguments you can pass this launch file, for example paused:=true -->
+
+    <param name="/cardsflow_xml" value="/home/missxa/.gazebo/models/musc_le/cardsflow.xml" />
+
+
+    <node name="robot_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+          args="-sdf -file $(find musc_le_models)/musc_le/model.sdf -model musc_le -R 3.14 -z 2.0"
+
+    />
+
+    <!-- start gazebo server-->
+    <!--<group if="$(arg use_clock_frequency)">-->
+        <!--<param name="gazebo/pub_clock_frequency" value="$(arg pub_clock_frequency)" />-->
+    <!--</group>-->
+    <!--<group>-->
+        <!--<param name="gazebo/enable_ros_network" value="$(arg enable_ros_network)" />-->
+    <!--</group>-->
+    <!--<node name="gazebo" pkg="gazebo_ros" type="$(arg script_type)" respawn="$(arg respawn_gazebo)" output="screen"-->
+          <!--args="$(arg command_arg1) $(arg command_arg2) $(arg command_arg3) -e $(arg physics) $(arg extra_gazebo_args) $(arg world_name)" />-->
+
+    <!-- start gazebo client -->
+    <!--<group if="$(arg gui)">-->
+        <!--<node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen" args="$(arg command_arg3)"/>-->
+    <!--</group>-->
+
+</launch>
