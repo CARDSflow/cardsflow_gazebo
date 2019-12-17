@@ -21,6 +21,10 @@ CardsflowGazebo::CardsflowGazebo() {
     emergencyStop_srv = nh->advertiseService("/roboy/middleware/EmergencyStop", &CardsflowGazebo::EmergencyStopService,
                                              this);
     torque_srv = nh->advertiseService("/roboy/middleware/TorqueControl", &CardsflowGazebo::TorqueControlService, this);
+    detach_srv =nh->advertiseService("/roboy/simulation/joint/detach", &CardsflowGazebo::DetachJointService, this);
+    attach_srv =nh->advertiseService("/roboy/simulation/joint/attach", &CardsflowGazebo::AttachJointService, this);
+    mass_srv = nh->advertiseService("/roboy/simulation/update_mass", &CardsflowGazebo::ChangeMassService, this);
+
     #ifdef PROTOBUF_opensim_5fmuscles_2eproto__INCLUDED
         muscleInfoNode = transport::NodePtr(new transport::Node());
         //TODO pass gazebo world name as node name
@@ -136,7 +140,9 @@ void CardsflowGazebo::Load(gazebo::physics::ModelPtr parent_, sdf::ElementPtr sd
     joint_state_msg.header.frame_id = "world";
 
     for (auto joint:parent_model->GetJoints()) {
-	joint->SetParam("friction", 0, 0.01);    
+       if (!joint->HasType(gazebo::physics::Entity::FIXED_JOINT)) {
+	        joint->SetParam("friction", 0, 0.01);
+        }
         joints.push_back(joint);
         joint_names.push_back(joint->GetName());
         torques[joint->GetName()] = 0;
@@ -272,6 +278,98 @@ void CardsflowGazebo::Reset() {
     last_write_sim_time_ros = ros::Time();
     //reset acceleration of links and the actuator simulation.
 }
+
+bool CardsflowGazebo::AttachJointService(roboy_cognition_msgs::Talk::Request &req,
+        roboy_cognition_msgs::Talk::Response &res) {
+
+
+    parent_model->GetWorld()->SetPaused(true);
+
+    // reset muscles
+
+    musc_info.clear();
+    ROS_INFO("Parsing musc muscles");
+    string cardsflow_xml;
+    nh->getParam("cardsflow_xml",cardsflow_xml);
+    if (!parseSDFusion(cardsflow_xml, musc_info, endEffectors))
+        ROS_WARN("ERROR parsing musc muscles, check your cardsflow xml file.");
+    numberOfMuscles = musc_info.size();
+    ROS_INFO("Found %d musc muscles in cardsflow xml file", numberOfMuscles);
+
+    muscles.clear();
+
+    //reset links
+    auto links = {"upper_arm", "lower_arm"};
+    ROS_INFO_STREAM("Resetting..");
+    for (auto l: links){
+        parent_model->GetLink(l)->ResetPhysicsStates();
+        parent_model->GetLink(l)->Reset();
+        parent_model->GetLink(l)->Update();
+    }
+    parent_model->GetLink(req.text)->ResetPhysicsStates();
+    parent_model->GetLink(req.text)->Reset();
+    parent_model->GetLink(req.text)->Update();
+
+
+    for (uint muscle = 0; muscle < musc_info.size(); muscle++) {
+        muscles.push_back(
+                boost::shared_ptr<cardsflow_gazebo::IMuscle>(new cardsflow_gazebo::IMuscle(parent_model)));
+        muscles.back()->Init(musc_info[muscle]);
+        muscles.back()->dummy = true;
+        muscles.back()->pid_control = true;
+        muscles.back()->cmd = 0.0;
+    }
+
+    setPoints.resize(muscles.size(), 0.0);
+
+    ROS_INFO_STREAM("Attaching the joint.. ");
+
+    parent_model->GetJoint("ball_joint")->Attach(parent_model->GetLink("upper_arm") , parent_model->GetLink(req.text));
+    ROS_INFO_STREAM("Done attaching.");
+
+    parent_model->GetWorld()->SetPaused(false);
+
+    return true;
+
+}
+
+bool CardsflowGazebo::ChangeMassService(gazebo_msgs::SetLinkProperties::Request &req,
+                                           gazebo_msgs::SetLinkProperties::Response &res) {
+ gazebo::physics::LinkPtr body = boost::dynamic_pointer_cast<gazebo::physics::Link>(parent_model->GetLink(req.link_name));
+if (!body)
+ {
+   res.success = false;
+   res.status_message = "SetLinkProperties: link not found, did you forget to scope the link by model name?";
+   return true;
+ }
+ else
+ {
+   gazebo::physics::InertialPtr mass = body->GetInertial();
+   // @todo: FIXME: add inertia matrix rotation to Gazebo
+   // mass.SetInertiaRotation(gazebo::math::Quaternionion(req.com.orientation.w,res.com.orientation.x,req.com.orientation.y req.com.orientation.z));
+   // mass->SetCoG(ignition::math::Vector3d(req.com.position.x,req.com.position.y,req.com.position.z));
+   // mass->SetInertiaMatrix(req.ixx,req.iyy,req.izz,req.ixy,req.ixz,req.iyz);
+   mass->SetMass(req.mass);
+   body->UpdateMass();
+   // body->SetGravityMode(req.gravity_mode);
+   // @todo: mass change unverified
+   res.success = true;
+   res.status_message = "SetLinkProperties: properties set";
+   return true;
+ }
+
+                                           }
+
+bool CardsflowGazebo::DetachJointService(std_srvs::Trigger::Request &req,
+        std_srvs::Trigger::Response &res) {
+//    pose = parent_model->GetJoint("ball_joint")->InitialAnchorPose();// ChildWorldPose();
+//    parent_model->GetJoint("ball_joint")->RemoveChild("musc-le-ball::ball");
+    parent_model->GetJoint("ball_joint")->Detach();
+//    parent_model->RemoveJoint("ball_joint");
+
+    return true;
+}
+
 
 void CardsflowGazebo::MotorCommand(const roboy_middleware_msgs::MotorCommand::ConstPtr &msg) {
     // update pid setvalues

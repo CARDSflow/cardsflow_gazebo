@@ -11,7 +11,10 @@
 #include <roboy_middleware_msgs/ControlMode.h>
 #include <roboy_middleware_msgs/TorqueControl.h>
 #include <roboy_simulation_msgs/Tendon.h>
+#include <roboy_cognition_msgs/Talk.h>
 #include <std_srvs/SetBool.h>
+#include <std_srvs/Trigger.h>
+#include <gazebo_msgs/SetLinkProperties.h>
 #include <sensor_msgs/JointState.h>
 #include "cardsflow_gazebo/muscle/IMuscle.hpp"
 #include <mutex>
@@ -100,8 +103,17 @@ private:
     bool ControlModeService(roboy_middleware_msgs::ControlMode::Request &req,
                             roboy_middleware_msgs::ControlMode::Response &res);
 
+    bool DetachJointService(std_srvs::Trigger::Request &req,
+                                         std_srvs::Trigger::Response &res);
+
+    bool AttachJointService(roboy_cognition_msgs::Talk::Request &req,
+                        roboy_cognition_msgs::Talk::Response &res);
+
     bool EmergencyStopService(std_srvs::SetBool::Request &req,
                               std_srvs::SetBool::Response &res);
+
+    bool ChangeMassService(gazebo_msgs::SetLinkProperties::Request &req,
+                                           gazebo_msgs::SetLinkProperties::Response &res);
 
     bool TorqueControlService(roboy_middleware_msgs::TorqueControl::Request &req,
                             roboy_middleware_msgs::TorqueControl::Response &res);
@@ -112,7 +124,7 @@ private:
     ros::NodeHandlePtr nh;
     ros::Subscriber motorCommand_sub, pid_control_sub;
     ros::Publisher motorStatus_pub, joint_state_pub, floating_base_pub, tendon_state_pub;
-    ros::ServiceServer motorConfig_srv, controlMode_srv, emergencyStop_srv, torque_srv;
+    ros::ServiceServer motorConfig_srv, controlMode_srv, emergencyStop_srv, torque_srv, attach_srv, detach_srv, mass_srv;
     boost::shared_ptr<ros::AsyncSpinner> spinner;
 
     bool motor_status_publishing = true;
