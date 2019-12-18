@@ -286,20 +286,20 @@ bool CardsflowGazebo::AttachJointService(roboy_cognition_msgs::Talk::Request &re
     // parent_model->GetWorld()->SetPaused(true);
 
     // reset muscles
+	try {
+    //musc_info.clear();
+    //ROS_INFO("Parsing musc muscles");
+    //string cardsflow_xml;
+    //nh->getParam("cardsflow_xml",cardsflow_xml);
+    //if (!parseSDFusion(cardsflow_xml, musc_info, endEffectors))
+    //    ROS_WARN("ERROR parsing musc muscles, check your cardsflow xml file.");
+    //numberOfMuscles = musc_info.size();
+    //ROS_INFO("Found %d musc muscles in cardsflow xml file", numberOfMuscles);
 
-    musc_info.clear();
-    ROS_INFO("Parsing musc muscles");
-    string cardsflow_xml;
-    nh->getParam("cardsflow_xml",cardsflow_xml);
-    if (!parseSDFusion(cardsflow_xml, musc_info, endEffectors))
-        ROS_WARN("ERROR parsing musc muscles, check your cardsflow xml file.");
-    numberOfMuscles = musc_info.size();
-    ROS_INFO("Found %d musc muscles in cardsflow xml file", numberOfMuscles);
-
-    muscles.clear();
+    //muscles.clear();
 
     //reset links
-    auto links = {"upper_arm", "lower_arm"};
+    auto links = {"robot::upper_arm", "robot::lower_arm"};
     ROS_INFO_STREAM("Resetting..");
     for (auto l: links){
         parent_model->GetLink(l)->ResetPhysicsStates();
@@ -310,32 +310,36 @@ bool CardsflowGazebo::AttachJointService(roboy_cognition_msgs::Talk::Request &re
     parent_model->GetLink(req.text)->Reset();
     parent_model->GetLink(req.text)->Update();
 
-
-    for (uint muscle = 0; muscle < musc_info.size(); muscle++) {
-        muscles.push_back(
-                boost::shared_ptr<cardsflow_gazebo::IMuscle>(new cardsflow_gazebo::IMuscle(parent_model)));
-        muscles.back()->Init(musc_info[muscle]);
-        muscles.back()->dummy = true;
-        muscles.back()->pid_control = true;
-        muscles.back()->cmd = 0.0;
-    }
+    //ROS_INFO_STREAM("adding muscles");
+    //for (uint muscle = 0; muscle < musc_info.size(); muscle++) {
+    //    muscles.push_back(
+    //            boost::shared_ptr<cardsflow_gazebo::IMuscle>(new cardsflow_gazebo::IMuscle(parent_model)));
+    //    muscles.back()->Init(musc_info[muscle]);
+    //    muscles.back()->dummy = true;
+    //    muscles.back()->pid_control = true;
+    //    muscles.back()->cmd = 0.0;
+    //}
 
     setPoints.resize(muscles.size(), 0.0);
 
     ROS_INFO_STREAM("Attaching the joint.. ");
 
-    parent_model->GetJoint("ball_joint")->Attach(parent_model->GetLink("upper_arm") , parent_model->GetLink(req.text));
+    parent_model->GetJoint("ball_joint")->Attach(parent_model->GetLink("robot::upper_arm") , parent_model->GetLink(req.text));
     ROS_INFO_STREAM("Done attaching.");
 
     // parent_model->GetWorld()->SetPaused(false);
-
+	} catch (const std::exception& e) {
+	ROS_ERROR_STREAM(e.what());
+	}
     return true;
 
 }
 
 bool CardsflowGazebo::ChangeMassService(gazebo_msgs::SetLinkProperties::Request &req,
                                            gazebo_msgs::SetLinkProperties::Response &res) {
- gazebo::physics::LinkPtr body = boost::dynamic_pointer_cast<gazebo::physics::Link>(parent_model->GetLink(req.link_name));
+ 
+	try {
+	gazebo::physics::LinkPtr body = boost::dynamic_pointer_cast<gazebo::physics::Link>(parent_model->GetLink(req.link_name));
 if (!body)
  {
    res.success = false;
@@ -355,10 +359,16 @@ if (!body)
    // @todo: mass change unverified
    res.success = true;
    res.status_message = "SetLinkProperties: properties set";
+ } 
+	}
+	catch (const std::exception& e) {
+	       ROS_ERROR_STREAM(e.what());
+	        }
+   
    return true;
  }
 
-                                           }
+                                           
 
 bool CardsflowGazebo::DetachJointService(std_srvs::Trigger::Request &req,
         std_srvs::Trigger::Response &res) {
