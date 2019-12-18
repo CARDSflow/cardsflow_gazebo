@@ -283,7 +283,7 @@ bool CardsflowGazebo::AttachJointService(roboy_cognition_msgs::Talk::Request &re
         roboy_cognition_msgs::Talk::Response &res) {
 
 
-    parent_model->GetWorld()->SetPaused(true);
+    // parent_model->GetWorld()->SetPaused(true);
 
     // reset muscles
 
@@ -327,7 +327,7 @@ bool CardsflowGazebo::AttachJointService(roboy_cognition_msgs::Talk::Request &re
     parent_model->GetJoint("ball_joint")->Attach(parent_model->GetLink("upper_arm") , parent_model->GetLink(req.text));
     ROS_INFO_STREAM("Done attaching.");
 
-    parent_model->GetWorld()->SetPaused(false);
+    // parent_model->GetWorld()->SetPaused(false);
 
     return true;
 
