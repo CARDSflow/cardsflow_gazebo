@@ -3,7 +3,7 @@
     <name>cardsflow_gazebo</name>
     <version>0.0.0</version>
     <description>The cardsflow_gazebo package</description>
-    <maintainer email="simon.trendel@tum.de">Simon Trendel</maintainer>
+    <maintainer email="unicorn@roboy.org">Alona Kharchenko</maintainer>
     <license>BSD</license>
 
     <buildtool_depend>catkin</buildtool_depend>
