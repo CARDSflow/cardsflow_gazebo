@@ -1,0 +1,8 @@
+<library path="libjoint_position_controller">
+  <class type="JointPositionController"
+	 base_class_type="JointPositionController">
+  <description>
+  	This is a musc plugin
+  </description>
+  </class>
+</library>

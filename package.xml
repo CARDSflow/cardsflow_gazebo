@@ -25,5 +25,6 @@
 
     <export>
         <roboy_simulation plugin="${prefix}/cardsflow_gazebo_plugin.xml"/>
+        <roboy_simulation plugin="${prefix}/joint_position_controller.xml"/>
     </export>
 </package>

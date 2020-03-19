@@ -39,6 +39,7 @@ find_package(gazebo REQUIRED)
 include_directories(${GAZEBO_INCLUDE_DIRS})
 link_directories(${GAZEBO_LIBRARY_DIRS})
 message(STATUS ${GAZEBO_INCLUDE_DIRS})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
 # libxml++
 find_package(LibXML++ REQUIRED)
@@ -56,50 +57,61 @@ include_directories(
 # Application
 #==============================================================================
 
-add_library(cardsflow_gazebo_plugin SHARED
-		src/cardsflow_gazebo.cpp
-		src/muscle/Actuator.cpp
-		src/muscle/IMuscle.cpp
-		src/muscle/ISee.cpp
-		src/muscle/IViaPoints.cpp
-		src/muscle/CylindricalWrapping.cpp
-		src/muscle/SphericalWrapping.cpp
-		src/muscle/MuscPID.cpp
-		src/muscle/StateMachine.cpp
-        #	src/muscle/MeshWrapping.cpp
-        include/cardsflow_gazebo/cardsflow_gazebo.hpp
-        include/cardsflow_gazebo/muscle/MuscPID.hpp
-		include/cardsflow_gazebo/muscle/IMuscle.hpp
-		include/cardsflow_gazebo/muscle/CylindricalWrapping.hpp
-		include/cardsflow_gazebo/muscle/ISee.hpp
-		include/cardsflow_gazebo/muscle/IViaPoints.hpp
-		#	include/cardsflow_gazebo/muscle/MeshWrapping.hpp
-		include/cardsflow_gazebo/muscle/SphericalWrapping.hpp
-		include/cardsflow_gazebo/muscle/StateMachine.hpp
-		include/cardsflow_gazebo/muscle/Actuator.h
-		include/cardsflow_gazebo/muscle/IActuator.h
-		)
+#add_library(cardsflow_gazebo_plugin SHARED
+#		src/cardsflow_gazebo.cpp
+#		src/muscle/Actuator.cpp
+#		src/muscle/IMuscle.cpp
+#		src/muscle/ISee.cpp
+#		src/muscle/IViaPoints.cpp
+#		src/muscle/CylindricalWrapping.cpp
+#		src/muscle/SphericalWrapping.cpp
+#		src/muscle/MuscPID.cpp
+#		src/muscle/StateMachine.cpp
+#        #	src/muscle/MeshWrapping.cpp
+#        include/cardsflow_gazebo/cardsflow_gazebo.hpp
+#        include/cardsflow_gazebo/muscle/MuscPID.hpp
+#		include/cardsflow_gazebo/muscle/IMuscle.hpp
+#		include/cardsflow_gazebo/muscle/CylindricalWrapping.hpp
+#		include/cardsflow_gazebo/muscle/ISee.hpp
+#		include/cardsflow_gazebo/muscle/IViaPoints.hpp
+#		#	include/cardsflow_gazebo/muscle/MeshWrapping.hpp
+#		include/cardsflow_gazebo/muscle/SphericalWrapping.hpp
+#		include/cardsflow_gazebo/muscle/StateMachine.hpp
+#		include/cardsflow_gazebo/muscle/Actuator.h
+#		include/cardsflow_gazebo/muscle/IActuator.h
+#		)
+#
+#add_dependencies( cardsflow_gazebo_plugin roboy_middleware_msgs_gencpp roboy_simulation_msgs_gencpp )
+#target_link_libraries(cardsflow_gazebo_plugin ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
 
-add_dependencies( cardsflow_gazebo_plugin roboy_middleware_msgs_gencpp roboy_simulation_msgs_gencpp )
-target_link_libraries(cardsflow_gazebo_plugin ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
+add_library(joint_position_controller SHARED
+		src/JointPositionController.cpp)
+add_dependencies(joint_position_controller sendsor_msgs_gencpp)
+target_link_libraries(joint_position_controller ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES} ${SENSOR-MSGS_LIBRARIES})
 
 if(LOGGING)
 	target_link_libraries(cardsflow_gazebo_plugin nlohmann_json)
 endif(LOGGING)
 
-add_executable(testMuscle src/testMuscle.cpp
-		src/muscle/Actuator.cpp
-		include/cardsflow_gazebo/muscle/Actuator.h
-		include/cardsflow_gazebo/muscle/IActuator.h)
+#add_executable(testMuscle src/testMuscle.cpp
+#		src/muscle/Actuator.cpp
+#		include/cardsflow_gazebo/muscle/Actuator.h
+#		include/cardsflow_gazebo/muscle/IActuator.h)
 
 
 #==============================================================================
 # Installation
 #==============================================================================
+#install(TARGETS
+#		cardsflow_gazebo_plugin
+#        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#)
+
 install(TARGETS
-		cardsflow_gazebo_plugin
+		joint_position_controller
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
+
 
 install(TARGETS
 	    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -108,6 +120,7 @@ install(TARGETS
 install(FILES
         package.xml
 		cardsflow_gazebo_plugin.xml
+		joint_position_controller.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
